@@ -1,0 +1,15 @@
+# Ignore logs
+*.log
+logs/
+
+# Ignore specific file types
+*.tmp
+*.swp
+*.bak
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore environment variable files
+.env
