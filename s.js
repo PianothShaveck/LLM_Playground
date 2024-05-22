@@ -1026,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', function() {
         textarea.style.height = textarea.scrollHeight + 'px';
         const maxTextBoxHeight = attachedFiles.length > 0 ? 'calc(30vh - 60px)' : '30vh';
         textarea.style.maxHeight = maxTextBoxHeight;
-        if (document.getElementById('messageBoxContainer').contains(messageBox)) {
+        if (document.getElementById('messageBoxContainer').contains(textarea)) {
             textarea.style.paddingLeft = `${attachButton.offsetWidth + 15}px`;
         }
     }
