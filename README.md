@@ -24,6 +24,10 @@ The LLM Playground allows users to:
 
 The interface also includes features for handling file drops, managing conversation history, and adjusting the layout dynamically based on user interactions.
 
+## Pure JavaScript Implementation
+
+This project is implemented using pure JavaScript, with minimal reliance on external libraries. The only external libraries used are for parsing various file types. The intention is to keep the project lightweight and free from unnecessary dependencies.
+
 ## Usage
 
 To view and interact with the LLM Playground:
