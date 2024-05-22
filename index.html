@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preload" href="s.css" as="style">
+    <link rel='preload' href='discord.png' as='image'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Playground</title>
+    <link rel="stylesheet" href="s.css">
+    <script defer data-domain="llmplayground.net" src="https://googleisbad.wuemeli.com/js/script.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <meta property="og:title" content="LLM Playground">
+    <meta property="og:description" content="A playground to test various Large Language Models.">
+    <meta property="og:image" content="https://llmplayground.net/favicon.png">
+    <meta property="og:url" content="https://llmplayground.net">
+    <meta property="og:type" content="website">
+    <meta property='og:theme-color' content='#333333'>
+    <meta name='theme-color' content='#333333'>
+    <script src="https://unpkg.com/event-source-polyfill"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LLM Playground</h1>
+            <div id="apiStatusMessage">api.discord.rocks is currently unavailable, chat with the assistants won't work. Try again later.</div>
+            <div id="GPTapiStatusMessage">gpt4.discord.rocks is currently unavailable, chat with OpenAI assistants won't work. Try again later.</div>
+            <a href='#' id='info-link' title='Designed by @pianoth, LLMs and domain provided by @meow_18838. Powered by the Discord Rocks API.'>?</a>
+            <a href="https://discord.com/invite/q55gsH8z5F" target="_blank"><img src="discord.png" id="discord-logo"></a>
+        </header>
+        <div class="chat-interface">
+            <div class="chat-controls">
+                <button id="backButton" style="display:none;">Back</button>
+            </div>
+            <div class="previous-chats">
+                <div class='previous-chats-controls'>
+                    <button id='exportDataButton'>Export data</button>
+                    <button id='importDataButton'>Import data</button>
+                    <button id='deleteDataButton'>Delete data</button>
+                    <button id='searchButton'>Search</button>
+                </div>
+                <h2>Previous Chats</h2>
+                <ul>
+                </ul>
+            </div>
+        </div>
+        <div id="messageContainer"></div>
+        <div class="export-button-container"></div>
+    </div>
+    <div class="message-form">
+        <div class="model-selector">
+            <div class="model-selector-right">
+                <label for="modelDropdown">Choose a model:</label>
+                <select id="modelDropdown">
+                    <option disabled>Popular models</option>
+                    <option value="gpt-4o">gpt-4o</option>
+                    <option value="claude-3-opus">claude-3-opus</option>
+                    <option value="llama-3-70b-chat">llama-3-70b-chat</option>
+                    <option value="mixtral-large">mixtral-large</option>
+                </select>
+            </div>
+        </div>   
+        <button id="toggleSystemPromptBtn">Toggle System Prompt</button>
+        <textarea id="systemPrompt" placeholder="Enter system prompt here..." style="display: none;"></textarea>
+        <div id="fileContainer" class="file-bubble-container">
+        </div>
+        <div id="messageBoxContainer">
+            <button id='attachButton'>+</button>
+            <input type="file" id="fileInput" multiple style="display:none;">
+            <textarea placeholder="What can I help you with?" id="messageBox"></textarea>
+        </div>
+        <div class="message-form-buttons">
+            <button id="sendButton">Start Chat</button>
+            <button id="addButton">+</button>
+            <button id="runButton">Run</button>
+        </div>
+    </div>
+    <script src="s.js"></script>
+</body>
+</html>
