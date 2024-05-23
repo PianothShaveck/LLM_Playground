@@ -711,6 +711,10 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
     .container {
         width: 80%;
     }
+
+    .assistant-message, .user-message {
+        max-width: 80%;
+    }
 }
 
 @media (width <= 768px) {
@@ -750,6 +754,10 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
     .message-form,.previous-chats {
         width: 90%;
         margin-bottom: 1px
+    }
+
+    .assistant-message, .user-message {
+        max-width: 90%;
     }
     
     .previous-chats h2,header h1 {
