@@ -1559,7 +1559,7 @@ document.addEventListener('DOMContentLoaded', function() {
          * Handles the click event of the share chat button. Prompts the user with a confirmation message and saves the chat data to a GitHub Gist if confirmed.
          */
         shareChatButton.onclick = function() {
-            const confirmation = confirm('Warning: Do not share sensitive data. Do you want to create a public link for this chat?');
+            const confirmation = confirm('Warning: Do not share sensitive data. The only way to un-share the chat is to contact @pianoth and sending the chat link to be removed.\n\nDo you want to create a public link for this chat?');
             if (confirmation) {
                 saveChatToGist(conversationHistory);
             }
