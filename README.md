@@ -10,6 +10,7 @@ The project consists of the following main files:
 - `s.js`: The JavaScript file that handles the functionality of the chat interface.
 - `s.css`: The CSS file that styles the webpage.
 - `discord.png`: An image file used for the Discord logo.
+- `light.png`: An image file used for the light theme toggle.
 - `favicon.png`: The favicon image for the website.
 
 ## Description
@@ -17,10 +18,11 @@ The project consists of the following main files:
 The LLM Playground allows users to:
 
 - Select different LLMs for generating responses.
-- Attach and process various file types (e.g., spreadsheets, documents, PDFs) as inputs for the models.
+- Attach and process various file types (e.g., spreadsheets, documents, PDFs, PowerPoints, EPUBs, RTFs) as inputs for the models.
 - Maintain a history of previous chats.
 - Export and import chat histories.
 - Edit, delete, and copy individual messages in the chat.
+- Toggle between light and dark themes.
 
 The interface also includes features for handling file drops, managing conversation history, and adjusting the layout dynamically based on user interactions.
 
@@ -40,3 +42,41 @@ No installation is required beyond cloning the repository and opening the HTML f
 ## License
 
 This project is licensed under the MIT License.
+
+## Features
+
+### Supported File Types
+
+The LLM Playground supports the following file types for attachment and processing:
+
+- `.xls`, `.xlsx`, `.csv`: Spreadsheets
+- `.docx`: Microsoft Word documents
+- `.pdf`: PDF files
+- `.pptx`: PowerPoint presentations
+- `.epub`: EPUB files
+- `.rtf`: Rich Text Format files
+- `.txt`: Plain text files
+
+### Theme Toggle
+
+Users can toggle between light and dark themes using the light theme toggle button. The selected theme preference is saved to the local storage.
+
+### Chat Management
+
+- **Chat History:** Users can view and manage their previous chats.
+- **Export/Import:** Users can export their chat histories to the clipboard and import them from the clipboard.
+- **Search:** Users can search through their chat data.
+
+### Message Management
+
+- **Edit/Delete/Copy:** Users can edit, delete, or copy individual messages.
+- **Show More/Less:** For long messages, users can toggle between showing the full content and a truncated version.
+
+### Settings
+
+Users can configure the following settings:
+
+- **System Prompt:** Customize the system prompt.
+- **Max Tokens:** Set the maximum number of tokens for the model responses.
+
+The settings are accessible through the settings button in the chat interface.
