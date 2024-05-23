@@ -652,6 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const previousChats = document.querySelector('.previous-chats ul');
     let conversationHistory = [];
     let currentChatIndex = -1;
+    let isNewChat = true;
     loadChatHistory();
     adjustTextareaHeight(messageBox);
     addButton.addEventListener('click', () => addMessageToHistory(messageBox.value.trim()));
@@ -814,6 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector('.previous-chats').style.display = 'none';
                     addExportButton();
                     displayMessage(messageContent, role);
+                    saveChatToHistory();
                     resolve();
                 }).catch(error => {
                     console.error(error);
@@ -827,9 +829,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('.previous-chats').style.display = 'none';
                 addExportButton();
                 displayMessage(messageContent, role);
+                saveChatToHistory();
                 resolve();
             }
         });
+    }
+    /**
+     * Fetches a chat title based on the provided message content using the GPT-4o model.
+     *
+     * @param {string} messageContent - The content of the message to generate the chat title from.
+     * @param {number} chatIndex - The index of the chat.
+     * @return {Promise<void>} A promise that resolves when the chat title is fetched and updated.
+     *                         Rejects if there is an error fetching the chat title.
+     */
+    function fetchChatTitle(messageContent, chatIndex) {
+        const requestBody = {
+            model: 'gpt-4o',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Create a title for the chat based on the following message:'
+                },
+                {
+                    role: 'user',
+                    content: messageContent
+                }
+            ],
+            max_tokens: 20
+        };
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch('https://api.discord.rocks/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
+        })
+        .then(response => {
+            clearTimeout(timeoutId);
+            if (!response.ok) {
+                console.error('API returned error status:', response.status);
+                return;
+            }
+            return response.json();
+        })
+        .then(jsonData => {
+            if (jsonData.response && jsonData.response.length > 0) {
+                let title = jsonData.response.trim();
+                if (title.startsWith('"')) {
+                    title = title.endsWith('"') ? title.slice(1, -1) : title.slice(1);
+                }
+                updateChatTitle(title, chatIndex);
+            }
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+                console.error('Fetch request for the chat title timed out.');
+            } else {
+                console.error('Error fetching chat title:', error);
+            }
+        });
+    }
+    /**
+     * Updates the title of the chat at the specified index in the chat history stored in the local storage.
+     *
+     * @param {string} newTitle - The new title for the chat.
+     * @param {number} chatIndex - The index of the chat in the chat history.
+     */
+    function updateChatTitle(newTitle, chatIndex) {
+        let chats = JSON.parse(localStorage.getItem('chats')) || [];
+        if (chatIndex < chats.length) {
+            chats[chatIndex].title = newTitle;
+            localStorage.setItem('chats', JSON.stringify(chats));
+            updateChatListUI();
+        } else {
+            console.error('Invalid chat index:', chatIndex);
+        }
     }
     /**
      * Sends a message and receives a response from the server.
@@ -843,6 +918,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const role = 'user';
             addMessageToHistory(messageContent, role)
                 .then(() => {
+                    if (isNewChat) {
+                        let chats = JSON.parse(localStorage.getItem('chats')) || [];
+                        fetchChatTitle(messageContent, chats.length - 1);
+                        isNewChat = false;
+                    }
                     handleSendMessage();
                     sendButton.textContent = 'Abort';
                     sendButton.removeEventListener('click', handleSendClick);
@@ -1294,6 +1374,7 @@ document.addEventListener('DOMContentLoaded', function() {
             createFileBubble(fileName, container, fileContent);
         }
     }
+    
     /**
      * Saves the current chat to the chat history in the local storage. If there is no current chat,
      * a new chat is created with the current timestamp and conversation history. If there is a current
@@ -1417,6 +1498,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.textContent = 'Start Chat';
         messageBox.value = '';
         adjustTextareaHeight(messageBox);
+        isNewChat = true;
     }
     /**
      * Loads a chat from local storage based on the given index and displays it in the UI.
@@ -1424,6 +1506,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {number} index - The index of the chat to load from local storage.
      */
     function loadChat(index) {
+        isNewChat = false;
         let chats = JSON.parse(localStorage.getItem('chats'));
         if (chats && chats.length > index) {
             let chatData = chats[index];
@@ -1576,11 +1659,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.toggle('light-mode');
         if (document.body.classList.contains('light-mode')) {
             localStorage.setItem('theme', 'light');
+            document.body.style.backgroundColor = '#f1f1f1';
+            document.documentElement.style.backgroundColor = '#f1f1f1';
         } else {
             localStorage.removeItem('theme');
+            document.body.style.backgroundColor = '#333';
+            document.documentElement.style.backgroundColor = '#333'
         }
     });
     if (localStorage.getItem('theme')) {
         document.body.classList.add('light-mode');
+        document.body.style.backgroundColor = '#f1f1f1';
+        document.documentElement.style.backgroundColor = '#f1f1f1';
     }
 });

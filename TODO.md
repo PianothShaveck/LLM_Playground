@@ -1,6 +1,6 @@
 # Features to be implemented
 
-- Automatic rename title of the chat after the first message using an LLM
+- max token parameter when showing system message
 - Change role on every message
 - Possibility of moving messages up and down the history
 - Sharing chats via anondrop key
