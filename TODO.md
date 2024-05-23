@@ -1,6 +1,5 @@
 # Features to be implemented
 
-- max token parameter when showing system message
 - Change role on every message
 - Possibility of moving messages up and down the history
 - Sharing chats via anondrop key

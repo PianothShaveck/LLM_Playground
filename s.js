@@ -697,6 +697,42 @@ document.addEventListener('DOMContentLoaded', function() {
         backButton.style.display = 'block';
         sendButton.className = 'abort-button';
     }
+    //Settings
+    const settingsButton = document.getElementById('settingsButton');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeModalButton = settingsModal.querySelector('.close');
+    const saveSettingsButton = document.getElementById('saveSettingsButton');
+    const systemPromptInput = document.getElementById('systemPromptInput');
+    const maxTokensInput = document.getElementById('maxTokensInput');
+    let maxTokens = 4096;
+    systemPromptInput.addEventListener('input', function() {
+        adjustTextareaHeight(this);
+    });
+    document.getElementById('maxTokensInput').addEventListener('input', function() {
+        if (this.value > 4096) {
+            alert('Max tokens cannot exceed 4096.');
+            this.value = 4096;
+        }
+    });
+    settingsButton.addEventListener('click', function() {
+        systemPromptInput.value = document.getElementById('systemPromptInput').value;
+        maxTokensInput.value = maxTokens;
+        settingsModal.style.display = '';
+    });
+    closeModalButton.addEventListener('click', function() {
+        settingsModal.style.display = 'none';
+    });
+    saveSettingsButton.addEventListener('click', function() {
+        document.getElementById('systemPromptInput').value = systemPromptInput.value;
+        maxTokens = parseInt(maxTokensInput.value) || 4096;  // Fallback to default
+        settingsModal.style.display = 'none';
+    });
+    window.addEventListener('click', function(event) {
+        if (event.target === settingsModal) {
+            settingsModal.style.display = 'none';
+        }
+    });
+    /*
     document.getElementById('toggleSystemPromptBtn').addEventListener('click', function() {
         const systemPrompt = document.getElementById('systemPrompt');
         systemPrompt.style.display = systemPrompt.style.display === 'none' ? 'block' : 'none';
@@ -704,6 +740,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const historyVisible = document.querySelector('.previous-chats').style.display !== 'none';
         messageForm.style.flex = historyVisible ? '1' : '1 0 100%';
     });
+    */
     messageBox.addEventListener('input', function() {
         adjustTextareaHeight(this);
     });
@@ -940,10 +977,11 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function handleSendMessage() {
         const selectedModel = modelDropdown.value;
-        const systemMessage = document.getElementById('systemPrompt').value.trim();
+        const systemMessage = document.getElementById('systemPromptInput').value.trim();
         const requestBody = {
             messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory,
             model: selectedModel,
+            max_tokens: maxTokens,
             stream: true
         };
         if (GPTModels.includes(selectedModel)) {
@@ -981,7 +1019,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
-                max_tokens: 16384,
                 signal: abortController.signal
             })
             .then(response => {
@@ -1017,7 +1054,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (event.startsWith('data: ')) {
                                 const jsonData = event.split('data: ')[1];
                                 if (jsonData === '[DONE]') {
-                                    console.log('[DONE] message received');
                                     return;
                                 }
                                 const eventData = JSON.parse(jsonData);

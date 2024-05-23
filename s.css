@@ -214,8 +214,12 @@ textarea {
     background: #222
 }
 
-#systemPrompt {
-    width: 90%
+#systemPromptInput {
+    width: 90%;
+    margin-bottom: 10px;
+    color: #ccc;
+    border: 1px solid #555;
+    background: #222
 }
 
 .message-form-buttons {
@@ -224,12 +228,12 @@ textarea {
     grid-template-columns: repeat(3,auto)
 }
 
-#sendButton,textarea {
+#saveSettingsButton,#sendButton,textarea {
     color: #f1f1f1;
     border-radius: 5px
 }
 
-#sendButton {
+#saveSettingsButton,#sendButton {
     font-size: 16px;
     background-color: #8f564c
 }
@@ -242,14 +246,14 @@ textarea {
     border-radius: 5px
 }
 
-#addButton,#runButton,#sendButton {
+#addButton,#runButton,#saveSettingsButton,#sendButton {
     margin-top: 10px;
     cursor: pointer;
     border: 0;
     grid-column: auto
 }
 
-#addButton:hover,#runButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover {
+#addButton:hover,#runButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover {
     background-color: #c56a4e
 }
 
@@ -310,7 +314,7 @@ textarea {
     margin-top: 10px
 }
 
-.previous-chats button,.previous-chats-controls button {
+#settingsButton,.previous-chats button,.previous-chats-controls button {
     cursor: pointer;
     color: #f1f1f1;
     border: 0;
@@ -342,26 +346,14 @@ textarea {
     background-color: #5a6268
 }
 
-#systemPrompt {
-    margin-bottom: 10px;
-    color: #ccc;
-    border: 1px solid #555;
-    background: #222
-}
-
-#toggleSystemPromptBtn {
+#settingsButton {
     font-size: 14px;
     display: inline-block;
     margin-bottom: 10px;
-    padding: 8px 16px;
-    cursor: pointer;
-    color: #f1f1f1;
-    border: 0;
-    border-radius: 5px;
-    background-color: #8f564c
+    padding: 8px 16px
 }
 
-#toggleSystemPromptBtn:hover {
+#settingsButton:hover {
     background-color: #c56a4e
 }
 
@@ -548,6 +540,7 @@ button.export-button {
 
 .modal-content {
     overflow: auto;
+    min-width: 60%;
     max-width: 80%;
     max-height: 80%;
     padding: 20px;
@@ -569,6 +562,16 @@ button.export-button {
 
 .modal-body {
     white-space: pre-wrap
+}
+
+#settingsContent {
+    display: flex;
+    align-items: center;
+    flex-direction: column
+}
+
+#settingsContent>* {
+    margin-bottom: 10px
 }
 
 #searchTextarea {
@@ -646,7 +649,7 @@ body.light-mode button:hover {
     background-color: #ccc
 }
 
-body.light-mode pre,body.light-mode select,body.light-mode textarea {
+body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
     color: #333;
     background: #fff
 }
