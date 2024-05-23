@@ -452,6 +452,7 @@ button.export-button {
     cursor: pointer;
     transition: background-color .3s;
     color: #f1f1f1;
+    margin: 10px;
     border: 0;
     border-radius: 5px;
     background-color: #8f564c

@@ -28,53 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js', () => {console.log('jszip loaded');});
     loadScript('https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.min.js', () => {console.log('epubjs loaded');});
-    const GPTModels = [];
-    /**
-     * Checks the status of the GPT-4 API and the Discord API and populates dropdowns with model IDs.
-     *
-     * @return {Promise<void>} A promise that resolves when the function completes.
-     */
+
     function checkApiStatus() {
-        /* Code for supporting the separate gpt4.discord.rocks api
-        
-        const controller1 = new AbortController();
-        const timeoutId1 = setTimeout(() => controller1.abort(), 2000);
-        fetch('https://gpt4.discord.rocks/models', {
-            method: 'GET',
-            signal: controller1.signal
-        })
-        .then(response => {
-            clearTimeout(timeoutId1);
-            if (!response.ok) {
-                console.error("GPT-4 API returned error status:", response.status);
-                document.getElementById('GPTapiStatusMessage').style.display = 'block';
-                return;
-            } 
-            return response.json();
-        })
-        .then(jsonData => {
-            if (jsonData) {
-                const modelIds = jsonData.data.map(item => item.id);
-                GPTModels.push(...modelIds);
-                populateDropdown(modelIds, 'GPT models');
-            }})
-        .catch(error => {
-            document.getElementById('GPTapiStatusMessage').style.display = 'block';
-            if (error.name === 'AbortError') {
-                console.error('Fetch request timed out.');
-                document.getElementById('GPTapiStatusMessage').textContent = 'Request to gpt4.discord.rocks timed out.'
-            } else {
-                console.error('Error fetching GPT API data:', error);
-            }
-        });*/
-        const controller2 = new AbortController();
-        const timeoutId2 = setTimeout(() => controller2.abort(), 2000);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
         fetch('https://api.discord.rocks/models', {
             method: 'GET',
-            signal: controller2.signal
+            signal: controller.signal
         })
         .then(response => {
-            clearTimeout(timeoutId2);
+            clearTimeout(timeoutId);
             if (!response.ok) {
                 console.error("API models returned error status:", response.status);
                 document.getElementById('apiStatusMessage').style.display = 'block';
@@ -87,13 +50,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const modelIds = jsonData.data.map(item => item.id);
                 populateDropdown(modelIds, 'Other models');
             }})
-        .catch(error => {
+        .catch(e => {
             document.getElementById('apiStatusMessage').style.display = 'block';
-            if (error.name === 'AbortError') {
+            if (e.name === 'AbortError') {
                 console.error('Fetch request timed out.');
                 document.getElementById('apiStatusMessage').textContent = 'Request to api.discord.rocks timed out.'
             } else {
-                console.error('Error fetching GPT API data:', error);
+                console.error('Error fetching GPT API data:', e);
             }
         });
     }
@@ -278,8 +241,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(result => {
                         resolve(result.value);
                     })
-                    .catch(err => {
-                        reject(new Error(`Failed to parse file "${file.name}": ${err.message}`));
+                    .catch(e => {
+                        reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                     });
             };
             /**
@@ -333,11 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             });
                             resolve(textContent.trim());
-                        }).catch(err => {
-                            reject(new Error(`Failed to parse slides: ${err.message}`));
+                        }).catch(e => {
+                            reject(new Error(`Failed to parse slides: ${e.message}`));
                         });
-                    }).catch(err => {
-                        reject(new Error(`Failed to load ZIP: ${err.message}`));
+                    }).catch(e => {
+                        reject(new Error(`Failed to load ZIP: ${e.message}`));
                     });
             };
             /**
@@ -380,8 +343,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         textContent += pageText + '\n\n';
                     }
                     resolve(textContent.trim());
-                } catch (error) {
-                    reject(new Error(`Failed to parse file "${file.name}": ${error.message}`));
+                } catch (e) {
+                    reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                 }
             };
             /**
@@ -426,11 +389,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     Promise.all(chaptersPromises).then(chapters => {
                         const textContent = chapters.join('\n\n');
                         resolve(textContent);
-                    }).catch(err => {
-                        reject(new Error(`Failed to parse chapters: ${err.message}`));
+                    }).catch(e => {
+                        reject(new Error(`Failed to parse chapters: ${e.message}`));
                     });
-                }).catch(err => {
-                    reject(new Error(`Failed to load EPUB: ${err.message}`));
+                }).catch(e => {
+                    reject(new Error(`Failed to load EPUB: ${e.message}`));
                 });
             };
             /**
@@ -499,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (file) {
                     getFileContent(file).then(fileContent => {
                         openModal(file.name, fileContent);
-                    }).catch(err => {
-                        console.error(`Failed to open file "${filename}": ${err.message}`);
+                    }).catch(e => {
+                        console.error(`Failed to open file "${filename}": ${e.message}`);
                     })
                 }
             }
@@ -764,40 +727,40 @@ document.addEventListener('DOMContentLoaded', function() {
                             parseSpreadsheet(file).then(fileContent => {
                                 filesText += `\n${file.name}\n\`\`\`\n${fileContent}\n\`\`\`\n`;
                                 resolve();
-                            }).catch(err => {
-                                reject(new Error(`Failed to parse file "${file.name}": ${err.message}`));
+                            }).catch(e => {
+                                reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                             });
                         } else if (extension === 'docx') {
                             parseDocx(file).then(fileContent => {
                                 fileContent = fileContent.replace(/`/g, '\\`');
                                 filesText += `\n${file.name}\n\`\`\`\n${fileContent}\n\`\`\`\n`;
                                 resolve();
-                            }).catch(err => {
-                                reject(new Error(`Failed to parse file "${file.name}": ${err.message}`));
+                            }).catch(e => {
+                                reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                             });
                         } else if (extension === 'pdf') {
                             parsePdf(file).then(fileContent => {
                                 fileContent = fileContent.replace(/`/g, '\\`');
                                 filesText += `\n${file.name}\n\`\`\`\n${fileContent}\n\`\`\`\n`;
                                 resolve();
-                            }).catch(err => {
-                                reject(new Error(`Failed to parse file "${file.name}": ${err.message}`));
+                            }).catch(e => {
+                                reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                             });
                         } else if (extension === 'pptx') {
                             parsePptx(file).then(fileContent => {
                                 fileContent = fileContent.replace(/`/g, '\\`');
                                 filesText += `\n${file.name}\n\`\`\`\n${fileContent}\n\`\`\`\n`;
                                 resolve();
-                            }).catch(err => {
-                                reject(new Error(`Failed to parse file "${file.name}": ${err.message}`));
+                            }).catch(e => {
+                                reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                             });
                         } else if (extension === 'epub') {
                             parseEpub(file).then(fileContent => {
                                 fileContent = fileContent.replace(/`/g, '\\`');
                                 filesText += `\n${file.name}\n\`\`\`\n${fileContent}\n\`\`\`\n`;
                                 resolve();
-                            }).catch(err => {
-                                reject(new Error(`Failed to parse file "${file.name}": ${err.message}`));
+                            }).catch(e => {
+                                reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                             });
                         } else if (extension === 'rtf') {
                             const reader = new FileReader();
@@ -854,10 +817,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayMessage(messageContent, role);
                     saveChatToHistory();
                     resolve();
-                }).catch(error => {
-                    console.error(error);
+                }).catch(e => {
+                    console.error(e);
                     addMessageToHistory("Failed to read attached files.", "assistant");
-                    reject(error);
+                    reject(e);
                 });
             } else {
                 conversationHistory.push({ role: role, content: messageContent });
@@ -919,11 +882,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateChatTitle(title, chatIndex);
             }
         })
-        .catch(error => {
-            if (error.name === 'AbortError') {
+        .catch(e => {
+            if (e.name === 'AbortError') {
                 console.error('Fetch request for the chat title timed out.');
             } else {
-                console.error('Error fetching chat title:', error);
+                console.error('Error fetching chat title:', e);
             }
         });
     }
@@ -966,8 +929,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     sendButton.addEventListener('click', handleAbortClick);
                     sendButton.className = 'abort-button';
                 })
-                .catch(error => {
-                    console.error('Error processing files:', error);
+                .catch(e => {
+                    console.error('Error processing files:', e);
                     addMessageToHistory("Failed to read attached files.", "assistant");
                 });
         }
@@ -984,11 +947,7 @@ document.addEventListener('DOMContentLoaded', function() {
             max_tokens: maxTokens,
             stream: true
         };
-        if (GPTModels.includes(selectedModel)) {
-            fetchWithRetry(requestBody,'https://gpt4.discord.rocks/ask');
-        } else {
-            fetchWithRetry(requestBody);
-        }
+        fetchWithRetry(requestBody);
     }
     /**
      * Fetches data from the specified URL using the provided request body.
@@ -1083,11 +1042,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 reader.read().then(processText);
             })
-            .catch(error => {
-                if (error.name === 'AbortError') {
+            .catch(e => {
+                if (e.name === 'AbortError') {
                     allowRetry = false;
                 } else {
-                    console.error('Error:', error);
+                    console.error('Error:', e);
                 }
                 if (retries < maxRetries && allowRetry) {
                     retries++;
@@ -1174,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const codeText = pre.innerText.slice(0, -11);
                 navigator.clipboard.writeText(codeText)
                     .then(() => alert('Code copied to clipboard!'))
-                    .catch(err => console.error('Failed to copy code: ', err));
+                    .catch(e => console.error('Failed to copy code: ', e));
             };
             pre.appendChild(copyButton);
         });
@@ -1330,7 +1289,7 @@ document.addEventListener('DOMContentLoaded', function() {
         copyButton.onclick = function() {
             navigator.clipboard.writeText(message)
                 .then(() => alert('Message copied to clipboard!'))
-                .catch(err => console.error('Failed to copy text: ', err));
+                .catch(e => console.error('Failed to copy text: ', e));
         };
     }
     /**
@@ -1577,9 +1536,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         exportButtonContainer.innerHTML = `
-            <button class="export-button" title="Export the current chat as a text file." aria-describedby='exportChatDesc'>Export chat</button>
+            <button id="exportChatButton" class="export-button" title="Export the current chat as a text file." aria-describedby='exportChatDesc'>Export chat</button>
+            <button id="shareChatButton" class="export-button" title="Create a shareable link to the current chat." aria-describedby='shareChatDesc'>Share chat</button>
         `;
-        const exportButton = exportButtonContainer.querySelector('.export-button');
+        const exportButton = document.getElementById('exportChatButton');
         /**
          * Handles the click event of the export button. Exports the current chat as a text file.
          */
@@ -1593,6 +1553,16 @@ document.addEventListener('DOMContentLoaded', function() {
             a.download = `${chats[currentChatIndex].title || 'Untitled'}.txt`;
             a.click();
             URL.revokeObjectURL(url);
+        };
+        const shareChatButton = document.getElementById('shareChatButton');
+        /**
+         * Handles the click event of the share chat button. Prompts the user with a confirmation message and saves the chat data to a GitHub Gist if confirmed.
+         */
+        shareChatButton.onclick = function() {
+            const confirmation = confirm('Warning: Do not share sensitive data. Do you want to create a public link for this chat?');
+            if (confirmation) {
+                saveChatToGist(conversationHistory);
+            }
         };
     }
     /**
@@ -1612,6 +1582,102 @@ document.addEventListener('DOMContentLoaded', function() {
             return exportText.substring(0, exportText.length - 7);
         }
     }
+    /**
+     * Saves the chat data to a GitHub Gist.
+     *
+     * @param {Object} chatData - The chat data to be saved.
+     * @return {Promise} A promise that resolves when the chat data is successfully saved, or rejects with an error if there was a problem.
+     */
+    function saveChatToGist(chatData) {
+        const apiUrl = 'https://api.github.com/gists';
+        const token = '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'; // Public token used only for LLM Playground
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `token ${token}`
+            },
+            body: JSON.stringify({
+                description: 'LLM Playground Chat',
+                public: true,
+                files: {
+                    'chat.json': {
+                        content: JSON.stringify(chatData)
+                    }
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                const uniqueId = generateUniqueId();
+                localStorage.setItem(uniqueId, data.id);
+                const shareableLink = `${window.location.origin}${window.location.pathname}?chat=${uniqueId}`;
+                if (confirm('Shareable link created: ' + shareableLink + '\n\nDo you want to copy the URL to the clipboard?')) {
+                    navigator.clipboard.writeText(shareableLink)
+                        .then(() => alert('Link copied to clipboard.'))
+                        .catch(e => console.error('Failed to copy link: ', e));
+                }
+            } else {
+                console.error('Failed to save chat data:', data);
+            }
+        })
+        .catch(e => {
+            console.error('Error:', e);
+        });
+    }
+    /**
+     * Generates a unique ID in the format of xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx.
+     *
+     * @return {string} The generated unique ID.
+     */
+    function generateUniqueId() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+    /**
+     * Loads chat data from a GitHub Gist based on the URL path.
+     *
+     * @return {Promise} A promise that resolves when the chat data is successfully loaded and displayed,
+     * or rejects with an error if there was a problem.
+     */
+    function loadChatFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const uniqueId = urlParams.get('chat');
+        const gistId = localStorage.getItem(uniqueId);
+        if (gistId) {
+            fetch(`https://api.github.com/gists/${gistId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.files && data.files['chat.json']) {
+                        conversationHistory = JSON.parse(data.files['chat.json'].content);
+                        displayLoadedChat();
+                    } else {
+                        console.error('No chat data found for this ID.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chat:', error);
+                });
+        }
+    }
+    /**
+     * Displays the loaded chat by clearing the message container, iterating over the conversation history,
+     * and displaying each message using the displayMessage function. It also updates the display of the
+     * back button, hides the previous chats container, and sets the text content of the send button to 'Send Message'.
+     */
+    function displayLoadedChat() {
+        document.getElementById('messageContainer').innerHTML = '';
+        conversationHistory.forEach(msg => {
+            displayMessage(msg.content, msg.role);
+        });
+        backButton.style.display = 'block';
+        document.querySelector('.previous-chats').style.display = 'none';
+        sendButton.textContent = 'Send Message';
+    }
+    loadChatFromUrl();
     const searchTextarea = document.createElement('textarea');
     searchTextarea.id = 'searchTextarea';
     searchTextarea.placeholder = 'Search chats...';
