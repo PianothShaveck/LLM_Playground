@@ -940,7 +940,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const eventData = JSON.parse(jsonData);
                             if (eventData.choices && eventData.choices[0].delta && eventData.choices[0].delta.content) {
                                 allContent += eventData.choices[0].delta.content;
-                                parseMessage(textSpan, allContent);
+                                parseMessage(textSpan, allContent, false);
                                 loadingMessage.className = 'assistant-message';
                             }
                         } catch (e) {
@@ -1066,8 +1066,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {HTMLElement} textSpan - The element to display the parsed message in.
      * @param {string} message - The message to parse and display.
      */
-    function parseMessage(textSpan, message) {
-        if (containsFiles(message)) {
+    function parseMessage(textSpan, message, user = true) {
+        if (containsFiles(message) && user) {
             displayFilesAsBubbles(textSpan, message);
         } else {
             parseMarkdownToHTML(textSpan, message);
@@ -1086,9 +1086,10 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function attachListeners(editButton, deleteButton, copyButton, textSpan, messageDiv, message, buttonsDiv) {
         const MAX_LENGTH = 1000;
+        const user = messageDiv.className === 'user-message';
         if (message.length > MAX_LENGTH) {
             const partialMessage = message.substring(0, MAX_LENGTH) + '...';
-            parseMessage(textSpan, partialMessage);
+            parseMessage(textSpan, partialMessage, user);
             const showMoreButton = document.createElement('button');
             showMoreButton.textContent = 'Show More';
             showMoreButton.className = 'show-more-button';
@@ -1100,19 +1101,19 @@ document.addEventListener('DOMContentLoaded', function() {
              */
             showMoreButton.onclick = function() {
                 if (showMoreButton.textContent === 'Show More') {
-                    parseMessage(textSpan, message);
+                    parseMessage(textSpan, message, user);
                     showMoreButton.textContent = 'Show Less';
                     showMoreButton.title = 'Collapse the content of this message.';
                     showMoreButton.setAttribute('aria-describedby', 'showLessButtonDesc');
                 } else {
-                    parseMessage(textSpan, partialMessage);
+                    parseMessage(textSpan, partialMessage, user);
                     showMoreButton.textContent = 'Show More';
                     showMoreButton.title = 'Show the full content of this message.';
                     showMoreButton.setAttribute('aria-describedby', 'showMoreButtonDesc');
                 }
             };
         } else {
-            parseMessage(textSpan, message);
+            parseMessage(textSpan, message, user);
         }
         /**
          * Handles the click event of the edit button. Aborts the current request, retrieves the current message index,
@@ -1167,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     conversationHistory.push({ role: 'user', content: input.value });
                 }
-                parseMessage(textSpan, input.value);
+                parseMessage(textSpan, input.value, user);
                 messageDiv.replaceChild(textSpan, input);
                 buttonsDiv.innerHTML = '';
                 buttonsDiv.appendChild(editButton);
@@ -1252,7 +1253,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('messageContainer').appendChild(messageDiv);
         setTimeout(() => {messageDiv.getBoundingClientRect();messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })}, 0);
         if (role !== 'loading') {
-            parseMessage(textSpan, message);
+            parseMessage(textSpan, message, role === 'user');
             messageDiv.appendChild(buttonsDiv);
             attachListeners(editButton, deleteButton, copyButton, textSpan, messageDiv, message, buttonsDiv);
         } else {
