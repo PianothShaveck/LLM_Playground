@@ -23,7 +23,7 @@ The LLM Playground allows users to:
 - Export and import chat histories.
 - Edit, delete, and copy individual messages in the chat.
 - Toggle between light and dark themes.
-- Users can create shareable links for their chats using GitHub Gists, allowing others to view the chat history across different browsers and devices.
+- Create shareable links for their chats using GitHub Gists, allowing others to view the chat history across different browsers and devices.
 
 The interface also includes features for handling file drops, managing conversation history, and adjusting the layout dynamically based on user interactions.
 
