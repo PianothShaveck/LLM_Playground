@@ -1,6 +1,5 @@
 # Features to be implemented
 
-- light/dark mode
 - Change role on every message
 - multiple language support
 - Automatic rename title of the chat after the first message using an LLM

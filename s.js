@@ -1570,4 +1570,17 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('All chats deleted.');
         }
     });
+    // Light theme toggle
+    const themeToggleButton = document.getElementById('theme-toggle');
+    themeToggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        if (document.body.classList.contains('light-mode')) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.removeItem('theme');
+        }
+    });
+    if (localStorage.getItem('theme')) {
+        document.body.classList.add('light-mode');
+    }
 });

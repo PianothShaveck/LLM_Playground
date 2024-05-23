@@ -80,7 +80,7 @@ header h1 {
     color: red
 }
 
-#discord-logo,#info-link {
+#discord-logo,#info-link,#theme-toggle {
     position: fixed;
     right: 10px;
     width: 20px;
@@ -106,9 +106,13 @@ header h1 {
     background-color: #c56a4e
 }
 
-#discord-logo {
+#discord-logo,#theme-toggle {
     top: 40px;
     cursor: pointer
+}
+
+#theme-toggle {
+    top: 70px
 }
 
 .chat-interface {
@@ -439,7 +443,7 @@ button.show-more-button {
     background-color: #fff
 }
 
-button.show-more-button:hover {
+body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
     color: #222;
     background-color: #eee
 }
@@ -461,7 +465,7 @@ button.export-button {
     background-color: #8f564c
 }
 
-#attachButton:hover,button.export-button:hover {
+#attachButton:hover,body.light-mode #info-link:hover,button.export-button:hover {
     background-color: #c56a4e
 }
 
@@ -559,7 +563,7 @@ button.export-button {
     margin-bottom: 10px
 }
 
-.modal-header .close {
+.modal-header .close,body.light-mode .modal-header .close {
     background-color: #dc3545
 }
 
@@ -578,6 +582,91 @@ button.export-button {
     border: 1px solid #ccc;
     border-radius: 5px;
     background: #222
+}
+
+body.light-mode {
+    color: #333
+}
+
+body.light-mode header h1 {
+    color: #8f564c
+}
+
+body.light-mode #info-link {
+    color: #333;
+    background-color: #8f564c
+}
+
+body.light-mode .previous-chats {
+    background: #aaa
+}
+
+body.light-mode .previous-chats li {
+    background: #eee
+}
+
+body.light-mode .previous-chats li:hover {
+    background: #ccc
+}
+
+body.light-mode,body.light-mode .message-form {
+    background-color: #f1f1f1
+}
+
+body.light-mode .user-message {
+    color: #333;
+    background: #aaa
+}
+
+body.light-mode .assistant-message {
+    color: #f1f1f1;
+    background: #8f564c
+}
+
+body.light-mode .error-message {
+    background: #8f564c
+}
+
+body.light-mode .loading-message {
+    background: #ccc
+}
+
+body.light-mode button.copy-code-button {
+    color: #333;
+    border: 1px solid #ccc;
+    background-color: #fff
+}
+
+body.light-mode button {
+    color: #333;
+    background-color: #ddd
+}
+
+body.light-mode button:hover {
+    background-color: #ccc
+}
+
+body.light-mode pre,body.light-mode select,body.light-mode textarea {
+    color: #333;
+    background: #fff
+}
+
+body.light-mode pre {
+    border: 1px solid #ccc
+}
+
+body.light-mode .modal-content {
+    color: #333;
+    background-color: #fff
+}
+
+body.light-mode .file-bubble {
+    color: #333;
+    background: #ddd
+}
+
+body.light-mode #attachButton,body.light-mode .model-selector label {
+    color: #333
 }
 
 @media (width <= 768px) {
