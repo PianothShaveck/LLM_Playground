@@ -844,6 +844,11 @@ document.addEventListener('DOMContentLoaded', function() {
      *                         Rejects if there is an error fetching the chat title.
      */
     function fetchChatTitle(messageContent, chatIndex) {
+        const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
+        const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
+        const spinner = document.createElement('span');
+        spinner.className = 'loading-spinner';
+        generateButton.appendChild(spinner);
         const requestBody = {
             model: 'gpt-4o',
             messages: [
@@ -884,6 +889,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(e => {
+            generateButton.removeChild(spinner);
             if (e.name === 'AbortError') {
                 console.error('Fetch request for the chat title timed out.');
             } else {
@@ -1416,7 +1422,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     /**
      * Adds a chat to the UI by creating a list item element and appending it to the previousChats element.
-     * The list item contains the chat title and two buttons for editing and deleting the chat.
+     * The list item contains the chat title and three buttons for generating title, editing, and deleting the chat.
      *
      * @param {Object} chat - The chat object containing the title of the chat.
      * @param {number} index - The index of the chat in the chats array.
@@ -1435,6 +1441,17 @@ document.addEventListener('DOMContentLoaded', function() {
             event.stopPropagation();
             editTitle(index);
         };
+        const generateTitleButton = document.createElement('button');
+        generateTitleButton.textContent = 'Generate Title';
+        generateTitleButton.title = 'Generate a new title for the chat.';
+        generateTitleButton.setAttribute('aria-describedby', 'generateTitleButtonDesc');
+        /**
+         * Handles the click event of the generateTitleButton. Stops the event propagation and calls the fetchChatTitle function with the concatenated content of the chat messages and the index parameter.
+         */
+        generateTitleButton.onclick = function(event) {
+            event.stopPropagation();
+            fetchChatTitle(chat.conversation.map(msg => msg.content).join('\n'), index);
+        };
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.title = 'Delete the chat.';
@@ -1447,6 +1464,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmDelete(index);
         };
         li.appendChild(editButton);
+        li.appendChild(generateTitleButton);
         li.appendChild(deleteButton);
         li.onclick = () => loadChat(index);
         previousChats.appendChild(li);

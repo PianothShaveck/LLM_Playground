@@ -8,6 +8,27 @@
     }
 }
 
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 5px;
+    animation: spinner .6s linear infinite;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top: 2px solid #fff;
+    border-radius: 50%
+}
+
 * {
     box-sizing: border-box;
     max-width: 100%;
