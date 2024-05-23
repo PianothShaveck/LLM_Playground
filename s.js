@@ -1610,31 +1610,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.id) {
-                const uniqueId = generateUniqueId();
-                localStorage.setItem(uniqueId, data.id);
-                const shareableLink = `${window.location.origin}${window.location.pathname}?chat=${uniqueId}`;
+                const shareableLink = `${window.location.origin}${window.location.pathname}?gist=${data.id}`;
                 if (confirm('Shareable link created: ' + shareableLink + '\n\nDo you want to copy the URL to the clipboard?')) {
                     navigator.clipboard.writeText(shareableLink)
                         .then(() => alert('Link copied to clipboard.'))
-                        .catch(e => console.error('Failed to copy link: ', e));
+                        .catch(error => console.error('Failed to copy link: ', error));
                 }
             } else {
                 console.error('Failed to save chat data:', data);
             }
         })
-        .catch(e => {
-            console.error('Error:', e);
-        });
-    }
-    /**
-     * Generates a unique ID in the format of xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx.
-     *
-     * @return {string} The generated unique ID.
-     */
-    function generateUniqueId() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
+        .catch(error => {
+            console.error('Error:', error);
         });
     }
     /**
@@ -1645,8 +1632,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function loadChatFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
-        const uniqueId = urlParams.get('chat');
-        const gistId = localStorage.getItem(uniqueId);
+        const gistId = urlParams.get('gist');
         if (gistId) {
             fetch(`https://api.github.com/gists/${gistId}`)
                 .then(response => response.json())
