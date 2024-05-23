@@ -2,7 +2,6 @@
 
 - Change role on every message
 - Possibility of moving messages up and down the history
-- Sharing chats via anondrop key
 - multiple language support
 - web search toggle like hugging chat?
 - Prompt enhancement toggle
