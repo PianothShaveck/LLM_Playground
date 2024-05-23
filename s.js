@@ -848,7 +848,7 @@ document.addEventListener('DOMContentLoaded', function() {
             messages: [
                 {
                     role: 'system',
-                    content: 'Create a title for the chat based on the following message:'
+                    content: 'Create a title for the chat based on the following message or conversation. Output plain text, no markdown.'
                 },
                 {
                     role: 'user',
@@ -981,6 +981,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
+                max_tokens: 16384,
                 signal: abortController.signal
             })
             .then(response => {
@@ -1013,15 +1014,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     buffer = events.pop();
                     events.forEach(event => {
                         try {
-                            if (event === 'data: [DONE]') {
-                                return;
-                            }
-                            const jsonData = event.split('data: ')[1];
-                            const eventData = JSON.parse(jsonData);
-                            if (eventData.choices && eventData.choices[0].delta && eventData.choices[0].delta.content) {
-                                allContent += eventData.choices[0].delta.content;
-                                parseMessage(textSpan, allContent, false);
-                                loadingMessage.className = 'assistant-message';
+                            if (event.startsWith('data: ')) {
+                                const jsonData = event.split('data: ')[1];
+                                if (jsonData === '[DONE]') {
+                                    console.log('[DONE] message received');
+                                    return;
+                                }
+                                const eventData = JSON.parse(jsonData);
+                                if (eventData.choices && eventData.choices[0].delta && eventData.choices[0].delta.content) {
+                                    allContent += eventData.choices[0].delta.content;
+                                    parseMarkdownToHTML(textSpan, allContent);
+                                    loadingMessage.className = 'assistant-message';
+                                }
                             }
                         } catch (e) {
                             console.error('Failed to parse event:', e, 'Event:', event);
