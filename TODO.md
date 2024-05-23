@@ -1,6 +1,5 @@
 # Features to be implemented
 
-- add description to every button
 - light/dark mode
 - Change role on every message
 - multiple language support

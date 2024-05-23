@@ -1092,6 +1092,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const showMoreButton = document.createElement('button');
             showMoreButton.textContent = 'Show More';
             showMoreButton.className = 'show-more-button';
+            showMoreButton.title = 'Show the full content of this message.';
+            showMoreButton.setAttribute('aria-describedby', 'showMoreButtonDesc');
             messageDiv.appendChild(showMoreButton);
             /**
              * Handles the click event of the showMoreButton element. Toggles between showing the full message and a partial message.
@@ -1100,9 +1102,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (showMoreButton.textContent === 'Show More') {
                     parseMessage(textSpan, message);
                     showMoreButton.textContent = 'Show Less';
+                    showMoreButton.title = 'Collapse the content of this message.';
+                    showMoreButton.setAttribute('aria-describedby', 'showLessButtonDesc');
                 } else {
                     parseMessage(textSpan, partialMessage);
                     showMoreButton.textContent = 'Show More';
+                    showMoreButton.title = 'Show the full content of this message.';
+                    showMoreButton.setAttribute('aria-describedby', 'showMoreButtonDesc');
                 }
             };
         } else {
@@ -1134,9 +1140,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Confirm';
             confirmButton.className = 'confirm-button';
+            confirmButton.title = 'Confirm the changes.';
+            confirmButton.setAttribute('aria-describedby', 'confirmButtonDesc');
             const cancelButton = document.createElement('button');
             cancelButton.textContent = 'Cancel';
             cancelButton.className = 'cancel-button';
+            cancelButton.title = 'Cancel the changes.';
+            cancelButton.setAttribute('aria-describedby', 'cancelButtonDesc');
             messageDiv.replaceChild(input, textSpan);
             buttonsDiv.innerHTML = '';
             const showMoreButton = messageDiv.querySelector('.show-more-button');
@@ -1223,12 +1233,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.className = 'edit-button';
+        editButton.title = 'Edit this message.';
+        editButton.setAttribute('aria-describedby', 'editButtonDesc');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.className = 'delete-button';
+        deleteButton.title = 'Delete this message.';
+        deleteButton.setAttribute('aria-describedby', 'deleteButtonDesc');
         const copyButton = document.createElement('button');
         copyButton.textContent = 'Copy';
         copyButton.className = 'copy-button';
+        copyButton.title = 'Copy this message to the clipboard.';
+        copyButton.setAttribute('aria-describedby', 'copyButtonDesc');
         buttonsDiv.appendChild(editButton);
         buttonsDiv.appendChild(deleteButton);
         buttonsDiv.appendChild(copyButton);
@@ -1328,6 +1344,8 @@ document.addEventListener('DOMContentLoaded', function() {
         li.textContent = `${chat.title || 'Untitled'}`;
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit Title';
+        editButton.title = 'Edit the title of the chat.';
+        editButton.setAttribute('aria-describedby', 'editTitleButtonDesc');
         /**
          * Handles the click event of the edit button. Stops the event propagation and calls the editTitle function with the index parameter.
          */
@@ -1337,6 +1355,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
+        deleteButton.title = 'Delete the chat.';
+        deleteButton.setAttribute('aria-describedby', 'deleteChatButtonDesc');
         /**
          * Handles the click event of the delete button. Stops the event propagation and calls the confirmDelete function with the index parameter.
          */
@@ -1433,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         exportButtonContainer.innerHTML = `
-            <button class="export-button">Export chat</button>
+            <button class="export-button" title="Export the current chat as a text file." aria-describedby='exportChatDesc'>Export chat</button>
         `;
         const exportButton = exportButtonContainer.querySelector('.export-button');
         /**

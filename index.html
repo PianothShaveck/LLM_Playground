@@ -1,79 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <link rel="preload" href="s.css" as="style">
+    <link rel='preload' href='s.css' as='style'>
     <link rel='preload' href='discord.png' as='image'>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>LLM Playground</title>
-    <link rel="stylesheet" href="s.css">
-    <script defer data-domain="llmplayground.net" src="https://googleisbad.wuemeli.com/js/script.js"></script>
-    <link rel="icon" type="image/x-icon" href="favicon.png">
-    <meta property="og:title" content="LLM Playground">
-    <meta property="og:description" content="A playground to test various Large Language Models.">
-    <meta property="og:image" content="https://llmplayground.net/favicon.png">
-    <meta property="og:url" content="https://llmplayground.net">
-    <meta property="og:type" content="website">
+    <link rel='stylesheet' href='s.css'>
+    <script defer data-domain='llmplayground.net' src='https://googleisbad.wuemeli.com/js/script.js'></script>
+    <link rel='icon' type='image/x-icon' href='favicon.png'>
+    <meta property='og:title' content='LLM Playground'>
+    <meta property='og:description' content='A playground to test various Large Language Models.'>
+    <meta property='og:image' content='https://llmplayground.net/favicon.png'>
+    <meta property='og:url' content='https://llmplayground.net'>
+    <meta property='og:type' content='website'>
     <meta property='og:theme-color' content='#333333'>
     <meta name='theme-color' content='#333333'>
-    <script src="https://unpkg.com/event-source-polyfill"></script>
+    <script src='https://unpkg.com/event-source-polyfill'></script>
 </head>
 <body>
-    <div class="container">
+    <div class='container'>
         <header>
             <h1>LLM Playground</h1>
-            <div id="apiStatusMessage">api.discord.rocks is currently unavailable, chat with the assistants won't work. Try again later.</div>
-            <div id="GPTapiStatusMessage">gpt4.discord.rocks is currently unavailable, chat with OpenAI assistants won't work. Try again later.</div>
-            <a href='#' id='info-link' title='Designed by @pianoth, LLMs and domain provided by @meow_18838. Powered by the Discord Rocks API.'>?</a>
-            <a href="https://discord.com/invite/q55gsH8z5F" target="_blank"><img src="discord.png" id="discord-logo"></a>
+            <div id='apiStatusMessage'>api.discord.rocks is currently unavailable, chat with the assistants won't work. Try again later.</div>
+            <div id='GPTapiStatusMessage'>gpt4.discord.rocks is currently unavailable, chat with OpenAI assistants won't work. Try again later.</div>
+            <a href='#' id='info-link' title='Designed by @pianoth, LLMs and domain provided by @meow_18838. Powered by the Discord Rocks API.' aria-describedby='infoLinkDesc'>?</a>
+            <a href='https://discord.com/invite/q55gsH8z5F' target='_blank' title="Join the Discord server by clicking this icon." aria-describedby='discordLogoDesc'><img src='discord.png' id='discord-logo'></a>
         </header>
-        <div class="chat-interface">
-            <div class="chat-controls">
-                <button id="backButton" style="display:none;">Back</button>
+        <div class='chat-interface'>
+            <div class='chat-controls'>
+                <button id='backButton' style='display:none;' title='Go back to the previous interface.' aria-describedby='backButtonDesc'>Back</button>
             </div>
-            <div class="previous-chats">
+            <div class='previous-chats'>
                 <div class='previous-chats-controls'>
-                    <button id='exportDataButton'>Export data</button>
-                    <button id='importDataButton'>Import data</button>
-                    <button id='deleteDataButton'>Delete data</button>
-                    <button id='searchButton'>Search</button>
+                    <button id='exportDataButton' title='Export the chat data to the clipboard.' aria-describedby='exportDataButtonDesc'>Export data</button>
+                    <button id='importDataButton' title='Import chat data from the clipboard.' aria-describedby='importDataButtonDesc'>Import data</button>
+                    <button id='deleteDataButton' title='Delete all chat data.' aria-describedby='deleteDataButtonDesc'>Delete data</button>
+                    <button id='searchButton' title='Search through chat data.' aria-describedby='searchButtonDesc'>Search</button>
                 </div>
                 <h2>Previous Chats</h2>
                 <ul>
                 </ul>
             </div>
         </div>
-        <div id="messageContainer"></div>
-        <div class="export-button-container"></div>
+        <div id='messageContainer'></div>
+        <div class='export-button-container'></div>
     </div>
-    <div class="message-form">
-        <div class="model-selector">
-            <div class="model-selector-right">
-                <label for="modelDropdown">Choose a model:</label>
-                <select id="modelDropdown">
+    <div class='message-form'>
+        <div class='model-selector'>
+            <div class='model-selector-right'>
+                <label for='modelDropdown'>Choose a model:</label>
+                <select id='modelDropdown' title='Select a large language model from the dropdown.' aria-describedby='modelDropdownDesc'>
                     <option disabled>Popular models</option>
-                    <option value="gpt-4o">gpt-4o</option>
-                    <option value="claude-3-opus">claude-3-opus</option>
-                    <option value="llama-3-70b-chat">llama-3-70b-chat</option>
-                    <option value="mixtral-large">mixtral-large</option>
+                    <option value='gpt-4o'>gpt-4o</option>
+                    <option value='claude-3-opus'>claude-3-opus</option>
+                    <option value='llama-3-70b-chat'>llama-3-70b-chat</option>
+                    <option value='mixtral-large'>mixtral-large</option>
                 </select>
             </div>
         </div>   
-        <button id="toggleSystemPromptBtn">Toggle System Prompt</button>
-        <textarea id="systemPrompt" placeholder="Enter system prompt here..." style="display: none;"></textarea>
-        <div id="fileContainer" class="file-bubble-container">
+        <button id='toggleSystemPromptBtn' title='Toggle the visibility of the system prompt' aria-describedby='toggleSystemPromptBtnDesc'>Toggle System Prompt</button>
+        <textarea id='systemPrompt' placeholder='Enter system prompt here...' style='display: none;'></textarea>
+        <div id='fileContainer' class='file-bubble-container'>
         </div>
-        <div id="messageBoxContainer">
-            <button id='attachButton'>+</button>
-            <input type="file" id="fileInput" multiple style="display:none;">
-            <textarea placeholder="What can I help you with?" id="messageBox"></textarea>
+        <div id='messageBoxContainer'>
+            <button id='attachButton' title='Attach a file' aria-describedby='attachButtonDesc'>+</button>
+            <input type='file' id='fileInput' multiple style='display:none;'>
+            <textarea placeholder='What can I help you with?' id='messageBox'></textarea>
         </div>
-        <div class="message-form-buttons">
-            <button id="sendButton">Start Chat</button>
-            <button id="addButton">+</button>
-            <button id="runButton">Run</button>
+        <div class='message-form-buttons'>
+            <button id='sendButton' title='Send your message' aria-describedby='sendButtonDesc'>Start Chat</button>
+            <button id='addButton' title='Add a new message without receiving a response' aria-describedby='addButtonDesc'>+</button>
+            <button id='runButton' title='Ask the model to generate a response' aria-describedby='runButtonDesc'>Run</button>
         </div>
     </div>
-    <script src="s.js"></script>
+    <!-- Add this to your HTML in a logical place, such as near the top or bottom of the body -->
+    <div id="descriptions" style="display:none;">
+        <p id="infoLinkDesc">Designed by @pianoth, LLMs and domain provided by @meow_18838. Powered by the Discord Rocks API.</p>
+        <p id="discordLogoDesc">Join the Discord server by clicking this icon.</p>
+        <p id="backButtonDesc">Go back to the previous interface.</p>
+        <p id="exportDataButtonDesc">Export the chat data to the clipboard.</p>
+        <p id="importDataButtonDesc">Import chat data from the clipboard.</p>
+        <p id="deleteDataButtonDesc">Delete all chat data.</p>
+        <p id="searchButtonDesc">Search through chat data.</p>
+        <p id="modelDropdownDesc">Select a model from the dropdown.</p>
+        <p id="toggleSystemPromptBtnDesc">Toggle the visibility of the system prompt.</p>
+        <p id="attachButtonDesc">Attach a file.</p>
+        <p id="sendButtonDesc">Send your message.</p>
+        <p id="addButtonDesc">Add a new message without receiving a response.</p>
+        <p id="runButtonDesc">Ask the model to generate a response.</p>
+        <p id="editButtonDesc">Edit this message.</p>
+        <p id="deleteButtonDesc">Delete this message.</p>
+        <p id="copyButtonDesc">Copy this message to the clipboard.</p>
+        <p id="exportChatDesc">Export the current chat as a text file.</p>
+        <p id="showMoreButtonDesc">Show the full content of this message.</p>
+        <p id="showLessButtonDesc">Collapse the content of this message.</p>
+        <p id="confirmButtonDesc">Confirm the changes.</p>
+        <p id="cancelButtonDesc">Cancel the changes.</p>
+        <p id="editTitleButtonDesc">Edit the title of the chat.</p>
+        <p id="deleteChatButtonDesc">Delete the chat.</p>
+    </div>
+    <script src='s.js'></script>
 </body>
 </html>
