@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sanitizer: true,
             sanitize: true,
         });
+        loadChatFromUrl();
         console.log('marked loaded');
     });
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {console.log('xlsx loaded');});
@@ -1663,7 +1664,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.previous-chats').style.display = 'none';
         sendButton.textContent = 'Send Message';
     }
-    loadChatFromUrl();
     const searchTextarea = document.createElement('textarea');
     searchTextarea.id = 'searchTextarea';
     searchTextarea.placeholder = 'Search chats...';
