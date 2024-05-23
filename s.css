@@ -23,7 +23,7 @@ pre {
 
 button.copy-code-button,select {
     padding: 5px 10px;
-    border-radius: 5px
+    border-radius: 3vw
 }
 
 button.copy-code-button {
@@ -56,7 +56,7 @@ body,html {
 
 .chat-interface,.container {
     display: flex;
-    width: 90%;
+    width: 85%;
     margin: 0 auto
 }
 
@@ -117,8 +117,7 @@ header h1 {
 
 .chat-interface {
     overflow-y: auto;
-    flex-direction: row;
-    height: 100%
+    flex-direction: row
 }
 
 .previous-chats {
@@ -127,12 +126,13 @@ header h1 {
     max-height: 350px;
     margin: 0 auto;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 3vw;
     background: #444
 }
 
 .previous-chats h2 {
-    font-size: 20px
+    font-size: 20px;
+    text-align: center
 }
 
 .previous-chats ul {
@@ -144,7 +144,7 @@ header h1 {
     margin-top: 5px;
     padding: 10px;
     transition: background-color .3s ease;
-    border-radius: 5px;
+    border-radius: 3vw;
     background: #555
 }
 
@@ -230,7 +230,7 @@ textarea {
 
 #saveSettingsButton,#sendButton,textarea {
     color: #f1f1f1;
-    border-radius: 5px
+    border-radius: 3vw
 }
 
 #saveSettingsButton,#sendButton {
@@ -243,7 +243,7 @@ textarea {
 }
 
 #runButton {
-    border-radius: 5px
+    border-radius: 3vw
 }
 
 #addButton,#runButton,#saveSettingsButton,#sendButton {
@@ -272,11 +272,12 @@ textarea {
 #backButton {
     position: fixed;
     z-index: 1;
+    left: 30px;
     padding: 5px 10px;
     cursor: pointer;
     transition: background-color .3s;
     border: 0;
-    border-radius: 5px;
+    border-radius: 3vw;
     background-color: #8f7535
 }
 
@@ -284,12 +285,21 @@ textarea {
     background-color: #705d2b
 }
 
+#messageContainer {
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    padding: 10px
+}
+
 .user-message {
+    align-self: flex-end;
     color: #f1f1f1;
     background: #555
 }
 
 .assistant-message {
+    align-self: flex-start;
     color: #f1f1f1;
     background: #8f564c
 }
@@ -298,7 +308,7 @@ textarea {
     margin: 10px 0;
     padding: 10px;
     color: #f1f1f1;
-    border-radius: 5px
+    border-radius: 3vw
 }
 
 .loading-message {
@@ -318,7 +328,7 @@ textarea {
     cursor: pointer;
     color: #f1f1f1;
     border: 0;
-    border-radius: 5px;
+    border-radius: 3vw;
     background-color: #8f564c
 }
 
@@ -359,14 +369,17 @@ textarea {
 
 .assistant-message,.user-message {
     position: relative;
-    display: flex;
+    display: inline-block;
+    overflow: hidden;
     align-items: center;
     flex-direction: column;
     justify-content: space-between;
-    width: 100%;
+    width: auto;
+    min-width: 50%;
+    max-width: 70%;
     margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px
+    padding: 10px 15px;
+    border-radius: 3vw
 }
 
 .message-content {
@@ -431,7 +444,7 @@ button.show-more-button {
     transition: background-color .3s,color .3s;
     color: #333;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 3vw;
     background-color: #fff
 }
 
@@ -448,13 +461,13 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
 
 button.export-button {
     font-size: 14px;
+    margin: 10px;
     padding: 8px 16px;
     cursor: pointer;
     transition: background-color .3s;
     color: #f1f1f1;
-    margin: 10px;
     border: 0;
-    border-radius: 5px;
+    border-radius: 3vw;
     background-color: #8f564c
 }
 
@@ -482,7 +495,7 @@ button.export-button {
     padding: 10px 30px 10px 10px;
     cursor: pointer;
     color: #f1f1f1;
-    border-radius: 5px;
+    border-radius: 3vw;
     background: #444
 }
 
@@ -584,7 +597,7 @@ button.export-button {
     resize: vertical;
     color: #f1f1f1;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 3vw;
     background: #222
 }
 
@@ -673,6 +686,12 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
     color: #333
 }
 
+@media (max-width: 1200px) {
+    .container {
+        width: 80%;
+    }
+}
+
 @media (width <= 768px) {
     .previous-chats-controls {
         display: flex;
@@ -705,7 +724,6 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
     
     .chat-interface {
         flex-direction: column;
-        height: 100%
     }
     
     .message-form,.previous-chats {

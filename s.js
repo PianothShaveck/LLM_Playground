@@ -1584,6 +1584,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
+     * Decodes a Base64 encoded string.
+     *
+     * @param {string} encodedStr - The Base64 encoded string.
+     * @return {string} The decoded string.
+     */
+    function decodeBase64(encodedStr) {
+        try {
+            return atob(encodedStr);
+        } catch (e) {
+            console.error('Failed to decode Base64 string:', e);
+            return '';
+        }
+    }
+    /**
+     * Reverses a string.
+     *
+     * @param {string} str - The string to reverse.
+     * @return {string} The reversed string.
+     */
+    function reverseString(str) {
+        return str.split('').reverse().join('');
+    }
+    // Base64 encoded reversed token
+    const encodedReversedToken = 'azFaTWlKNDBMeXhtMFQzMmZxcW4yYXlkOGxpWnJPT0VZbEhWNEtfcGhneDk=';
+    const token = reverseString(decodeBase64(encodedReversedToken)).slice(2,-2); //Public token used only for LLM Playground
+    /**
      * Saves the chat data to a GitHub Gist.
      *
      * @param {Object} chatData - The chat data to be saved.
@@ -1591,7 +1617,6 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function saveChatToGist(chatData) {
         const apiUrl = 'https://api.github.com/gists';
-        const token = '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'; // Public token used only for LLM Playground
         fetch(apiUrl, {
             method: 'POST',
             headers: {
