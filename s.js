@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sanitize: true,
         });
         loadChatFromUrl();
+        loadSettings();
         console.log('marked loaded');
     });
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {console.log('xlsx loaded');});
@@ -590,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handlePasteEvent(event) {
         const clipboardData = event.clipboardData || window.clipboardData;
         const pastedText = clipboardData.getData('Text');
-        if (pastedText && pastedText.length > 500) {
+        if (pastedText && pastedText.length > 1000 && copyToFileEnabled) {
             event.preventDefault();
             const blob = new Blob([pastedText], { type: 'text/plain' });
             const file = new File([blob], `paste-${pasteCount}.txt`, { type: 'text/plain' });
@@ -686,7 +687,20 @@ document.addEventListener('DOMContentLoaded', function() {
     closeModalButton.addEventListener('click', function() {
         settingsModal.style.display = 'none';
     });
+    let copyToFileEnabled = true;
+    function loadSettings() {
+        const savedCopyToFileEnabled = localStorage.getItem('copyToFileEnabled');
+        if (savedCopyToFileEnabled !== null) {
+            copyToFileEnabled = JSON.parse(savedCopyToFileEnabled);
+            document.getElementById('copyToFileToggle').checked = copyToFileEnabled;
+        }
+    }
+    function saveSettings() {
+        localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
+    }
     saveSettingsButton.addEventListener('click', function() {
+        copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
+        saveSettings();
         document.getElementById('systemPromptInput').value = systemPromptInput.value;
         maxTokens = parseInt(maxTokensInput.value) || 4096;  // Fallback to default
         settingsModal.style.display = 'none';
