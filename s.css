@@ -1,10 +1,9 @@
 @keyframes blinkingText {
     0%,to {
-        opacity: 1
+        opacity: 1;
     }
-
     50% {
-        opacity: 0
+        opacity: 0;
     }
 }
 
@@ -32,7 +31,7 @@
 * {
     box-sizing: border-box;
     max-width: 100%;
-    word-wrap: break-word
+    word-wrap: break-word;
 }
 
 pre {
@@ -41,23 +40,23 @@ pre {
     padding: 10px 10px 30px;
     border: 1px solid #fff
 }
-
+   
 button.copy-code-button,select {
     padding: 5px 10px;
-    border-radius: 2vw
-}
-
-button.copy-code-button {
+    border-radius: 3vw
+    }
+    	
+    button.copy-code-button {
     font-size: .8em;
     position: absolute;
     right: 5px;
     bottom: 5px;
     cursor: pointer;
     transition: background-color .3s,color .3s;
-    color: #333;
+    color: #333;	
     border: 1px solid #ccc;
-    background-color: #fff
-}
+    background-color: #fff;
+    }
 
 button.copy-code-button:hover {
     color: #222;
@@ -72,33 +71,33 @@ body,html {
     margin: 0;
     padding: 0;
     color: #f1f1f1;
-    background-color: #333
+    background-color: #333;
 }
 
 .chat-interface,.container {
     display: flex;
     width: 85%;
-    margin: 0 auto
+    margin: 0 auto;
 }
 
 .container {
     flex: 1;
     flex-direction: column;
     padding: 20px;
-    padding-bottom: 50vh
+    padding-bottom: 50vh;
 }
 
 header h1 {
     font-size: 24px;
     text-align: center;
-    color: #8f564c
+    color: #bd5536;
 }
 
 #GPTapiStatusMessage,#apiStatusMessage {
     display: none;
     margin-bottom: 10px;
     text-align: center;
-    color: red
+    color: red;
 }
 
 #discord-logo,#info-link,#theme-toggle {
@@ -106,7 +105,7 @@ header h1 {
     right: 10px;
     width: 20px;
     height: 20px;
-    border-radius: 50%
+    border-radius: 50%;
 }
 
 #info-link {
@@ -118,37 +117,38 @@ header h1 {
     cursor: help;
     text-align: center;
     text-decoration: none;
-    color: #f1f1f1;
-    background-color: #8f564c
+    color: #202020;
+    background-color: #bd5536;
 }
 
 #info-link:hover {
     cursor: help;
-    background-color: #c56a4e
+    background-color: #bd5636d5; 
 }
 
 #discord-logo,#theme-toggle {
     top: 40px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 #theme-toggle {
-    top: 70px
+    top: 70px;
 }
 
 .chat-interface {
     overflow-y: auto;
-    flex-direction: row
+    flex-direction: row;
 }
 
 .previous-chats {
     overflow-y: auto;
     width: 70%;
     max-height: 350px;
-    margin: 0 auto;
+    margin: 10px auto;
     padding: 10px;
-    border-radius: 2vw;
-    background: #444
+    border-radius: 3vw;
+    background: #444;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .previous-chats h2 {
@@ -158,25 +158,25 @@ header h1 {
 
 .previous-chats ul {
     padding: 0;
-    list-style: none
+    list-style: none;
 }
 
 .previous-chats li {
     margin-top: 5px;
     padding: 10px;
     transition: background-color .3s ease;
-    border-radius: 2vw;
-    background: #555
+    border-radius: 3vw;
+    background: #555;
 }
 
 .previous-chats li:hover {
     cursor: pointer;
-    background: #666
+    background: #666;
 }
 
-.message-form,.model-selector {
+.message-form, .model-selector {
     display: flex;
-    align-items: center
+    align-items: center;
 }
 
 .message-form {
@@ -187,39 +187,41 @@ header h1 {
     flex-direction: column;
     width: 70%;
     max-height: 50%;
-    padding: 5px;
+    padding: 10px;
     transform: translateX(-50%);
-    background-color: #333;
-    box-shadow: 0-1px 10px rgb(0 0 0/30%)
+    background-color: #2a2a2a;
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.3);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .model-selector {
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
 .model-selector-right {
-    margin-left: auto
+    margin-left: auto;
 }
 
 .model-selector label {
     margin-right: 10px;
-    color: #ccc
+    color: #ccc;
 }
 
-pre,select {
-    background: #222
+pre, select {
+    background: #222;
 }
 
 select {
-    color: #f1f1f1;
-    border: 1px solid #444
+    color: #f1f1f1;;
+    border: 1px solid #444;
 }
 
 select:focus {
-    border-color: #8f564c;
-    outline: 0
+    border-color: #bd5536;
+    outline: 0;
 }
 
 textarea {
@@ -231,8 +233,7 @@ textarea {
     margin-right: 10px;
     padding: 10px;
     resize: vertical;
-    border: 1px solid #ccc;
-    background: #222
+    background: #333333;   
 }
 
 #systemPromptInput {
@@ -240,57 +241,88 @@ textarea {
     margin-bottom: 10px;
     color: #ccc;
     border: 1px solid #555;
-    background: #222
+    background: #222;
 }
 
 .message-form-buttons {
     display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(3,auto)
+    grid-gap: 15px;
+    grid-template-columns: repeat(3, auto);
 }
 
-#saveSettingsButton,#sendButton,textarea {
+#saveSettingsButton, textarea {
     color: #f1f1f1;
-    border-radius: 2vw
+    border-radius: 30px;
+    
 }
 
-#saveSettingsButton,#sendButton {
+#sendButton {
+    border-radius: 30px;
+    background-color: #bd5536;
+    color: #f1f1f1;
+    width: 7.5vw;     
+    height: 5.5vw;
+    min-width: 92px;    
+    max-width: 100px;       
+    min-height: 50px;       
+    max-height: 50px;     
+}
+
+
+#saveSettingsButton {
     font-size: 16px;
-    background-color: #8f564c
+    background-color: #bd5536;    
+    color: #f1f1f1;  
+    border-radius: 30px;
+    width: 7.5vw;     
+    height: 5.5vw;
+    min-width: 70px;    
+    max-width: 100px;       
+    min-height: 50px;       
+    max-height: 50px;  
 }
 
-#addButton {
-    border-radius: 100%
-}
 
-#runButton {
-    border-radius: 2vw
-}
-
-#addButton,#runButton,#saveSettingsButton,#sendButton {
+#addButton, #runButton, #saveSettingsButton, #sendButton {
     margin-top: 10px;
     cursor: pointer;
     border: 0;
-    grid-column: auto
+    grid-column: auto;
 }
 
-#addButton:hover,#runButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover {
-    background-color: #c56a4e
+#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,#backButton:hover,#settingsButton:hover {
+    background-color: #bd5636d5;
+    color: #f1f1f1;
+}
+
+#addButton, #runButton {
+    color: #f1f1f1;
 }
 
 #addButton {
-    background-color: #6a6a6a
-}
-
-#addButton,#backButton,#runButton {
-    color: #f1f1f1
+    background-color: #6a6a6a;
+    border-radius: 50%;
+    width: 50px;            
+    height: 50px;  
 }
 
 #runButton {
-    background-color: #6a6a6a
+    background-color: #6a6a6a;  
+    border-radius: 30px;
+    width: 7.5vw;     
+    height: 5.5vw;
+    min-width: 70px;    
+    max-width: 100px;       
+    min-height: 50px;       
+    max-height: 50px;   
 }
 
-#backButton {
+#addButton:hover, #runButton:hover {
+    background-color: #bd5536;
+    color: #f1f1f1;
+}
+
+#backButton {   
     position: fixed;
     z-index: 1;
     left: 30px;
@@ -298,97 +330,100 @@ textarea {
     cursor: pointer;
     transition: background-color .3s;
     border: 0;
-    border-radius: 2vw;
-    background-color: #8f7535
+    border-radius: 2.75vw;
+    background-color: #bd5536;
+    color: #f1f1f1;
+    width: 3.25vw;
+    height: 2.5vw;
+    max-width: 70px;
+    max-height: 42px;
+    min-width: 55px;
+    min-height: 30px;
+
 }
 
-#backButton:hover {
-    background-color: #705d2b
-}
 
 #messageContainer {
     display: flex;
-    overflow-y: auto;
-    flex-direction: column;
-    padding: 10px
-}
+    	overflow-y: auto;
+    	flex-direction: column;
+    	padding: 10px
+    	}
 
 .user-message {
     align-self: flex-end;
     color: #f1f1f1;
-    background: #555
+    background: #555;
 }
 
 .assistant-message {
     align-self: flex-start;
     color: #f1f1f1;
-    background: #8f564c
+    background: #bd5536;
 }
 
-.error-message,.loading-message {
+.error-message, .loading-message {
     margin: 10px 0;
     padding: 10px;
     color: #f1f1f1;
-    border-radius: 2vw
+    border-radius: 3vw;
 }
 
 .loading-message {
     animation: blinkingText 1.2s infinite;
-    background: #666
+    background: #666;
 }
 
 .error-message {
-    background: #8f564c
+    background: #bd5536;
 }
 
 .chat-controls {
-    margin-top: 10px
+    margin-top: 10px;
 }
 
-#settingsButton,.previous-chats button,.previous-chats-controls button {
+#settingsButton, .previous-chats button, .previous-chats-controls button {
     cursor: pointer;
     color: #f1f1f1;
     border: 0;
-    border-radius: 2vw;
-    background-color: #8f564c
+    border-radius: 3vw;
+    background-color: #bd5536;
 }
 
 .previous-chats button {
     margin-left: 10px;
-    padding: 3px 6px
+    padding: 3px 6px;
 }
 
 .previous-chats-controls {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px
+    margin-top: 10px;
 }
 
 .previous-chats-controls button {
-    padding: 5px 10px
+    padding: 0.8vw 10px;
 }
 
 #sendButton.abort-button {
     color: #f1f1f1;
-    background-color: #6c757d
+    background-color: #6a6a6a;
 }
 
 #sendButton.abort-button:hover {
-    background-color: #5a6268
+    background-color: #bd5536;
+    color: #f1f1f1;
 }
 
 #settingsButton {
     font-size: 14px;
     display: inline-block;
     margin-bottom: 10px;
-    padding: 8px 16px
+    padding: 8px 16px;
 }
 
-#settingsButton:hover {
-    background-color: #c56a4e
-}
 
-.assistant-message,.user-message {
+.assistant-message, .user-message {
     position: relative;
     display: inline-block;
     overflow: hidden;
@@ -399,62 +434,64 @@ textarea {
     min-width: 50%;
     max-width: 70%;
     margin: 10px 0;
-    padding: 18px;
-    border-radius: 2vw
+	padding: 20px 20px;
+	border-radius: 3vw
 }
 
 .message-content {
     flex-grow: 1;
-    width: 100%
+    width: 100%;
 }
 
 .messageDiv {
     overflow: auto;
     align-items: center;
-    flex-direction: column
+    flex-direction: column;
 }
 
 button.edit-button {
-    background-color: #007bff
+    background-color: #007bff;
 }
 
-.file-bubble .close-btn,button.delete-button {
-    background-color: #dc3545
+.file-bubble.close-btn,button.delete-button {
+    background-color: #dc3545;
 }
 
 button.copy-button {
-    background-color: #008514
+    background-color: #008514;
 }
+
 
 button.copy-button,button.delete-button,button.edit-button {
     font-size: .8em;
     margin: 0 5px;
     padding: 5px 10px;
-    cursor: pointer
+    cursor: pointer;
+    border-radius: 3vw;
 }
 
 button.copy-button:hover,button.delete-button:hover,button.edit-button:hover {
-    opacity: .8
+    transform: scale(1.1);
 }
 
 .message-buttons {
     display: flex;
     justify-content: center;
-    padding: 10px 0
+    padding: 10px 0;
 }
 
 button.cancel-button,button.confirm-button {
     font-size: .8em;
     margin-left: 5px;
-    padding: 5px 10px
+    padding: 5px 10px;
 }
 
 button.confirm-button {
-    background-color: #28a745
+    background-color: #28a745;
 }
 
 button.cancel-button {
-    background-color: #6c757d
+    background-color: #6c757d;
 }
 
 button.show-more-button {
@@ -465,19 +502,19 @@ button.show-more-button {
     transition: background-color .3s,color .3s;
     color: #333;
     border: 1px solid #ccc;
-    border-radius: 2vw;
+    border-radius: 3vw;
     background-color: #fff
 }
 
-body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
+body.light-mode button.copy-code-button:hover, button.show-more-button:hover {
     color: #222;
-    background-color: #eee
+    background-color: #eee;
 }
 
 .export-button-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px
+    margin-top: 20px;
 }
 
 button.export-button {
@@ -486,27 +523,27 @@ button.export-button {
     padding: 8px 16px;
     cursor: pointer;
     transition: background-color .3s;
-    color: #f1f1f1;
+    color: #4e4e4e;
     border: 0;
-    border-radius: 2vw;
-    background-color: #8f564c
+    border-radius: 3vw;
+    background-color: #bd5536
 }
 
-#attachButton:hover,body.light-mode #info-link:hover,button.export-button:hover {
-    background-color: #c56a4e
+body.light-mode #info-link:hover,button.export-button:hover {
+    background-color: #ffae42;
 }
 
 .file-bubble-container {
     display: flex;
     overflow-x: auto;
     flex-direction: row;
-    max-width: 90%
+    max-width: 90%;
 }
 
 .file-bubble,.modal {
     display: flex;
     align-items: center;
-    justify-content: center
+    justify-content: center;
 }
 
 .file-bubble {
@@ -516,17 +553,17 @@ button.export-button {
     padding: 10px 30px 10px 10px;
     cursor: pointer;
     color: #f1f1f1;
-    border-radius: 2vw;
+    border-radius: 3vw;
     background: #444
 }
 
 .file-bubble span {
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
 }
 
-.file-bubble .close-btn {
+.file-bubble.close-btn {
     font-size: .8em;
     position: absolute;
     top: 2px;
@@ -535,22 +572,22 @@ button.export-button {
     cursor: pointer;
     color: #f1f1f1;
     border: 0;
-    border-radius: 50%
+    border-radius: 50%;
 }
 
-.file-bubble .close-btn:hover,.modal-header .close:hover {
-    background-color: #c82333
+.file-bubble.close-btn:hover,.modal-header.close:hover {
+    background-color: #ffae42;
 }
 
 #messageBoxContainer {
     position: relative;
-    width: 90%
+    width: 90%;
 }
 
-#attachButton,.modal-header .close {
+#attachButton,.modal-header.close {
     padding: 2px 5px;
     cursor: pointer;
-    border-radius: 100%
+    border-radius: 100%;
 }
 
 #attachButton {
@@ -559,8 +596,13 @@ button.export-button {
     top: 50%;
     left: 10px;
     transform: translateY(-50%);
+    background-color: transparent;
     color: #f1f1f1;
-    background-color: transparent
+}
+
+#attachButton:hover {
+    color: #f1f1f1;
+    background-color: #bd5536;
 }
 
 .modal {
@@ -581,32 +623,32 @@ button.export-button {
     padding: 20px;
     color: #f1f1f1;
     border-radius: 10px;
-    background-color: #333
+    background-color: #333;
 }
 
 .modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
-.modal-header .close,body.light-mode .modal-header .close {
-    background-color: #dc3545
+.modal-header.close, body.light-mode.modal-header.close {
+    background-color: #bd5536;
 }
 
 .modal-body {
-    white-space: pre-wrap
+    white-space: pre-wrap;
 }
 
 #settingsContent {
     display: flex;
     align-items: center;
-    flex-direction: column
+    flex-direction: column;
 }
 
-#settingsContent>*,.toggle-container {
-    margin-bottom: 10px
+#settingsContent>* {
+    margin-bottom: 10px;
 }
 
 #searchTextarea {
@@ -618,210 +660,154 @@ button.export-button {
     resize: vertical;
     color: #f1f1f1;
     border: 1px solid #ccc;
-    border-radius: 2vw;
-    background: #222
+    border-radius: 3vw;
+    background: #313131;
 }
 
 body.light-mode {
-    color: #333
-}
-
-body.light-mode header h1 {
-    color: #8f564c
+    color: #333;
 }
 
 body.light-mode #info-link {
-    color: #333;
-    background-color: #8f564c
+    color: #f1f1f1;
 }
 
+body.light-mode #attachButton:hover {
+    color: #f1f1f1;
+}
+
+
 body.light-mode .previous-chats {
-    background: #aaa
+    background: #c5c5c5;
+
 }
 
 body.light-mode .previous-chats li {
-    background: #eee
+    background: #eee;
 }
 
 body.light-mode .previous-chats li:hover {
-    background: #ccc
+    background: #dddddd;
 }
 
 body.light-mode,body.light-mode .message-form {
-    background-color: #f1f1f1
+    background-color: #e2e2e2;
 }
 
 body.light-mode .user-message {
     color: #333;
-    background: #aaa
+    background: #d3d3d3;
 }
 
 body.light-mode .assistant-message {
-    color: #f1f1f1;
-    background: #8f564c
+    color: #f0f0f0;
+    background: #bd5536;
 }
 
 body.light-mode .error-message {
-    background: #8f564c
+    background: #bd5536;
 }
 
 body.light-mode .loading-message {
-    background: #ccc
+    background: #ccc;
 }
 
 body.light-mode button.copy-code-button {
     color: #333;
     border: 1px solid #ccc;
-    background-color: #fff
+    background-color: #fff;
 }
 
-body.light-mode button {
-    color: #333;
-    background-color: #ddd
-}
+body.light-mode button.copy-button,body.light-mode button.delete-button,body.light-mode button.edit-button {
+    	color: #333;
+    	background-color: #ddd
+    	}	
 
-body.light-mode button:hover {
-    background-color: #ccc
-}
+
 
 body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
     color: #333;
-    background: #fff
+    background: #fff;
 }
 
 body.light-mode pre {
-    border: 1px solid #ccc
+    border: 1px solid #ccc;
 }
 
-body.light-mode .modal-content {
+body.light-mode.modal-content {
     color: #333;
-    background-color: #fff
+    background-color: #fff;
 }
 
-body.light-mode .file-bubble {
+body.light-mode.file-bubble {
     color: #333;
-    background: #ddd
+    background: #ddd;
 }
 
 body.light-mode #attachButton,body.light-mode .model-selector label {
-    color: #333
+    color: #333;
 }
 
-.toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 34px;
-    height: 20px;
-    margin-left: 10px;
-    pointer-events: none
-}
-
-.switch input {
-    width: 0;
-    height: 0;
-    opacity: 0
-}
-
-.slider,.slider:before {
-    position: absolute;
-    transition: .4s
-}
-
-.slider {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    box-sizing: border-box;
-    cursor: pointer;
-    pointer-events: auto;
-    border-radius: 34px;
-    background-color: #ccc
-}
-
-.slider:before {
-    bottom: 4px;
-    left: 4px;
-    width: 12px;
-    height: 12px;
-    content: "";
-    border-radius: 50%;
-    background-color: #fff
-}
-
-input:checked+.slider {
-    background-color: #8f564c
-}
-
-input:checked+.slider:before {
-    transform: translateX(14px)
-}
 
 @media (max-width: 1200px) {
     .container {
-        width: 80%;
+    width: 80%;
     }
-
-    .assistant-message, .user-message {
-        max-width: 80%;
+    	
+    .assistant-message,.user-message {
+    max-width: 80%;
     }
-}
+    }
 
 @media (width <= 768px) {
     .previous-chats-controls {
         display: flex;
         align-items: stretch;
-        flex-direction: column
+        flex-direction: column;
     }
     
     .previous-chats-controls button {
         width: 90%;
         margin-right: auto;
         margin-bottom: 10px;
-        margin-left: auto
+        margin-left: auto;
     }
     
     #searchTextarea {
         width: calc(100% - 20px);
-        margin: 10px auto
+        margin: 10px auto;
     }
     
     .modal-content {
         width: 90%;
-        height: 90%
+        height: 90%;
     }
     
     .container {
         width: 90%;
         padding: 10px;
-        padding-bottom: 50vh
+        padding-bottom: 50vh;
     }
     
     .chat-interface {
         flex-direction: column;
     }
     
-    .message-form,.previous-chats {
+    .message-form, .previous-chats {
         width: 90%;
-        margin-bottom: 1px
-    }
-
-    .assistant-message, .user-message {
-        max-width: 90%;
+        margin-bottom: 1px;
     }
     
+    .assistant-message, .user-message {
+        max-width: 90%;
+	}
+
     .previous-chats h2,header h1 {
-        font-size: 18px
+        font-size: 18px;
     }
     
     button {
         font-size: 14px;
-        padding: 8px 16px
+        padding: 8px 16px;
     }
 }
