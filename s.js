@@ -854,11 +854,11 @@ document.addEventListener('DOMContentLoaded', function() {
             messages: [
                 {
                     role: 'system',
-                    content: 'You generate title to conversations. You do NOT respond to the message. You do NOT continue the conversation.'
+                    content: 'You generate title to conversations. You do NOT respond to the message. You do NOT continue the conversation. You use plain text, no markdown.'
                 },
                 {
                     role: 'user',
-                    content: 'CONTEXT:\n\n' + messageContent + '\n\n---\n\nIMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.'
+                    content: 'IMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.\n\n---\n\nCONTEXT:\n\n' + messageContent + '\n\n---\n\nIMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.'
                 }
             ],
             max_tokens: 20
