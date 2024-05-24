@@ -705,7 +705,7 @@ body.light-mode button:hover {
     background-color: #ccc
 }
 
-body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
+body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea,body.light-mode #searchTextarea {
     color: #333;
     background: #fff
 }
@@ -726,11 +726,6 @@ body.light-mode .file-bubble {
 
 body.light-mode #attachButton,body.light-mode .model-selector label {
     color: #333
-}
-
-body.light-mode #searchTextarea {
-    color: #333;
-    background: #f8f8f8;
 }
 
 .toggle-container {
