@@ -792,10 +792,6 @@ input:checked+.slider:before {
     .assistant-message,.user-message {
         max-width: 80%;
     }
-    
-    .previous-chats {
-        max-height: 45vh;
-    }
 }
 
 @media (width <= 768px) {
@@ -810,6 +806,10 @@ input:checked+.slider:before {
         margin-right: auto;
         margin-bottom: 10px;
         margin-left: auto
+    }
+
+    .previous-chats {
+        max-height: 45vh;
     }
     
     #searchTextarea {
