@@ -858,7 +858,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 {
                     role: 'system',
-                    content: 'Create a title for the chat based on the message or conversation. Do not answer to the message, and **do not complete the last message of the conversation**: just generate a title. Output plain text, no markdown.'
+                    content: 'Create a title for the chat based on the message or conversation. **Do not answer to the message(s), and do not complete the last message of the conversation: just generate a title.** Output plain text, no markdown.'
                 }
             ],
             max_tokens: 20
@@ -921,7 +921,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function sendAndReceiveMessage() {
         let messageContent = messageBox.value.trim();
-        if (messageContent) {
+        if (messageContent || attachedFiles.length > 0) {
             const role = 'user';
             addMessageToHistory(messageContent, role)
                 .then(() => {

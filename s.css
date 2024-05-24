@@ -44,7 +44,7 @@ pre {
 
 button.copy-code-button,select {
     padding: 5px 10px;
-    border-radius: 3vw
+    border-radius: 2vw
 }
 
 button.copy-code-button {
@@ -147,7 +147,7 @@ header h1 {
     max-height: 350px;
     margin: 0 auto;
     padding: 10px;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background: #444
 }
 
@@ -165,7 +165,7 @@ header h1 {
     margin-top: 5px;
     padding: 10px;
     transition: background-color .3s ease;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background: #555
 }
 
@@ -251,7 +251,7 @@ textarea {
 
 #saveSettingsButton,#sendButton,textarea {
     color: #f1f1f1;
-    border-radius: 3vw
+    border-radius: 2vw
 }
 
 #saveSettingsButton,#sendButton {
@@ -264,7 +264,7 @@ textarea {
 }
 
 #runButton {
-    border-radius: 3vw
+    border-radius: 2vw
 }
 
 #addButton,#runButton,#saveSettingsButton,#sendButton {
@@ -298,7 +298,7 @@ textarea {
     cursor: pointer;
     transition: background-color .3s;
     border: 0;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background-color: #8f7535
 }
 
@@ -329,7 +329,7 @@ textarea {
     margin: 10px 0;
     padding: 10px;
     color: #f1f1f1;
-    border-radius: 3vw
+    border-radius: 2vw
 }
 
 .loading-message {
@@ -349,7 +349,7 @@ textarea {
     cursor: pointer;
     color: #f1f1f1;
     border: 0;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background-color: #8f564c
 }
 
@@ -399,8 +399,8 @@ textarea {
     min-width: 50%;
     max-width: 70%;
     margin: 10px 0;
-    padding: 20px 20px;
-    border-radius: 3vw
+    padding: 18px;
+    border-radius: 2vw
 }
 
 .message-content {
@@ -465,7 +465,7 @@ button.show-more-button {
     transition: background-color .3s,color .3s;
     color: #333;
     border: 1px solid #ccc;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background-color: #fff
 }
 
@@ -488,7 +488,7 @@ button.export-button {
     transition: background-color .3s;
     color: #f1f1f1;
     border: 0;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background-color: #8f564c
 }
 
@@ -516,7 +516,7 @@ button.export-button {
     padding: 10px 30px 10px 10px;
     cursor: pointer;
     color: #f1f1f1;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background: #444
 }
 
@@ -618,7 +618,7 @@ button.export-button {
     resize: vertical;
     color: #f1f1f1;
     border: 1px solid #ccc;
-    border-radius: 3vw;
+    border-radius: 2vw;
     background: #222
 }
 
