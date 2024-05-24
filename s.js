@@ -855,7 +855,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     role: 'user',
                     content: messageContent
-                }
+                },
                 {
                     role: 'system',
                     content: 'Create a title for the chat based on the message or conversation. Do not answer to the message, and **do not complete the last message of the conversation**: just generate a title. Output plain text, no markdown.'
