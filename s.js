@@ -850,7 +850,7 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.className = 'loading-spinner';
         generateButton.appendChild(spinner);
         const requestBody = {
-            model: 'gpt-4-turbo',
+            model: 'gpt-4o',
             messages: [
                 {
                     role: 'system',
