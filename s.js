@@ -1175,17 +1175,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Attaches edit, delete and copy listeners to the given buttons and text elements.
+     * Attaches event listeners to the given buttons and selects elements to handle user interactions.
      *
-     * @param {HTMLElement} editButton - The edit button element.
-     * @param {HTMLElement} deleteButton - The delete button element.
-     * @param {HTMLElement} copyButton - The copy button element.
-     * @param {HTMLElement} textSpan - The text span element.
-     * @param {HTMLElement} messageDiv - The message div element.
-     * @param {string} message - The message to be edited or deleted.
+     * @param {HTMLElement} editButton - The button element for editing a message.
+     * @param {HTMLElement} deleteButton - The button element for deleting a message.
+     * @param {HTMLElement} copyButton - The button element for copying a message.
+     * @param {HTMLElement} roleSelect - The select element for selecting a role.
+     * @param {HTMLElement} textSpan - The element containing the message text.
+     * @param {HTMLElement} messageDiv - The div element containing the message.
+     * @param {string} message - The message text.
      * @param {HTMLElement} buttonsDiv - The div element containing the buttons.
      */
-    function attachListeners(editButton, deleteButton, copyButton, textSpan, messageDiv, message, buttonsDiv) {
+    function attachListeners(editButton, deleteButton, copyButton, roleSelect, textSpan, messageDiv, message, buttonsDiv) {
         const MAX_LENGTH = 1000;
         const user = messageDiv.className === 'user-message';
         if (message.length > MAX_LENGTH) {
@@ -1216,6 +1217,20 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             parseMessage(textSpan, message, user);
         }
+        /**
+         * Handles the change event of the roleSelect element. Updates the role of the corresponding message in the
+         * conversation history.
+         */
+        roleSelect.addEventListener('change', () => {
+            const newRole = roleSelect.value;
+            const currentIndex = parseInt(messageDiv.id.split('-')[1]);
+            if (currentIndex === -1) return;
+            abortController.abort();
+            abortController = new AbortController();
+            conversationHistory[currentIndex].role = newRole;
+            saveChatToHistory();
+            messageDiv.className = `${newRole}-message`;
+        });
         /**
          * Handles the click event of the edit button. Aborts the current request, retrieves the current message index,
          * creates a textarea element with the value of the corresponding message in the conversation history, adjusts the
@@ -1275,8 +1290,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonsDiv.appendChild(editButton);
                 buttonsDiv.appendChild(deleteButton);
                 buttonsDiv.appendChild(copyButton);
+                buttonsDiv.appendChild(roleSelect);
                 saveChatToHistory();
-                attachListeners(editButton, deleteButton, copyButton, textSpan, messageDiv, input.value, buttonsDiv);
+                attachListeners(editButton, deleteButton, copyButton, roleSelect, textSpan, messageDiv, input.value, buttonsDiv);
             };
             /**
              * Handles the click event of the cancel button. Replaces the textarea with the text span, clears the buttons div,
@@ -1288,6 +1304,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonsDiv.appendChild(editButton);
                 buttonsDiv.appendChild(deleteButton);
                 buttonsDiv.appendChild(copyButton);
+                buttonsDiv.appendChild(roleSelect);
                 if (showMoreButtonExists) {
                     messageDiv.appendChild(showMoreButton);
                 }
@@ -1302,6 +1319,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('messageContainer').removeChild(messageDiv);
                 conversationHistory = conversationHistory.filter(m => m.content !== message);
                 saveChatToHistory();
+                updateMessageCounters();
             }
         };
         /**
@@ -1347,16 +1365,31 @@ document.addEventListener('DOMContentLoaded', function() {
         copyButton.className = 'copy-button';
         copyButton.title = 'Copy this message to the clipboard.';
         copyButton.setAttribute('aria-describedby', 'copyButtonDesc');
+        const roleSelect = document.createElement('select');
+        roleSelect.className = 'role-selector';
+        roleSelect.title = 'Change the role of this message.';
+        roleSelect.setAttribute('aria-describedby', 'roleSelectDesc');
+        const roles = ['user', 'assistant', 'system'];
+        roles.forEach(r => {
+            const option = document.createElement('option');
+            option.value = r;
+            option.textContent = r.charAt(0).toUpperCase() + r.slice(1);
+            if (r === role) {
+                option.selected = true;
+            }
+            roleSelect.appendChild(option);
+        });
         buttonsDiv.appendChild(editButton);
         buttonsDiv.appendChild(deleteButton);
         buttonsDiv.appendChild(copyButton);
-        messageDiv.className = role === 'user' ? 'user-message' : (role === 'assistant' ? 'assistant-message' : 'loading-message');
+        buttonsDiv.appendChild(roleSelect);
+        messageDiv.className = role === 'user' ? 'user-message' : (role === 'assistant' ? 'assistant-message' : (role === 'system' ? 'system-message' : 'loading-message'));
         document.getElementById('messageContainer').appendChild(messageDiv);
         setTimeout(() => {messageDiv.getBoundingClientRect();messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })}, 0);
         if (role !== 'loading') {
             parseMessage(textSpan, message, role === 'user');
             messageDiv.appendChild(buttonsDiv);
-            attachListeners(editButton, deleteButton, copyButton, textSpan, messageDiv, message, buttonsDiv);
+            attachListeners(editButton, deleteButton, copyButton, roleSelect, textSpan, messageDiv, message, buttonsDiv);
         } else {
             textSpan.textContent = message;
         }

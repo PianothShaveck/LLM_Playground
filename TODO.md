@@ -6,4 +6,4 @@
 - Prompt enhancement toggle
 - multiple language support
 - "Run and overwrite" button on messages?
-- Redesign UI and make it more accessible
+- (Redesign UI and make it more accessible)

@@ -389,7 +389,7 @@ textarea {
     background-color: #8f564cd5
 }
 
-.assistant-message,.user-message {
+.assistant-message,.user-message,.system-message {
     position: relative;
     display: inline-block;
     overflow: hidden;
@@ -402,6 +402,27 @@ textarea {
     margin: 10px 0;
     padding: 18px;
     border-radius: 2vw
+}
+
+.system-message {
+    align-self: center;
+    color: #f1f1f1;
+    background: #337ab7;
+    width: 70%;
+}
+
+select.role-selector {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 2vw;
+    color: #f1f1f1;
+    background: #222;
+    border: 1px solid #444;
+}
+
+select.role-selector:focus {
+    border-color: #bd5536;
+    outline: 0;
 }
 
 .message-content {
