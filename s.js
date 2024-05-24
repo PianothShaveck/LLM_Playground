@@ -1546,6 +1546,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (chats && chats.length > index) {
                 chats.splice(index, 1);
                 localStorage.setItem('chats', JSON.stringify(chats));
+                setTimeout(updateMessageCounters(), 0);
                 updateChatListUI();
             }
         }
