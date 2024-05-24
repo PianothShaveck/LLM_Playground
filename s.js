@@ -858,7 +858,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 {
                     role: 'user',
-                    content: messageContent + '\n\n IMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.'
+                    content: 'CONTEXT:\n\n' + messageContent + '\n\n---\n\nIMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.'
                 }
             ],
             max_tokens: 20
