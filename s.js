@@ -1022,6 +1022,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         displayMessage(allContent.trim(), 'assistant');
                         conversationHistory.push({ role: 'assistant', content: allContent.trim() });
                         saveChatToHistory();
+                        updateMessageCounters();
                         revertSendButton();
                         backButton.disabled = false;
                         return;
@@ -1035,7 +1036,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (event.startsWith('data: ')) {
                                 const jsonData = event.split('data: ')[1];
                                 if (jsonData === '[DONE]') {
-                                    updateMessageCounters()
                                     return;
                                 }
                                 const eventData = JSON.parse(jsonData);
@@ -1758,7 +1758,6 @@ document.addEventListener('DOMContentLoaded', function() {
      * Updates the message counters by calculating the number of messages in the conversation history and the total number of messages across all chats.
      */
     function updateMessageCounters() {
-        console.log(conversationHistory)
         const messageCount = conversationHistory.length;
         messageCounter.textContent = `Messages: ${messageCount}`;
         let totalMessageCount = 0;
