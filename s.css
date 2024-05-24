@@ -605,7 +605,7 @@ button.export-button {
     flex-direction: column
 }
 
-#settingsContent>* {
+#settingsContent>*,.toggle-container {
     margin-bottom: 10px
 }
 
@@ -710,8 +710,7 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
 .toggle-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
+    justify-content: space-between
 }
 
 .switch {
@@ -720,47 +719,48 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
     width: 34px;
     height: 20px;
     margin-left: 10px;
-    pointer-events: none;
+    pointer-events: none
 }
 
 .switch input {
-    opacity: 0;
     width: 0;
     height: 0;
+    opacity: 0
+}
+
+.slider,.slider:before {
+    position: absolute;
+    transition: .4s
 }
 
 .slider {
-    position: absolute;
-    cursor: pointer;
     top: 0;
-    left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
+    left: 0;
     box-sizing: border-box;
-    pointer-events: auto
+    cursor: pointer;
+    pointer-events: auto;
+    border-radius: 34px;
+    background-color: #ccc
 }
 
 .slider:before {
-    position: absolute;
-    content: '';
-    height: 12px;
-    width: 12px;
-    left: 4px;
     bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+    content: "";
     border-radius: 50%;
+    background-color: #fff
 }
 
-input:checked + .slider {
-    background-color: #8f564c;
+input:checked+.slider {
+    background-color: #8f564c
 }
 
-input:checked + .slider:before {
-    transform: translateX(14px);
+input:checked+.slider:before {
+    transform: translateX(14px)
 }
 
 @media (max-width: 1200px) {
