@@ -220,7 +220,7 @@ select {
     border: 1px solid #444
 }
 
-select:focus {
+select.role-selector:focus,select:focus {
     border-color: #bd5536;
     outline: 0
 }
@@ -275,7 +275,7 @@ textarea {
     grid-column: auto
 }
 
-#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#attachButton:hover {
+#attachButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
     background-color: #8f564cd5
 }
 
@@ -291,15 +291,18 @@ textarea {
     color: #f1f1f1
 }
 
+#backButton,select.role-selector {
+    padding: 5px 10px;
+    border-radius: 2vw
+}
+
 #backButton {
     position: fixed;
     z-index: 1;
     left: 30px;
-    padding: 5px 10px;
     cursor: pointer;
     transition: background-color .3s;
     border: 0;
-    border-radius: 2vw;
     background-color: #8f564c
 }
 
@@ -389,7 +392,7 @@ textarea {
     background-color: #8f564cd5
 }
 
-.assistant-message,.user-message,.system-message {
+.assistant-message,.system-message,.user-message {
     position: relative;
     display: inline-block;
     overflow: hidden;
@@ -408,21 +411,14 @@ textarea {
     align-self: center;
     color: #f1f1f1;
     background: #337ab7;
-    width: 70%;
+    width: 70%
 }
 
 select.role-selector {
     margin-left: 10px;
-    padding: 5px 10px;
-    border-radius: 2vw;
     color: #f1f1f1;
     background: #222;
-    border: 1px solid #444;
-}
-
-select.role-selector:focus {
-    border-color: #bd5536;
-    outline: 0;
+    border: 1px solid #444
 }
 
 .message-content {
@@ -514,7 +510,7 @@ button.export-button {
     background-color: #8f564c
 }
 
-body.light-mode #info-link:hover{
+body.light-mode #info-link:hover {
     background-color: #bd5636d5
 }
 
@@ -821,7 +817,7 @@ input:checked+.slider:before {
         align-items: stretch;
         flex-direction: column
     }
-    
+
     .previous-chats-controls button {
         width: 90%;
         margin-right: auto;
@@ -830,45 +826,57 @@ input:checked+.slider:before {
     }
 
     .previous-chats {
-        max-height: 45vh;
+        max-height: 45vh
     }
-    
+
     #searchTextarea {
         width: calc(100% - 20px);
         margin: 10px auto
     }
-    
+
     .modal-content {
         width: 90%;
         height: 90%
     }
-    
+
     .container {
         width: 90%;
         margin-top: 40px;
         padding: 10px;
         padding-bottom: 50vh
     }
-    
+
     .chat-interface {
         flex-direction: column
     }
-    
+
     .message-form,.previous-chats {
         width: 90%;
         margin-bottom: 1px
     }
-    
+
     .assistant-message,.user-message {
         max-width: 95%
     }
-    
+
     .previous-chats h2,header h1 {
         font-size: 18px
     }
-    
+
     button {
         font-size: 14px;
         padding: 8px 16px
+    }
+
+    .message-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center
+    }
+
+    .message-buttons .role-selector {
+        width: 50%;
+        margin-top: 5px;
+        margin-left: 0
     }
 }
