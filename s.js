@@ -850,11 +850,11 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.className = 'loading-spinner';
         generateButton.appendChild(spinner);
         const requestBody = {
-            model: 'gpt-4o',
+            model: 'gpt-4-turbo',
             messages: [
                 {
                     role: 'system',
-                    content: 'You generate title to conversations.'
+                    content: 'You generate title to conversations. You do NOT respond to the message. You do NOT continue the conversation.'
                 },
                 {
                     role: 'user',
