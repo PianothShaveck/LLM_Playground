@@ -275,7 +275,7 @@ textarea {
     grid-column: auto
 }
 
-#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover {
+#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#attachButton:hover {
     background-color: #8f564cd5
 }
 
@@ -493,7 +493,7 @@ button.export-button {
     background-color: #8f564c
 }
 
-#attachButton:hover,body.light-mode #info-link:hover,button.export-button:hover {
+body.light-mode #info-link:hover{
     background-color: #bd5636d5
 }
 
@@ -631,7 +631,7 @@ body.light-mode {
 }
 
 body.light-mode header h1 {
-    color: #8f564c
+    color: #bd5536
 }
 
 body.light-mode #info-link {
