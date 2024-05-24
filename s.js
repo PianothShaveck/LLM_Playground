@@ -853,12 +853,12 @@ document.addEventListener('DOMContentLoaded', function() {
             model: 'gpt-4o',
             messages: [
                 {
-                    role: 'user',
-                    content: messageContent
+                    role: 'system',
+                    content: 'Generate a title for the chat based on the message or conversation. WARNING: Do NOT answer the message(s). Do NOT complete the last message of the conversation. Just produce a concise title. Output plain text only, no markdown.'
                 },
                 {
-                    role: 'system',
-                    content: 'Create a title for the chat based on the message or conversation. **Do not answer to the message(s), and do not complete the last message of the conversation: just generate a title.** Output plain text, no markdown.'
+                    role: 'user',
+                    content: messageContent + '\n\n IMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.'
                 }
             ],
             max_tokens: 20
