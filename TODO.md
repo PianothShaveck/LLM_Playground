@@ -1,6 +1,5 @@
 # Features to be implemented
 
-- Change role on every message
 - Possibility of moving messages up and down the history
 - web search toggle like hugging chat?
 - Prompt enhancement toggle
