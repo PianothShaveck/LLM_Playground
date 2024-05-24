@@ -1469,7 +1469,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateChatListUI() {
         previousChats.innerHTML = '';
         loadChatHistory();
-        }
+    }
     /**
      * Adds a chat to the UI by creating a list item element and appending it to the previousChats element.
      * The list item contains the chat title and three buttons for generating title, editing, and deleting the chat.
@@ -1843,6 +1843,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (Array.isArray(importedChats)) {
                             localStorage.setItem('chats', JSON.stringify(importedChats));
                             updateChatListUI();
+                            updateMessageCounters();
                             alert('Chats imported successfully.');
                         } else {
                             alert('Invalid chat data.');
@@ -1859,6 +1860,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (confirm('Do you want to delete all chats?')) {
             localStorage.removeItem('chats');
             updateChatListUI();
+            updateMessageCounters();
             alert('All chats deleted.');
         }
     });
