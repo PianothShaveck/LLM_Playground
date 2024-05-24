@@ -91,7 +91,7 @@ body,html {
 header h1 {
     font-size: 24px;
     text-align: center;
-    color: #8f564c
+    color: #bd5536
 }
 
 #GPTapiStatusMessage,#apiStatusMessage {
@@ -118,13 +118,13 @@ header h1 {
     cursor: help;
     text-align: center;
     text-decoration: none;
-    color: #f1f1f1;
-    background-color: #8f564c
+    color: #202020;
+    background-color: #bd5536
 }
 
 #info-link:hover {
     cursor: help;
-    background-color: #c56a4e
+    background-color: #bd5636d5
 }
 
 #discord-logo,#theme-toggle {
@@ -145,10 +145,11 @@ header h1 {
     overflow-y: auto;
     width: 70%;
     max-height: 350px;
-    margin: 0 auto;
+    margin: 10px auto;
     padding: 10px;
     border-radius: 2vw;
-    background: #444
+    background: #444;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
 }
 
 .previous-chats h2 {
@@ -187,10 +188,12 @@ header h1 {
     flex-direction: column;
     width: 70%;
     max-height: 50%;
-    padding: 5px;
+    padding: 10px;
     transform: translateX(-50%);
-    background-color: #333;
-    box-shadow: 0-1px 10px rgb(0 0 0/30%)
+    background-color: #2a2a2a;
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.3);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px
 }
 
 .model-selector {
@@ -218,7 +221,7 @@ select {
 }
 
 select:focus {
-    border-color: #8f564c;
+    border-color: #bd5536;
     outline: 0
 }
 
@@ -231,21 +234,19 @@ textarea {
     margin-right: 10px;
     padding: 10px;
     resize: vertical;
-    border: 1px solid #ccc;
-    background: #222
+    background: #333333
 }
 
 #systemPromptInput {
     width: 90%;
     margin-bottom: 10px;
     color: #ccc;
-    border: 1px solid #555;
-    background: #222
+    background: #333333
 }
 
 .message-form-buttons {
     display: grid;
-    grid-gap: 10px;
+    grid-gap: 15px;
     grid-template-columns: repeat(3,auto)
 }
 
@@ -274,20 +275,20 @@ textarea {
     grid-column: auto
 }
 
-#addButton:hover,#runButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover {
-    background-color: #c56a4e
+#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover {
+    background-color: #8f564cd5
 }
 
-#addButton {
+#addButton,#runButton {
     background-color: #6a6a6a
+}
+
+#addButton:hover,#runButton:hover {
+    background-color: #6a6a6ad5
 }
 
 #addButton,#backButton,#runButton {
     color: #f1f1f1
-}
-
-#runButton {
-    background-color: #6a6a6a
 }
 
 #backButton {
@@ -299,11 +300,11 @@ textarea {
     transition: background-color .3s;
     border: 0;
     border-radius: 2vw;
-    background-color: #8f7535
+    background-color: #8f564c
 }
 
 #backButton:hover {
-    background-color: #705d2b
+    background-color: #8f564cd5
 }
 
 #messageContainer {
@@ -374,7 +375,7 @@ textarea {
 }
 
 #sendButton.abort-button:hover {
-    background-color: #5a6268
+    background-color: #6c757dd5
 }
 
 #settingsButton {
@@ -385,7 +386,7 @@ textarea {
 }
 
 #settingsButton:hover {
-    background-color: #c56a4e
+    background-color: #8f564cd5
 }
 
 .assistant-message,.user-message {
@@ -493,7 +494,7 @@ button.export-button {
 }
 
 #attachButton:hover,body.light-mode #info-link:hover,button.export-button:hover {
-    background-color: #c56a4e
+    background-color: #bd5636d5
 }
 
 .file-bubble-container {
@@ -539,7 +540,7 @@ button.export-button {
 }
 
 .file-bubble .close-btn:hover,.modal-header .close:hover {
-    background-color: #c82333
+    background-color: #dc3545d5
 }
 
 #messageBoxContainer {
@@ -570,7 +571,10 @@ button.export-button {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(0 0 0/50%)
+    background-color: rgb(0 0 0/50%);
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.3);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px
 }
 
 .modal-content {
@@ -631,8 +635,8 @@ body.light-mode header h1 {
 }
 
 body.light-mode #info-link {
-    color: #333;
-    background-color: #8f564c
+    color: #202020;
+    background-color: #bd5536
 }
 
 body.light-mode .previous-chats {
