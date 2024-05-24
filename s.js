@@ -832,7 +832,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     addExportButton();
                     displayMessage(messageContent, role);
                     saveChatToHistory();
-                    updateMessageCounters();
                     resolve();
                 }).catch(e => {
                     console.error(e);
@@ -847,7 +846,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 addExportButton();
                 displayMessage(messageContent, role);
                 saveChatToHistory();
-                updateMessageCounters();
                 resolve();
             }
         });
@@ -1575,6 +1573,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         exportButtonContainer.appendChild(messageCounter);
         messageCounter.style.display = '';
+        updateMessageCounters();
         const exportButton = document.getElementById('exportChatButton');
         /**
          * Handles the click event of the export button. Exports the current chat as a text file.
