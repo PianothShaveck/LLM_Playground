@@ -981,6 +981,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function fetchWithRetry(requestBody, URL = 'https://api.discord.rocks/chat/completions') {
         const loadingMessage = displayMessage('Loading...', 'loading');
+        updateMessageCounters();
         let retries = 0;
         const maxRetries = 2;
         let allContent = '';
