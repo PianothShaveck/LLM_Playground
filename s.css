@@ -728,6 +728,11 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
     color: #333
 }
 
+body.light-mode #searchTextarea {
+    color: #333;
+    background: #f8f8f8;
+}
+
 .toggle-container {
     display: flex;
     align-items: center;
