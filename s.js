@@ -1035,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (event.startsWith('data: ')) {
                                 const jsonData = event.split('data: ')[1];
                                 if (jsonData === '[DONE]') {
-                                    updateMessageCounters();
+                                    setTimeout(updateMessageCounters(),0);
                                     return;
                                 }
                                 const eventData = JSON.parse(jsonData);
