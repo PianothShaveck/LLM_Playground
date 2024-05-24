@@ -816,6 +816,7 @@ input:checked+.slider:before {
     
     .container {
         width: 90%;
+        margin-top: 40px;
         padding: 10px;
         padding-bottom: 50vh
     }
