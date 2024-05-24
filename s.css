@@ -763,6 +763,23 @@ input:checked+.slider:before {
     transform: translateX(14px)
 }
 
+.global-message-counter,.message-counter {
+    font-size: 14px;
+    margin: 10px;
+    padding: 8px 16px;
+    text-align: center;
+    color: #f1f1f1;
+    border-radius: 2vw;
+    background-color: #8f564c
+}
+
+.global-message-counter {
+    position: absolute;
+    z-index: 1000;
+    top: 10px;
+    left: 10px
+}
+
 @media (max-width: 1200px) {
     .container {
         width: 80%;
@@ -813,7 +830,7 @@ input:checked+.slider:before {
     }
 
     .assistant-message, .user-message {
-        max-width: 90%;
+        max-width: 95%;
     }
     
     .previous-chats h2,header h1 {

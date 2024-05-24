@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         loadChatFromUrl();
         loadSettings();
+        updateMessageCounters();
         console.log('marked loaded');
     });
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {console.log('xlsx loaded');});
@@ -831,6 +832,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     addExportButton();
                     displayMessage(messageContent, role);
                     saveChatToHistory();
+                    updateMessageCounters();
                     resolve();
                 }).catch(e => {
                     console.error(e);
@@ -845,6 +847,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 addExportButton();
                 displayMessage(messageContent, role);
                 saveChatToHistory();
+                updateMessageCounters();
                 resolve();
             }
         });
@@ -1531,6 +1534,7 @@ document.addEventListener('DOMContentLoaded', function() {
         messageBox.value = '';
         adjustTextareaHeight(messageBox);
         isNewChat = true;
+        updateMessageCounters();
     }
     /**
      * Loads a chat from local storage based on the given index and displays it in the UI.
@@ -1565,13 +1569,12 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function addExportButton() {
         const exportButtonContainer = document.querySelector('.export-button-container');
-        if (exportButtonContainer.innerHTML) {
-            return;
-        }
         exportButtonContainer.innerHTML = `
             <button id="exportChatButton" class="export-button" title="Export the current chat as a text file." aria-describedby='exportChatDesc'>Export chat</button>
             <button id="shareChatButton" class="export-button" title="Create a shareable link to the current chat." aria-describedby='shareChatDesc'>Share chat</button>
         `;
+        exportButtonContainer.appendChild(messageCounter);
+        messageCounter.style.display = '';
         const exportButton = document.getElementById('exportChatButton');
         /**
          * Handles the click event of the export button. Exports the current chat as a text file.
@@ -1706,6 +1709,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error loading chat:', error);
                 });
         }
+    }
+    //Message counters
+    const messageCounter = document.createElement('div');
+    messageCounter.classList.add('message-counter');
+    messageCounter.textContent = 'Messages: 0';
+    messageCounter.style.display = 'none';
+    document.querySelector('.export-button-container').appendChild(messageCounter);
+    const globalMessageCounter = document.createElement('div');
+    globalMessageCounter.classList.add('global-message-counter');
+    globalMessageCounter.textContent = 'Total Messages: 0';
+    document.querySelector('.previous-chats').appendChild(globalMessageCounter);
+    /**
+     * Updates the message counters by calculating the number of messages in the conversation history and the total number of messages across all chats.
+     */
+    function updateMessageCounters() {
+        const messageCount = conversationHistory.length;
+        messageCounter.textContent = `Messages: ${messageCount}`;
+        let totalMessageCount = 0;
+        const chats = JSON.parse(localStorage.getItem('chats')) || [];
+        chats.forEach(chat => {
+            totalMessageCount += chat.conversation.length;
+        });
+        globalMessageCounter.textContent = `Total Messages: ${totalMessageCount}`;
     }
     /**
      * Displays the loaded chat by clearing the message container, iterating over the conversation history,
