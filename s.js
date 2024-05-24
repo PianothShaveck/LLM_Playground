@@ -854,7 +854,7 @@ document.addEventListener('DOMContentLoaded', function() {
             messages: [
                 {
                     role: 'system',
-                    content: 'Generate a title for the chat based on the message or conversation. WARNING: Do NOT answer the message(s). Do NOT complete the last message of the conversation. Just produce a concise title. Output plain text only, no markdown.'
+                    content: 'You generate title to conversations.'
                 },
                 {
                     role: 'user',
