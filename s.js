@@ -1158,7 +1158,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const latexPattern = /\\[a-zA-Z([]+/;
         return latexPattern.test(text);
     }
-    // in-line pattern: /\\\(.*?\\\)/, display pattern /\\\[.*?\\\]/
+    /**
+     * Parses Markdown text and renders it as HTML, handling LaTeX syntax if present.
+     *
+     * @param {HTMLElement} textSpan - The HTML element to render the parsed text into.
+     * @param {string} message - The Markdown text to parse and render.
+     */
     function parseMarkdownToHTML(textSpan, message) {
         if (containsLaTeX(message)) {
             const inlinePattern = /\\\(.*?\\\)/g;
@@ -1199,8 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             textSpan.innerHTML = parsedText.replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
         } else if (containsMarkdown(message)) {
-            let parsedText = marked.parse(message);
-            textSpan.innerHTML = parsedText.replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
+            textSpan.innerHTML = marked.parse(message).replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, "<br>");
         } else {
             textSpan.innerHTML = message.replace(/\n/g, '<br>');
             return;
