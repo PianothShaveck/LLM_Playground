@@ -13,7 +13,7 @@ This repository contains the source code for [LLM Playground](https://llmplaygro
 
 LLM Playground offers users an intuitive interface to:
 
-- Select and test different LLMs.
+- Select and test different streaming LLMs.
 - Attach and process various file types (e.g., spreadsheets, documents, PDFs, PowerPoints, EPUBs, RTFs).
 - Maintain, export, and import chat histories.
 - Edit, delete, and copy individual messages.
