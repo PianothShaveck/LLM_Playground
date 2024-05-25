@@ -630,7 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * Displays information about the application and prompts the user to visit the Discord Rocks API website if confirmed.
      */
     function showInfo() {
-        var message = 'Created by @pianoth, LLMs and domain provided by @meow_18838.\nPowered by the Discord Rocks API (https://api.discord.rocks/) and (https://gpt4.discord.rocks).\n\nDo you want to visit the Discord Rocks API website?';
+        var message = 'Created by @pianoth, LLMs and domain provided by @meow_18838.\nPowered by the Discord Rocks API (https://api.discord.rocks/).\n\nDo you want to visit the Discord Rocks API website?';
         var result = confirm(message);
         if (result) {
             window.location.href = 'https://api.discord.rocks/';
