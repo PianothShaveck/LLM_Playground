@@ -1578,7 +1578,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.message-form').style.flex = '1'
         document.querySelector('.previous-chats').style.display = 'block';
         sendButton.textContent = 'Start Chat';
-        messageBox.value = '';
         adjustTextareaHeight(messageBox);
         isNewChat = true;
         updateMessageCounters();
