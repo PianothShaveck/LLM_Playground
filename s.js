@@ -1204,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             textSpan.innerHTML = parsedText.replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
         } else if (containsMarkdown(message)) {
-            textSpan.innerHTML = marked.parse(message).replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, "<br>");
+            textSpan.innerHTML = marked.parse(message).replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
         } else {
             textSpan.innerHTML = message.replace(/\n/g, '<br>');
             return;
