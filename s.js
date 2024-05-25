@@ -1430,7 +1430,6 @@ document.addEventListener('DOMContentLoaded', function() {
             createFileBubble(fileName, container, fileContent);
         }
     }
-    
     /**
      * Saves the current chat to the chat history in the local storage. If there is no current chat,
      * a new chat is created with the current timestamp and conversation history. If there is a current
@@ -1481,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const li = document.createElement('li');
         li.textContent = `${chat.title || 'Untitled'}`;
         const editButton = document.createElement('button');
-        editButton.textContent = 'Edit Title';
+        editButton.textContent = 'Edit';
         editButton.title = 'Edit the title of the chat.';
         editButton.setAttribute('aria-describedby', 'editTitleButtonDesc');
         /**
@@ -1492,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editTitle(index);
         };
         const generateTitleButton = document.createElement('button');
-        generateTitleButton.textContent = 'Generate Title';
+        generateTitleButton.textContent = 'Generate';
         generateTitleButton.title = 'Generate a new title for the chat.';
         generateTitleButton.setAttribute('aria-describedby', 'generateTitleButtonDesc');
         /**
