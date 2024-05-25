@@ -1607,7 +1607,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.previous-chats').style.display = 'none';
             addExportButton();
             sendButton.textContent = 'Send Message';
-            messageBox.value = '';
             adjustTextareaHeight(messageBox);
         }
     }
