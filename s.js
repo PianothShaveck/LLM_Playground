@@ -1641,6 +1641,7 @@ document.addEventListener('DOMContentLoaded', function() {
         adjustTextareaHeight(messageBox);
         isNewChat = true;
         updateMessageCounters();
+        setTimeout(() => {document.documentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })}, 0);
     }
     /**
      * Loads a chat from local storage based on the given index and displays it in the UI.
