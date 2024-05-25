@@ -169,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         } catch (e) {
                             alert(`File '${file.name}' is not a supported text, rtf, spreadsheet, docx, pptx, pdf or epub file.`);
+                            console.error(e);
                         }
                     };
                     /**
@@ -473,6 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+        messageBox.style.maxHeight = 'calc(30vh - 60px)';
         container.appendChild(fileBubble);
     }
     /**
@@ -1137,14 +1139,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Parses the given Markdown message and replaces newline characters outside of HTML tags with <br> tags.
-     * Also adds a copy button to each <pre> element in the parsed HTML.
+     * Checks if the given text contains basic Markdown syntax.
      *
-     * @param {HTMLElement} textSpan - The element to display the parsed message in.
-     * @param {string} message - The Markdown message to parse and display.
+     * @param {string} text - The text to check for Markdown syntax.
+     * @return {boolean} Returns true if the text contains Markdown syntax, false otherwise.
      */
+    function containsMarkdown(text) {
+        const markdownPattern = /[#*_\[\]`!]/;
+        return markdownPattern.test(text);
+    }
+    /**
+     * Checks if the given text contains basic LaTeX syntax.
+     *
+     * @param {string} text - The text to check for LaTeX syntax.
+     * @return {boolean} Returns true if the text contains LaTeX syntax, false otherwise.
+     */
+    function containsLaTeX(text) {
+        const latexPattern = /\\[a-zA-Z([]+/;
+        return latexPattern.test(text);
+    }
+    // in-line pattern: /\\\(.*?\\\)/, display pattern /\\\[.*?\\\]/
     function parseMarkdownToHTML(textSpan, message) {
-        textSpan.innerHTML = marked.parse(message).replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, "<br>");
+        if (containsLaTeX(message)) {
+            const inlinePattern = /\\\(.*?\\\)/g;
+            const displayPattern = /\\\[[\s\S]*?\\\]/g;
+            let counter = 0;
+            const formulas = [];
+            const placeholders = [];
+            /**
+             * Replaces a matched string with a placeholder and adds the match and placeholder to the formulas array.
+             *
+             * @param {string} match - The matched string.
+             * @param {string} p1 - The first capturing group of the matched string.
+             * @param {number} offset - The offset of the matched string in the input string.
+             * @param {string} string - The input string.
+             * @return {string} The placeholder string.
+             */
+            const replaceFunc = (match, p1, offset, string) => {
+                let placeholder = `$$$$$MATH$${counter++}$$$$$`;
+                formulas.push({match, placeholder});
+                return placeholder;
+            };
+            message = message.replace(inlinePattern, replaceFunc);
+            message = message.replace(displayPattern, replaceFunc);
+            formulas.forEach(formula => {
+                try {
+                    const html = katex.renderToString(formula.match.slice(2, -2), {
+                        throwOnError: false,
+                        displayMode: formula.match.startsWith('\\[')
+                    });
+                    placeholders.push({placeholder: formula.placeholder, html});
+                } catch (e) {
+                    console.error('KaTeX rendering error:', e);
+                }
+            });
+            let parsedText = marked.parse(message)
+            placeholders.forEach(ph => {
+                parsedText = parsedText.replace(ph.placeholder, ph.html);
+            });
+            textSpan.innerHTML = parsedText.replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
+        } else if (containsMarkdown(message)) {
+            let parsedText = marked.parse(message);
+            textSpan.innerHTML = parsedText.replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
+        } else {
+            textSpan.innerHTML = message.replace(/\\n/g, '<br>');
+            return;
+        }
         const preElements = textSpan.querySelectorAll('pre');
         preElements.forEach(pre => {
             const copyButton = document.createElement('button');

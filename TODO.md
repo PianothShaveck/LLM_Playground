@@ -1,7 +1,6 @@
 # Features to be implemented
 
 - Possibility of moving messages up and down the history
-- LaTeX support
 - web search toggle like hugging chat?
 - Prompt enhancement toggle
 - multiple language support
