@@ -128,11 +128,11 @@ document.addEventListener('DOMContentLoaded', function() {
     ['dragleave', 'drop'].forEach(eventName => {
         messageBox.addEventListener(eventName, unhighlight, false);
     });
-    messageBox.addEventListener('drop', handleDrop, false);
+    messageBox.addEventListener('drop', handleFileDrop, false);
     /**
      * Handles the drop event and processes the dropped files.
      */
-    function handleDrop(e) {
+    function handleFileDrop(e) {
         const dt = e.dataTransfer;
         const files = dt.files;
         handleFiles(files);
@@ -163,8 +163,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             decoder.decode(arr);
                             attachedFiles.push(file);
                             createFileBubble(file.name, fileContainer);
+                            if (fileContainer.children.length > 0) {
+                                fileContainer.style.display = 'flex';
+                                fileContainer.style.marginBottom = '10px';
+                            }
                         } catch (e) {
-                            alert(`File "${file.name}" is not a supported text, rtf, spreadsheet, docx, pptx, pdf or epub file.`);
+                            alert(`File '${file.name}' is not a supported text, rtf, spreadsheet, docx, pptx, pdf or epub file.`);
                         }
                     };
                     /**
@@ -176,11 +180,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     reader.readAsArrayBuffer(file.slice(0, 100));
                 }
             } else {
-                alert(`File "${file.name}" is already attached.`);
+                alert(`File '${file.name}' is already attached.`);
             }
         }
-        fileContainer.style.display = 'flex';
-        fileContainer.style.marginBottom = '10px';
     }
     /**
      * Parses a spreadsheet file and returns a promise that resolves with the markdown table representation of the first sheet of the parsed workbook.
@@ -466,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     getFileContent(file).then(fileContent => {
                         openModal(file.name, fileContent);
                     }).catch(e => {
-                        console.error(`Failed to open file "${filename}": ${e.message}`);
+                        console.error(`Failed to open file '${filename}': ${e.message}`);
                     })
                 }
             }
@@ -608,6 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const files = event.target.files;
         handleFiles(files);
         adjustTextareaHeight(messageBox);
+        fileInput.value = '';
     });
     const sendButton = document.getElementById('sendButton');
     const backButton = document.getElementById('backButton');
@@ -1321,6 +1324,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('messageContainer').removeChild(messageDiv);
                 conversationHistory = conversationHistory.filter(m => m.content !== message);
                 saveChatToHistory();
+                reassignMessageIds();
                 updateMessageCounters();
             }
         };
@@ -1333,6 +1337,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(() => alert('Message copied to clipboard!'))
                 .catch(e => console.error('Failed to copy text: ', e));
         };
+    }
+    /**
+     * Reassigns unique IDs to each message div element in the message container.
+     */
+    function reassignMessageIds() {
+        const messageContainer = document.getElementById('messageContainer');
+        const messageDivs = messageContainer.children;
+        for (let i = 0; i < messageDivs.length; i++) {
+            messageDivs[i].setAttribute('id', 'message-' + i);
+        }
     }
     /**
      * Creates a new message div element and appends it to the message container.

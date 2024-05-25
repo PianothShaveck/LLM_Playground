@@ -256,7 +256,7 @@ textarea {
 }
 
 #saveSettingsButton,#sendButton {
-    font-size: 16px;
+    font-size: 14px;
     background-color: #8f564c
 }
 
@@ -433,15 +433,15 @@ select.role-selector {
 }
 
 button.edit-button {
-    background-color: #007bff
+    background-color: #9cb0c5
 }
 
 .file-bubble .close-btn,button.delete-button {
-    background-color: #dc3545
+    background-color: #cdabaf
 }
 
 button.copy-button {
-    background-color: #008514
+    background-color: #a4c4a8
 }
 
 button.copy-button,button.delete-button,button.edit-button {
