@@ -1202,7 +1202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let parsedText = marked.parse(message);
             textSpan.innerHTML = parsedText.replace(/(?<!<\/?\w+>)\n(?!\s*<\/?\w+>)/g, '<br>');
         } else {
-            textSpan.innerHTML = message.replace(/\\n/g, '<br>');
+            textSpan.innerHTML = message.replace(/\n/g, '<br>');
             return;
         }
         const preElements = textSpan.querySelectorAll('pre');
