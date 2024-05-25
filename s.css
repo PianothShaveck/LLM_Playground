@@ -122,11 +122,6 @@ header h1 {
     background-color: #bd5536
 }
 
-#info-link:hover {
-    cursor: help;
-    background-color: #bd5636d5
-}
-
 #discord-logo,#theme-toggle {
     top: 40px;
     cursor: pointer
@@ -436,7 +431,7 @@ button.edit-button {
     background-color: #9cb0c5
 }
 
-.file-bubble .close-btn,button.delete-button {
+button.delete-button {
     background-color: #cdabaf
 }
 
@@ -510,7 +505,7 @@ button.export-button {
     background-color: #8f564c
 }
 
-body.light-mode #info-link:hover {
+#info-link:hover {
     background-color: #bd5636d5
 }
 
@@ -612,7 +607,7 @@ body.light-mode #info-link:hover {
     margin-bottom: 10px
 }
 
-.modal-header .close,body.light-mode .modal-header .close {
+.file-bubble .close-btn,.modal-header .close,body.light-mode .modal-header .close {
     background-color: #dc3545
 }
 
