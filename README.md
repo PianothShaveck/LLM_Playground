@@ -23,6 +23,10 @@ LLM Playground offers users an intuitive interface to:
 - Enable, disable, or automate web searches to enrich responses.
 - Save and load system prompts.
 
+## Pure JavaScript Implementation
+
+This project is implemented using pure JavaScript, with minimal reliance on external libraries. The only external libraries used are for parsing various file types. The intention is to keep the project lightweight and free from unnecessary dependencies.
+
 ## Key Features
 
 ### File Attachments
