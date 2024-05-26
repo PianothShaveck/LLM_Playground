@@ -21,6 +21,7 @@ LLM Playground offers users an intuitive interface to:
 - Create shareable links for chats using GitHub Gists.
 - Change the role of messages between user, assistant, and system.
 - Enable, disable, or automate web searches to enrich responses.
+- Save and load system prompts.
 
 ## Key Features
 
