@@ -2179,25 +2179,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.backgroundColor = '#f1f1f1';
         document.documentElement.style.backgroundColor = '#f1f1f1';
     }
-
-
-
-
-    
     const systemPromptsList = document.getElementById('systemPromptsList');
-    const systemPromptNameInput = document.getElementById('systemPromptName');
     const saveSystemPromptButton = document.getElementById('saveSystemPromptButton');
-
-    // Load saved system prompts from localStorage
+    const loadPromptsModal = document.getElementById('loadPromptsModal');
+    const closeLoadPromptsModal = loadPromptsModal.querySelector('.close');
+    /**
+     * Loads system prompts from local storage and displays them in a modal.
+     */
     function loadSystemPrompts() {
         const savedPrompts = JSON.parse(localStorage.getItem('systemPrompts')) || [];
-        const systemPromptsList = document.getElementById('systemPromptsList');
         systemPromptsList.innerHTML = '';
         savedPrompts.forEach((prompt, index) => {
             const li = document.createElement('li');
             li.textContent = prompt.name;
             li.addEventListener('click', () => {
                 systemPromptInput.value = prompt.content;
+                adjustTextareaHeight(systemPromptInput);
                 document.getElementById('loadPromptsModal').style.display = 'none';
             });
             const deleteButton = document.createElement('button');
@@ -2211,21 +2208,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         document.getElementById('loadPromptsModal').style.display = 'flex';
     }
-
-    const loadPromptsModal = document.getElementById('loadPromptsModal');
-    const closeLoadPromptsModal = loadPromptsModal.querySelector('.close');
-
     closeLoadPromptsModal.addEventListener('click', function() {
         loadPromptsModal.style.display = 'none';
     });
-
     window.addEventListener('click', function(event) {
         if (event.target === loadPromptsModal) {
             loadPromptsModal.style.display = 'none';
         }
     });
-
-    // Save current system prompt to localStorage
+    /**
+     * Saves a system prompt to the local storage.
+     */
     function saveSystemPrompt() {
         const promptName = prompt('Enter a name for the system prompt:');
         const promptContent = systemPromptInput.value.trim();
@@ -2236,15 +2229,17 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('System prompt saved successfully!');
         }
     }
-
-    // Delete a system prompt from localStorage
+    /**
+     * Deletes a system prompt from the local storage.
+     *
+     * @param {number} index - The index of the system prompt to delete.
+     */
     function deleteSystemPrompt(index) {
         const savedPrompts = JSON.parse(localStorage.getItem('systemPrompts')) || [];
         savedPrompts.splice(index, 1);
         localStorage.setItem('systemPrompts', JSON.stringify(savedPrompts));
         loadSystemPrompts();
     }
-
     saveSystemPromptButton.addEventListener('click', saveSystemPrompt);
     document.getElementById('loadSystemPromptButton').addEventListener('click', loadSystemPrompts);
 });
