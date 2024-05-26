@@ -971,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
                 }
             ],
-            max_tokens: 30
+            max_tokens: 40
         };
         return new Promise((resolve, reject) => {
             fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -987,7 +987,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 response = data.choices[0].message.content
-                console.log(response)
                 if (response && response.startsWith('`') && response.endsWith('`')) {
                     response = response.slice(1, -1);
                     if (response.startsWith('"') && response.endsWith('"')) {
@@ -1033,7 +1032,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
                 }
             ],
-            max_tokens: 30
+            max_tokens: 40
         };
         return new Promise((resolve, reject) => {
             fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -1184,7 +1183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingMessage.textContent = 'Searching for `' + searchQuery + '`...'
         fetchSearchResults(searchQuery)
             .then(searchResults => {
-                const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1]. If you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2]. The links will be automatically filled, you don't have to include them if you use this format.`;
+                const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1].\n\nIf you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2].\n\nThe links will be automatically filled, you don't have to include them if you use this format.`;
                 const selectedModel = modelDropdown.value;
                 const systemMessage = document.getElementById('systemPromptInput').value.trim();
                 const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens: maxTokens, stream: true }
@@ -1461,6 +1460,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
+     * Calculates the total length of all quoted sections in a message string.
+     *
+     * @param {string} message - The message string containing quotes.
+     * @returns {number} The total length of all quoted sections.
+     */
+    function calculateQuoteLength(message) {
+        const quotePattern = /^\[\d+\]:\s+https?:\/\/\S+\s*/gm;
+        let match;
+        let totalQuoteLength = 0;
+        while ((match = quotePattern.exec(message)) !== null) {
+            totalQuoteLength += match[0].length;
+        }
+        return totalQuoteLength;
+    }
+    /**
      * Attaches event listeners to the given buttons and selects elements to handle user interactions.
      *
      * @param {HTMLElement} editButton - The button element for editing a message.
@@ -1473,7 +1487,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {HTMLElement} buttonsDiv - The div element containing the buttons.
      */
     function attachListeners(editButton, deleteButton, copyButton, roleSelect, textSpan, messageDiv, message, buttonsDiv) {
-        const MAX_LENGTH = 1000;
+        const MAX_LENGTH = 1000 + calculateQuoteLength(message);
         const user = messageDiv.className === 'user-message';
         if (message.length > MAX_LENGTH) {
             const partialMessage = message.substring(0, MAX_LENGTH) + '...';
