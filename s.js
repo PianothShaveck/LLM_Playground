@@ -1183,7 +1183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingMessage.textContent = 'Searching for `' + searchQuery + '`...'
         fetchSearchResults(searchQuery)
             .then(searchResults => {
-                const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1]. The links will be automatically filled, you don't have to include them if you use this format.`;
+                const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1]. If you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2]. The links will be automatically filled, you don't have to include them if you use this format.`;
                 const selectedModel = modelDropdown.value;
                 const systemMessage = document.getElementById('systemPromptInput').value.trim();
                 const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens: maxTokens, stream: true }
