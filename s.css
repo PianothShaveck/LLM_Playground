@@ -65,7 +65,6 @@ button.copy-code-button:hover {
 }
 
 body,html {
-    touch-action: pan-x pan-y;
     font-family: Arial,sans-serif;
     display: flex;
     flex-direction: column;
@@ -73,7 +72,8 @@ body,html {
     margin: 0;
     padding: 0;
     color: #f1f1f1;
-    background-color: #333
+    background-color: #333;
+    touch-action: pan-x pan-y
 }
 
 .chat-interface,.container {
@@ -180,12 +180,12 @@ header h1 {
 .message-form {
     position: fixed;
     z-index: 10;
-    margin: 0 auto;
     bottom: 0;
     left: 50%;
     flex-direction: column;
     width: 70%;
     max-height: 50%;
+    margin: 0 auto;
     padding: 10px;
     transform: translateX(-50%);
     border-top-left-radius: 20px;
@@ -390,6 +390,10 @@ textarea {
     background-color: #8f564cd5
 }
 
+.assistant-message {
+    width: auto
+}
+
 .assistant-message,.system-message,.user-message {
     position: relative;
     display: inline-block;
@@ -397,7 +401,6 @@ textarea {
     align-items: center;
     flex-direction: column;
     justify-content: space-between;
-    width: auto;
     min-width: 50%;
     max-width: 70%;
     margin: 10px 0;
@@ -405,18 +408,22 @@ textarea {
     border-radius: 2vw
 }
 
+.user-message {
+    width: auto
+}
+
 .system-message {
     align-self: center;
+    width: 70%;
     color: #f1f1f1;
-    background: #337ab7;
-    width: 70%
+    background: #337ab7
 }
 
 select.role-selector {
     margin-left: 10px;
     color: #f1f1f1;
-    background: #222;
-    border: 1px solid #444
+    border: 1px solid #444;
+    background: #222
 }
 
 .message-content {
@@ -443,16 +450,16 @@ button.copy-button {
 }
 
 button.copy-button,button.delete-button,button.edit-button {
-    color: #333;
     font-size: .8em;
     margin: 0 5px;
     padding: 5px 10px;
-    cursor: pointer
+    cursor: pointer;
+    color: #333
 }
 
 button.copy-button:hover,button.delete-button:hover,button.edit-button:hover {
-    color: #222;
-    opacity: .8
+    opacity: .8;
+    color: #222
 }
 
 .message-buttons {
@@ -556,7 +563,7 @@ button.export-button {
     border-radius: 50%
 }
 
-.file-bubble .close-btn:hover,.modal-header .close:hover,#systemPromptsList li button:hover {
+#systemPromptsList li button:hover,.file-bubble .close-btn:hover,.modal-header .close:hover {
     background-color: #dc3545d5
 }
 
@@ -631,37 +638,35 @@ button.export-button {
 }
 
 .web-search-toggle {
-    display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .web-search-toggle label {
-    margin-right: 10px;
-  }
-  
-  .web-search-options {
+    margin-bottom: 10px
+}
+
+.web-search-toggle label {
+    margin-right: 10px
+}
+
+.web-search-options,.web-search-toggle {
     display: flex;
-    align-items: center;
-  }
-  
-  .web-search-options input[type="radio"] {
-    display: none;
-  }
-  
-  .web-search-options label {
-    padding: 5px 10px;
+    align-items: center
+}
+
+.web-search-options input[type=radio] {
+    display: none
+}
+
+.web-search-options label {
     margin-right: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 5px 10px;
     cursor: pointer;
-  }
-  
-  .web-search-options input[type="radio"]:checked + label {
-    background-color: #8f564c;
+    border: 1px solid #ccc;
+    border-radius: 4px
+}
+
+.web-search-options input[type=radio]:checked+label {
     color: #fff;
-  }
+    background-color: #8f564c
+}
 
 #searchTextarea {
     display: none;
@@ -738,7 +743,7 @@ body.light-mode button:hover {
     background-color: #ccc
 }
 
-body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea,body.light-mode #searchTextarea {
+body.light-mode #searchTextarea,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
     color: #333;
     background: #fff
 }
@@ -836,73 +841,67 @@ input:checked+.slider:before {
 
 .system-prompts-section {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    flex-direction: column;
+    margin-bottom: 20px
 }
 
-.system-prompts-section > div {
+.system-prompts-section>div {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: 100%
 }
 
 #systemPromptsList {
-    list-style-type: none;
-    padding: 0;
-    margin-bottom: 10px;
     width: 100%;
+    margin-bottom: 10px;
+    padding: 0;
+    list-style-type: none
 }
 
 #systemPromptsList li {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    justify-content: space-between;
     margin-bottom: 5px;
-    background-color: #444;
-    border-radius: 5px;
+    padding: 10px;
     cursor: pointer;
+    border-radius: 5px;
+    background-color: #444
 }
 
 #systemPromptsList li:hover {
-    background-color: #555;
+    background-color: #555
 }
 
-#systemPromptsList li button {
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
+#loadSystemPromptButton,#saveSystemPromptButton,#systemPromptsList li button {
     padding: 5px 10px;
-    border-radius: 5px;
     cursor: pointer;
-}
-
-#saveSystemPromptButton,
-#loadSystemPromptButton {
-    background-color: #8f564c;
     color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px;
+    border: 0;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    background-color: #dc3545
 }
 
-#saveSystemPromptButton:hover,
-#loadSystemPromptButton:hover {
-    background-color: #8f564cd5;
+#loadSystemPromptButton,#saveSystemPromptButton {
+    margin: 10px;
+    padding: 10px 20px;
+    transition: background-color .3s;
+    background-color: #8f564c
+}
+
+#loadSystemPromptButton:hover,#saveSystemPromptButton:hover {
+    background-color: #8f564cd5
 }
 
 #systemPromptName {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-right: 10px;
     width: 200px;
-    background-color: #222;
+    margin-right: 10px;
+    padding: 10px;
     color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #222
 }
 
 @media (max-width: 1200px) {
