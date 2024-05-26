@@ -1024,8 +1024,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 function processText({ done, value }) {
                     if (done) {
                         document.getElementById('messageContainer').removeChild(loadingMessage);
-                        console.log('All content received:', allContent.trim());
-                        console.log(allContent.trim() === '')
                         if (allContent.trim() === '') {
                             allContent = 'No response from the API.';
                         }
