@@ -971,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
                 }
             ],
-            max_tokens: 20
+            max_tokens: 30
         };
         return new Promise((resolve, reject) => {
             fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -987,6 +987,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 response = data.choices[0].message.content
+                console.log(response)
                 if (response && response.startsWith('`') && response.endsWith('`')) {
                     response = response.slice(1, -1);
                     if (response.startsWith('"') && response.endsWith('"')) {
@@ -1032,7 +1033,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
                 }
             ],
-            max_tokens: 20
+            max_tokens: 30
         };
         return new Promise((resolve, reject) => {
             fetch('https://api.groq.com/openai/v1/chat/completions', {
