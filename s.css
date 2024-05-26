@@ -273,19 +273,19 @@ textarea {
     grid-column: auto
 }
 
-#attachButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
+#attachButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#loadSystemPromptButton:hover,#saveSystemPromptButton:hover,#backButton:hover,#settingsButton:hover {
     background-color: #8f564cd5
 }
 
-#addButton,#runButton {
+#addButton,#runButton,#sendButton.abort-button {
     background-color: #6a6a6a
 }
 
-#addButton:hover,#runButton:hover {
+#addButton:hover,#runButton:hover,#sendButton.abort-button:hover {
     background-color: #6a6a6ad5
 }
 
-#addButton,#backButton,#runButton {
+#addButton,#backButton,#runButton,#sendButton.abort-button {
     color: #f1f1f1
 }
 
@@ -302,10 +302,6 @@ textarea {
     transition: background-color .3s;
     border: 0;
     background-color: #8f564c
-}
-
-#backButton:hover {
-    background-color: #8f564cd5
 }
 
 #messageContainer {
@@ -370,24 +366,11 @@ textarea {
     padding: 5px 10px
 }
 
-#sendButton.abort-button {
-    color: #f1f1f1;
-    background-color: #6c757d
-}
-
-#sendButton.abort-button:hover {
-    background-color: #6c757dd5
-}
-
 #settingsButton {
     font-size: 14px;
     display: inline-block;
     margin-bottom: 10px;
     padding: 8px 16px
-}
-
-#settingsButton:hover {
-    background-color: #8f564cd5
 }
 
 .assistant-message {
@@ -888,10 +871,6 @@ input:checked+.slider:before {
     padding: 10px 20px;
     transition: background-color .3s;
     background-color: #8f564c
-}
-
-#loadSystemPromptButton:hover,#saveSystemPromptButton:hover {
-    background-color: #8f564cd5
 }
 
 #systemPromptName {
