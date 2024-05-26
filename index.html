@@ -86,8 +86,8 @@
                 <textarea id='systemPromptInput' placeholder='Enter system prompt here...'></textarea>
                 <div class='system-prompts-section'>
                     <div>
-                        <button id='saveSystemPromptButton'>Save Current Prompt</button>
-                        <button id='loadSystemPromptButton'>Load Prompts</button>
+                        <button id='saveSystemPromptButton' title='Save the current system prompt.' aria-describedby='saveCurrentSystemPrompt'>Save Current Prompt</button>
+                        <button id='loadSystemPromptButton' title='Load a system prompt.' aria-describedby='loadSystemPrompt'>Load Prompt</button>
                     </div>
                 </div>
                 <label for='maxTokensInput'>Max Tokens:</label>
@@ -158,6 +158,8 @@
         <p id='internetOn'>Web search is enabled</p>
         <p id='copyToFileToggleDesc'>Enable or disable copying long text to a file.</p>
         <p id="saveSettingsButtonDesc">Save the current settings.</p>
+        <p id="saveCurrentSystemPrompt">Save the current system prompt.</p>
+        <p id="loadSystemPrompt">Load a system prompt.</p>
     </div>
     <script src='s.js'></script>
 </body>
