@@ -1024,6 +1024,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 function processText({ done, value }) {
                     if (done) {
                         document.getElementById('messageContainer').removeChild(loadingMessage);
+                        if (allContent.trim() === '') {
+                            allContent = 'No response from the API.';
+                        }
                         displayMessage(allContent.trim(), 'assistant');
                         conversationHistory.push({ role: 'assistant', content: allContent.trim() });
                         saveChatToHistory();
