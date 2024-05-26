@@ -1,5 +1,6 @@
 # Features to be implemented
 
+- Save system prompts
 - Possibility of moving messages up and down the history
 - advanced mode for web search
 - Prompt enhancement toggle
