@@ -556,7 +556,7 @@ button.export-button {
     border-radius: 50%
 }
 
-.file-bubble .close-btn:hover,.modal-header .close:hover {
+.file-bubble .close-btn:hover,.modal-header .close:hover,#systemPromptsList li button:hover {
     background-color: #dc3545d5
 }
 
@@ -832,6 +832,77 @@ input:checked+.slider:before {
     z-index: 1000;
     top: 10px;
     left: 10px
+}
+
+.system-prompts-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.system-prompts-section > div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#systemPromptsList {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#systemPromptsList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #444;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#systemPromptsList li:hover {
+    background-color: #555;
+}
+
+#systemPromptsList li button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#saveSystemPromptButton,
+#loadSystemPromptButton {
+    background-color: #8f564c;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#saveSystemPromptButton:hover,
+#loadSystemPromptButton:hover {
+    background-color: #8f564cd5;
+}
+
+#systemPromptName {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    width: 200px;
+    background-color: #222;
+    color: #fff;
 }
 
 @media (max-width: 1200px) {

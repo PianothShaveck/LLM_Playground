@@ -84,6 +84,12 @@
             <div class='modal-body' id='settingsContent'>
                 <label for='systemPromptInput'>System Prompt:</label>
                 <textarea id='systemPromptInput' placeholder='Enter system prompt here...'></textarea>
+                <div class='system-prompts-section'>
+                    <div>
+                        <button id='saveSystemPromptButton'>Save Current Prompt</button>
+                        <button id='loadSystemPromptButton'>Load Prompts</button>
+                    </div>
+                </div>
                 <label for='maxTokensInput'>Max Tokens:</label>
                 <input type='number' id='maxTokensInput' value='4096' min='1'>
                 <div class="web-search-toggle">
@@ -105,6 +111,17 @@
                     </label>
                 </div>
                 <button id='saveSettingsButton' title='Save the current settings.' aria-describedby='savesettings'>Save</button>
+            </div>
+        </div>
+    </div>
+    <div id='loadPromptsModal' class='modal' style='display:none;'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <span>Load System Prompt</span>
+                <span class='close'>&times;</span>
+            </div>
+            <div class='modal-body'>
+                <ul id='systemPromptsList'></ul>
             </div>
         </div>
     </div>

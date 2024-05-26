@@ -962,7 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     If you believe a search is necessary, generate a search query that you would enter into the DuckDuckGo search engine to find the most relevant information to help you respond.
                     
-                    Put your search query between backticks, like this: \`example search query\`
+                    Keep it simple and short. Output your search query between \` characters, like this: \`example search query\`
 
                     Respond with plain text only. Do not use any markdown formatting. Do not include any text before or after the search query.
 
@@ -1023,7 +1023,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     Your task is to generate a search query that you would enter into the DuckDuckGo search engine to find information that could help respond to the user's message. Do not attempt to directly answer the message yourself. Instead, focus on creating a search query that would surface the most relevant information from DuckDuckGo.
                     
-                    Output your search query between \` characters, like this: \`example search query\`
+                    Keep it simple and short. Output your search query between \` characters, like this: \`example search query\`
                     
                     Respond with plain text only. Do not use any markdown formatting. Do not include any text before or after the search query.
                     
@@ -2179,4 +2179,72 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.backgroundColor = '#f1f1f1';
         document.documentElement.style.backgroundColor = '#f1f1f1';
     }
+
+
+
+
+    
+    const systemPromptsList = document.getElementById('systemPromptsList');
+    const systemPromptNameInput = document.getElementById('systemPromptName');
+    const saveSystemPromptButton = document.getElementById('saveSystemPromptButton');
+
+    // Load saved system prompts from localStorage
+    function loadSystemPrompts() {
+        const savedPrompts = JSON.parse(localStorage.getItem('systemPrompts')) || [];
+        const systemPromptsList = document.getElementById('systemPromptsList');
+        systemPromptsList.innerHTML = '';
+        savedPrompts.forEach((prompt, index) => {
+            const li = document.createElement('li');
+            li.textContent = prompt.name;
+            li.addEventListener('click', () => {
+                systemPromptInput.value = prompt.content;
+                document.getElementById('loadPromptsModal').style.display = 'none';
+            });
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                deleteSystemPrompt(index);
+            });
+            li.appendChild(deleteButton);
+            systemPromptsList.appendChild(li);
+        });
+        document.getElementById('loadPromptsModal').style.display = 'flex';
+    }
+
+    const loadPromptsModal = document.getElementById('loadPromptsModal');
+    const closeLoadPromptsModal = loadPromptsModal.querySelector('.close');
+
+    closeLoadPromptsModal.addEventListener('click', function() {
+        loadPromptsModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === loadPromptsModal) {
+            loadPromptsModal.style.display = 'none';
+        }
+    });
+
+    // Save current system prompt to localStorage
+    function saveSystemPrompt() {
+        const promptName = prompt('Enter a name for the system prompt:');
+        const promptContent = systemPromptInput.value.trim();
+        if (promptName && promptContent) {
+            const savedPrompts = JSON.parse(localStorage.getItem('systemPrompts')) || [];
+            savedPrompts.push({ name: promptName, content: promptContent });
+            localStorage.setItem('systemPrompts', JSON.stringify(savedPrompts));
+            alert('System prompt saved successfully!');
+        }
+    }
+
+    // Delete a system prompt from localStorage
+    function deleteSystemPrompt(index) {
+        const savedPrompts = JSON.parse(localStorage.getItem('systemPrompts')) || [];
+        savedPrompts.splice(index, 1);
+        localStorage.setItem('systemPrompts', JSON.stringify(savedPrompts));
+        loadSystemPrompts();
+    }
+
+    saveSystemPromptButton.addEventListener('click', saveSystemPrompt);
+    document.getElementById('loadSystemPromptButton').addEventListener('click', loadSystemPrompts);
 });
