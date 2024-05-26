@@ -626,9 +626,42 @@ button.export-button {
     flex-direction: column
 }
 
-#settingsContent>*,.toggle-container {
+#settingsContent>* {
     margin-bottom: 10px
 }
+
+.web-search-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .web-search-toggle label {
+    margin-right: 10px;
+  }
+  
+  .web-search-options {
+    display: flex;
+    align-items: center;
+  }
+  
+  .web-search-options input[type="radio"] {
+    display: none;
+  }
+  
+  .web-search-options label {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .web-search-options input[type="radio"]:checked + label {
+    background-color: #8f564c;
+    color: #fff;
+  }
 
 #searchTextarea {
     display: none;

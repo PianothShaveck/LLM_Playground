@@ -86,10 +86,21 @@
                 <textarea id='systemPromptInput' placeholder='Enter system prompt here...'></textarea>
                 <label for='maxTokensInput'>Max Tokens:</label>
                 <input type='number' id='maxTokensInput' value='4096' min='1'>
+                <div class="web-search-toggle">
+                    <label for="webSearchToggle">Web Search:</label>
+                    <div class="web-search-options">
+                        <input type="radio" id="webSearchOff" name="webSearch" value="off" checked>
+                        <label for="webSearchOff" title="Web search is disabled" aria-describedby="internetOff">OFF</label>
+                        <input type="radio" id="webSearchAuto" name="webSearch" value="auto">
+                        <label for="webSearchAuto" title="The AI can choose to perform a web search" aria-describedby="internetAuto">Auto</label>
+                        <input type="radio" id="webSearchOn" name="webSearch" value="on">
+                        <label for="webSearchOn" title="Web search is enabled" aria-describedby="internetOn">ON</label>
+                    </div>
+                </div>
                 <div class='toggle-container'>
                     <label for='copyToFileToggle'>Copy long text to file:</label>
                     <label class='switch'>
-                        <input type='checkbox' id='copyToFileToggle' checked>
+                        <input type='checkbox' id='copyToFileToggle' title='Enable or disable copying long text to a file.' aria-describedby='copyToFileToggleDesc' checked>
                         <span class='slider'></span>
                     </label>
                 </div>
@@ -124,8 +135,12 @@
         <p id='generateTitleButtonDesc'>Generate a new title for this chat using the conversation content.</p>
         <p id="deleteChatButtonDesc">Delete the chat.</p>
         <p id="themeToggleDesc">Toggle light/dark mode.</p>
-        <p id="saveSettingsButtonDesc">Save the current settings.</p>
         <p id='roleSelectDesc'>Change the role of this message.</p>
+        <p id='internetOff'>Web search is disabled</p>
+        <p id='internetAuto'>The AI can choose to perform a web search</p>
+        <p id='internetOn'>Web search is enabled</p>
+        <p id='copyToFileToggleDesc'>Enable or disable copying long text to a file.</p>
+        <p id="saveSettingsButtonDesc">Save the current settings.</p>
     </div>
     <script src='s.js'></script>
 </body>

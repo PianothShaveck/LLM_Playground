@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handlePasteEvent(event) {
         const clipboardData = event.clipboardData || window.clipboardData;
         const pastedText = clipboardData.getData('Text');
-        if (pastedText && pastedText.length > 1000 && copyToFileEnabled) {
+        if (pastedText && pastedText.length > 1500 && copyToFileEnabled) {
             event.preventDefault();
             const blob = new Blob([pastedText], { type: 'text/plain' });
             const file = new File([blob], `paste-${pasteCount}.txt`, { type: 'text/plain' });
@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function run() {
         document.querySelector('.previous-chats').style.display = 'none';
         addExportButton();
-        handleSendMessage();
+        handleSend();
         sendButton.textContent = 'Abort';
         sendButton.removeEventListener('click', handleSendClick);
         sendButton.addEventListener('click', handleAbortClick);
@@ -700,15 +700,20 @@ document.addEventListener('DOMContentLoaded', function() {
             copyToFileEnabled = JSON.parse(savedCopyToFileEnabled);
             document.getElementById('copyToFileToggle').checked = copyToFileEnabled;
         }
+        const webSearchToggle = localStorage.getItem('webSearch');
+        if (webSearchToggle !== null) {
+            document.querySelector('input[name="webSearch"][value="' + webSearchToggle + '"]').checked = true;
+        }
     }
     function saveSettings() {
         localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
+        localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
     }
     saveSettingsButton.addEventListener('click', function() {
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
         document.getElementById('systemPromptInput').value = systemPromptInput.value;
-        maxTokens = parseInt(maxTokensInput.value) || 4096;  // Fallback to default
+        maxTokens = parseInt(maxTokensInput.value) || 4096; // Fallback to default
         settingsModal.style.display = 'none';
     });
     window.addEventListener('click', function(event) {
@@ -934,6 +939,173 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
+     * Decides whether to fetch a web search query based on the provided message content using the LLaMA 8B model.
+     *
+     * @param {string} messageContent - The content of the message to generate the search query from.
+     * @return {Promise<string>} A promise that resolves with the generated search query or the string 'FwFCQI69pikGw6SQE2z6', or rejects with an error.
+     */
+    function fetchAutoWebSearchQuery(messageContent) {
+        const today = new Date();
+        const requestBody = {
+            model: 'llama3-8b-8192',
+            messages: [
+                {
+                    role: 'user',
+                    content: `Here is a conversation from the user:
+                    <conversation>
+                    ${JSON.stringify(messageContent)}
+                    </conversation>
+                    
+                    Please carefully analyze the conversation to determine if a web search is needed in order for you to provide an appropriate response to the latest message. 
+
+                    If you don't think you need to do a web search in order to respond, just reply with a very short message saying "NO".
+
+                    If you believe a search is necessary, generate a search query that you would enter into the DuckDuckGo search engine to find the most relevant information to help you respond.
+                    
+                    Put your search query between backticks, like this: \`example search query\`
+
+                    Respond with plain text only. Do not use any markdown formatting. Do not include any text before or after the search query.
+
+                    Remember, today's date is ${today.toDateString()}. Keep this date in mind to provide time-relevant context in your search query if needed.
+                    
+                    Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
+                }
+            ],
+            max_tokens: 20
+        };
+        return new Promise((resolve, reject) => {
+            fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${gToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                response = data.choices[0].message.content
+                if (response && response.startsWith('`') && response.endsWith('`')) {
+                    response = response.slice(1, -1);
+                    if (response.startsWith('"') && response.endsWith('"')) {
+                        response = response.slice(1, -1);
+                    }
+                    resolve(response);
+                } else {
+                    resolve('FwFCQI69pikGw6SQE2z6');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching web search query:', error);
+                reject(error);
+            });
+        });
+    }
+    /**
+     * Fetches a web search query based on the provided message content using the LLaMA 8B model.
+     *
+     * @param {string} messageContent - The content of the message to generate the search query from.
+     * @return {Promise<string>} A promise that resolves with the generated search query, or rejects with an error.
+     */
+    function fetchWebSearchQuery(messageContent) {
+        const today = new Date();
+        const requestBody = {
+            model: 'llama3-8b-8192',
+            messages: [
+                {
+                    role: 'user',
+                    content: `Here is a conversation from the user:
+                    <conversation>
+                    ${JSON.stringify(messageContent)}
+                    </conversation>
+                    
+                    Your task is to generate a search query that you would enter into the DuckDuckGo search engine to find information that could help respond to the user's message. Do not attempt to directly answer the message yourself. Instead, focus on creating a search query that would surface the most relevant information from DuckDuckGo.
+                    
+                    Output your search query between \` characters, like this: \`example search query\`
+                    
+                    Respond with plain text only. Do not use any markdown formatting. Do not include any text before or after the search query.
+                    
+                    Remember, today's date is ${today.toDateString()}. Keep this date in mind to provide time-relevant context in your search query if needed.
+                    
+                    Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
+                }
+            ],
+            max_tokens: 20
+        };
+        return new Promise((resolve, reject) => {
+            fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${gToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                response = data.choices[0].message.content
+                if (response && response.startsWith('`') && response.endsWith('`')) {
+                    response = response.slice(1, -1);
+                    if (response.startsWith('"') && response.endsWith('"')) {
+                        response = response.slice(1, -1);
+                    }
+                    resolve(response);
+                } else {
+                    console.error('Invalid response from the API:', data);
+                    reject(new Error('Invalid response from the API'));
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching web search query:', error);
+                reject(error);
+            });
+        });
+    }
+    /**
+     * Fetches search results from DuckDuckGo based on the provided query.
+     *
+     * @param {string} query - The search query.
+     * @return {Promise<Array<Array<string>>|string>} A promise that resolves with an array of formatted search results
+     *                                                  or 'No search results found' if none are found. Each result is
+     *                                                  represented as an array containing the title, URL, and snippet.
+     */
+    function fetchSearchResults(query) {        
+        return new Promise((resolve, reject) => {
+            fetch(`https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://duckduckgo.com/html/?q=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const searchResults = doc.querySelectorAll('.result');
+                    if (searchResults.length > 0) {
+                        const topResults = Array.from(searchResults).slice(0, 7);
+                        const formattedResults = topResults.map(result => {
+                            const title = result.querySelector('.result__title .result__a').textContent;
+                            const url = decodeURIComponent(result.querySelector('.result__title .result__a').href.match(/[?&]uddg=([^&]+)/)[1]);
+                            const snippet = result.querySelector('.result__snippet').textContent;
+                            return [title,url,snippet];
+                        });
+                        resolve(formattedResults);
+                    } else {
+                        resolve('No search results found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching search results:', error);
+                    reject(error);
+                });
+        });
+    }
+    /**
      * Sends a message and receives a response from the server.
      *
      * @return {Promise<void>} A promise that resolves when the message is sent and a response is received.
@@ -950,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         fetchChatTitle(messageContent, chats.length - 1);
                         isNewChat = false;
                     }
-                    handleSendMessage();
+                    handleSend();
                     sendButton.textContent = 'Abort';
                     sendButton.removeEventListener('click', handleSendClick);
                     sendButton.addEventListener('click', handleAbortClick);
@@ -958,50 +1130,91 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(e => {
                     console.error('Error processing files:', e);
-                    addMessageToHistory("Failed to read attached files.", "assistant");
+                    addMessageToHistory('Failed to read attached files.', 'assistant');
                 });
         }
     }
     /**
-     * Handles sending a message by fetching data from the server and updating the UI.
+     * Handles sending a message by fetching a web search query if necessary and updating the UI.
+     *
+     * @return {Promise<void>} A promise that resolves when the message is sent and the UI is updated.
      */
-    function handleSendMessage() {
-        const selectedModel = modelDropdown.value;
-        const systemMessage = document.getElementById('systemPromptInput').value.trim();
-        const requestBody = {
-            messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory,
-            model: selectedModel,
-            max_tokens: maxTokens,
-            stream: true
-        };
-        fetchWithRetry(requestBody);
+    function handleSend() {
+        const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
+        if (webSearchToggle === 'on') {
+            const loadingMessage = displayMessage('Thinking...', 'loading');
+            fetchWebSearchQuery(conversationHistory)
+                .then(searchQuery => {
+                    handleSendMessageWithSearch(loadingMessage, searchQuery)
+                })
+                .catch(error => {
+                    console.error('Error in web search:', error);
+                    document.getElementById('messageContainer').removeChild(loadingMessage)
+                    handleSendMessage();
+                });
+        } else if (webSearchToggle === 'off') {
+            handleSendMessage();
+        } else {
+            const loadingMessage = displayMessage('Thinking...', 'loading');
+            fetchAutoWebSearchQuery(conversationHistory)
+                .then(searchQuery => {
+                    if (!searchQuery || searchQuery === 'FwFCQI69pikGw6SQE2z6') {
+                        document.getElementById('messageContainer').removeChild(loadingMessage)
+                        handleSendMessage();
+                    } else {
+                        handleSendMessageWithSearch(loadingMessage, searchQuery)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in auto web search:', error);
+                    document.getElementById('messageContainer').removeChild(loadingMessage)
+                    handleSendMessage()
+                });
+        }
     }
     /**
-     * Fetches data from the specified URL using the provided request body.
-     * If successful, processes the received data in chunks and updates the UI.
-     * If an error occurs, retries up to a maximum number of times.
+     * Handles sending a message with a search query by fetching search results from the server and updating the UI.
      *
-     * @param {Object} requestBody - The data to be sent in the request body.
-     * @param {string} [URL='https://api.discord.rocks/chat/completions'] - The URL to send the request to.
+     * @param {HTMLElement} loadingMessage - The loading message element to update with the search query.
+     * @param {string} searchQuery - The search query to fetch results for.
+     * @return {Promise<void>} A promise that resolves when the search results are fetched and the UI is updated.
      */
-    function fetchWithRetry(requestBody, URL = 'https://api.discord.rocks/chat/completions') {
+    function handleSendMessageWithSearch(loadingMessage, searchQuery) {
+        loadingMessage.textContent = 'Searching for `' + searchQuery + '`...'
+        fetchSearchResults(searchQuery)
+            .then(searchResults => {
+                const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1]. The links will be automatically filled, you don't have to include them if you use this format.`;
+                const selectedModel = modelDropdown.value;
+                const systemMessage = document.getElementById('systemPromptInput').value.trim();
+                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens: maxTokens, stream: true }
+                document.getElementById('messageContainer').removeChild(loadingMessage)
+                handleSendMessage(body, searchResults.map((result, i) => `[${i + 1}]: ${result[1]}`).join('\n') + '\n')
+            })
+            .catch(error => {
+                console.error('Error in search:', error);
+                document.getElementById('messageContainer').removeChild(loadingMessage)
+                handleSendMessage()
+            });
+    }
+    /**
+     * Handles sending a message by fetching data from the server and updating the UI.
+     */
+    function handleSendMessage(body = null, quotes = null) {
+        const selectedModel = modelDropdown.value;
+        const systemMessage = document.getElementById('systemPromptInput').value.trim();
+        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens: maxTokens, stream: true } : body
+        fetchWithRetry(requestBody, quotes);
+    }
+    function fetchWithRetry(requestBody, quotes) {
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
         const maxRetries = 2;
-        let allContent = '';
+        let allContent = quotes || '';
         let buffer = '';
-        /**
-         * Fetches data from the specified URL using the provided request body.
-         * If successful, processes the received data in chunks and updates the UI.
-         * If an error occurs, retries up to a maximum number of times.
-         *
-         * @param {Object} requestBody - The data to be sent in the request body.
-         * @param {string} [URL='https://api.discord.rocks/chat/completions'] - The URL to send the request to.
-         */
         function tryFetch() {
             backButton.disabled = true;
             abortController = new AbortController();
-            fetch(URL, {
+            fetch('https://api.discord.rocks/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
@@ -1733,20 +1946,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Decodes a Base64 encoded string.
-     *
-     * @param {string} encodedStr - The Base64 encoded string.
-     * @return {string} The decoded string.
-     */
-    function decodeBase64(encodedStr) {
-        try {
-            return atob(encodedStr);
-        } catch (e) {
-            console.error('Failed to decode Base64 string:', e);
-            return '';
-        }
-    }
-    /**
      * Reverses a string.
      *
      * @param {string} str - The string to reverse.
@@ -1755,9 +1954,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function reverseString(str) {
         return str.split('').reverse().join('');
     }
-    // Base64 encoded reversed token
+    // //Public tokens used only for LLM Playground
     const encodedReversedToken = 'azFaTWlKNDBMeXhtMFQzMmZxcW4yYXlkOGxpWnJPT0VZbEhWNEtfcGhneDk=';
-    const token = reverseString(decodeBase64(encodedReversedToken)).slice(2,-2); //Public token used only for LLM Playground
+    const encodedReversedGToken = 'c3A3ck9wM3JRbEgxckFKdHBlNWJPYjE5NkRtWUYzYnlkR1c3eDdMR1hIMlEzVmtndkQwRVpQaV9rc2c5eDE=';
+    const token = reverseString(atob(encodedReversedToken)).slice(2,-2);
+    const gToken = reverseString(atob(encodedReversedGToken)).slice(3,-3);
     /**
      * Saves the chat data to a GitHub Gist.
      *
