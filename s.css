@@ -961,4 +961,8 @@ input:checked+.slider:before {
         margin-top: 5px;
         margin-left: 0
     }
+    #addButton {
+        width: 35px;            
+        height: 35px;
+    }
 }
