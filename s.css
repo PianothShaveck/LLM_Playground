@@ -259,7 +259,11 @@ textarea {
 }
 
 #addButton {
-    border-radius: 100%
+    border-radius: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size:135%;
 }
 
 #runButton {
@@ -555,10 +559,10 @@ button.export-button {
     width: 90%
 }
 
-#attachButton,.modal-header .close {
-    padding: 2px 5px;
+.modal-header .close {
     cursor: pointer;
-    border-radius: 100%
+    border-radius: 100%;
+    padding: 0px 5px;
 }
 
 #attachButton {
@@ -568,7 +572,10 @@ button.export-button {
     left: 10px;
     transform: translateY(-50%);
     color: #f1f1f1;
-    background-color: transparent
+    background-color: transparent;
+    padding: 1px 5px;
+    cursor: pointer;
+    border-radius: 100%;
 }
 
 .modal {
@@ -960,5 +967,10 @@ input:checked+.slider:before {
         width: 50%;
         margin-top: 5px;
         margin-left: 0
+    }
+    
+    #addButton {
+        width: 35px;            
+        height: 35px;
     }
 }
