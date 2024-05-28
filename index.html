@@ -82,6 +82,7 @@
                 <span class='close'>&times;</span>
             </div>
             <div class='modal-body' id='settingsContent'>
+                <button id='saveSettingsButton' title='Save the current settings.' aria-describedby='savesettings'>Save</button>
                 <label for='systemPromptInput'>System Prompt:</label>
                 <textarea id='systemPromptInput' placeholder='Enter system prompt here...'></textarea>
                 <div class='system-prompts-section'>
@@ -90,8 +91,6 @@
                         <button id='loadSystemPromptButton' title='Load a system prompt.' aria-describedby='loadSystemPrompt'>Load Prompt</button>
                     </div>
                 </div>
-                <label for='maxTokensInput'>Max Tokens:</label>
-                <input type='number' id='maxTokensInput' value='4096' min='1'>
                 <div class="web-search-toggle">
                     <label for="webSearchToggle">Web Search:</label>
                     <div class="web-search-options">
@@ -110,6 +109,12 @@
                         <span class='slider'></span>
                     </label>
                 </div>
+                <label for='maxTokensInput'>Max Tokens:</label>
+                <input type='number' id='maxTokensInput' value='4096' min='1'>
+                <label for='temperatureInput'>Temperature:</label>
+                <input type='number' id='temperatureInput' value='1' min='0' max='2'>
+                <label for='top_pInput'>top_p:</label>
+                <input type='number' id='top_pInput' value='1' min='0' max='2'>
                 <button id='saveSettingsButton' title='Save the current settings.' aria-describedby='savesettings'>Save</button>
             </div>
         </div>

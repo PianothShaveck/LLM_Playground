@@ -675,19 +675,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveSettingsButton = document.getElementById('saveSettingsButton');
     const systemPromptInput = document.getElementById('systemPromptInput');
     const maxTokensInput = document.getElementById('maxTokensInput');
+    const temperatureInput = document.getElementById('temperatureInput');
+    const top_pInput = document.getElementById('top_pInput');
     let maxTokens = 4096;
+    let temperature = 1;
+    let top_p = 1;
     systemPromptInput.addEventListener('input', function() {
         adjustTextareaHeight(this);
     });
-    document.getElementById('maxTokensInput').addEventListener('input', function() {
-        if (this.value > 4096) {
-            alert('Max tokens cannot exceed 4096.');
-            this.value = 4096;
+    document.getElementById('temperatureInput').addEventListener('input', function() {
+        if (this.value > 2) {
+            alert('Temperature cannot exceed 2.');
+            this.value = 2;
+        } else if (this.value < 0) {
+            alert('Temperature cannot be less than 0.');
+            this.value = 0;
+        }
+    });
+    document.getElementById('top_pInput').addEventListener('input', function() {
+        if (this.value > 2) {
+            alert('Top_p cannot exceed 2.');
+            this.value = 2;
+        } else if (this.value < 0) {
+            alert('Top_p cannot be less than 0.');
+            this.value = 0;
         }
     });
     settingsButton.addEventListener('click', function() {
         systemPromptInput.value = document.getElementById('systemPromptInput').value;
         maxTokensInput.value = maxTokens;
+        temperatureInput.value = temperature;
+        top_pInput.value = top_p;
         settingsModal.style.display = '';
     });
     closeModalButton.addEventListener('click', function() {
@@ -713,7 +731,9 @@ document.addEventListener('DOMContentLoaded', function() {
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
         document.getElementById('systemPromptInput').value = systemPromptInput.value;
-        maxTokens = parseInt(maxTokensInput.value) || 4096; // Fallback to default
+        maxTokens = parseInt(maxTokensInput.value) || 4096;
+        temperature = parseFloat(temperatureInput.value) || 1;
+        top_p = parseFloat(top_pInput.value) || 1;
         settingsModal.style.display = 'none';
     });
     window.addEventListener('click', function(event) {
@@ -1257,7 +1277,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1].\n\nIf you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2].\n\nThe links will be automatically filled, you don't have to include them if you use this format.`;
                 const selectedModel = modelDropdown.value;
                 const systemMessage = document.getElementById('systemPromptInput').value.trim();
-                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens: maxTokens, stream: true }
+                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens: maxTokens, temperature: temperature, top_p: top_p, stream: true }
                 document.getElementById('messageContainer').removeChild(loadingMessage)
                 handleSendMessage(body, searchResults.map((result, i) => `[${i + 1}]: ${result[1]}`).join('\n') + '\n')
             })
@@ -1273,7 +1293,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSendMessage(body = null, quotes = null) {
         const selectedModel = modelDropdown.value;
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
-        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens: maxTokens, stream: true } : body
+        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens: maxTokens, temperature: temperature, top_p: top_p, stream: true } : body
         fetchWithRetry(requestBody, quotes);
     }
     function fetchWithRetry(requestBody, quotes) {
