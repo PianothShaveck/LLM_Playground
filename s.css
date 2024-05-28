@@ -248,12 +248,12 @@ textarea {
     grid-template-columns: repeat(3,auto)
 }
 
-#saveSettingsButton,#sendButton,textarea {
+#saveSettingsButton,#sendButton,textarea,#endpointsButton {
     color: #f1f1f1;
     border-radius: 2vw
 }
 
-#saveSettingsButton,#sendButton {
+#saveSettingsButton,#sendButton,#endpointsButton {
     font-size: 14px;
     background-color: #8f564c
 }
@@ -270,14 +270,14 @@ textarea {
     border-radius: 2vw
 }
 
-#addButton,#runButton,#saveSettingsButton,#sendButton {
+#addButton,#runButton,#saveSettingsButton,#sendButton,#endpointsButton {
     margin-top: 10px;
     cursor: pointer;
     border: 0;
     grid-column: auto
 }
 
-#attachButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#loadSystemPromptButton:hover,#saveSystemPromptButton:hover,#backButton:hover,#settingsButton:hover {
+#attachButton:hover,#saveSettingsButton:hover,#sendButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#loadSystemPromptButton:hover,#saveSystemPromptButton:hover,#backButton:hover,#settingsButton:hover,#endpointsButton:hover {
     background-color: #8f564cd5
 }
 
@@ -479,6 +479,94 @@ button.show-more-button {
     border: 1px solid #ccc;
     border-radius: 2vw;
     background-color: #fff
+}
+
+#endpointsModal .modal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+#endpointsList {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 0;
+    list-style-type: none;
+}
+
+#endpointsList li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #444;
+}
+
+#endpointsList li:hover {
+    background-color: #555;
+}
+
+#endpointsList li button {
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    background-color: #dc3545;
+}
+
+#addEndpointButton {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    background-color: #8f564c;
+    transition: background-color 0.3s;
+}
+
+#addEndpointButton:hover {
+    background-color: #8f564cd5;
+}
+
+#endpointSettingsModal input[type="text"],
+#endpointSettingsModal textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #222;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+#endpointUrl {
+    background-color: #666;
+}
+
+#saveEndpointSettingsButton {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    background-color: #8f564c;
+    transition: background-color 0.3s;
+    margin-top: 15px;
+}
+
+#saveEndpointSettingsButton:hover {
+    background-color: #8f564cd5;
+}
+
+body.light-mode #endpointsList li {
+    background-color: #eee; 
+}
+
+body.light-mode #endpointsList li:hover {
+    background-color: #ccc;
 }
 
 body.light-mode button.copy-code-button:hover,button.show-more-button:hover {

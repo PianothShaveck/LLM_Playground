@@ -19,19 +19,17 @@ document.addEventListener('DOMContentLoaded', function() {
         loadChatFromUrl();
         loadSettings();
         updateMessageCounters();
-        console.log('marked loaded');
     });
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {console.log('xlsx loaded');});
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js', () => {console.log('mammoth loaded');});
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {});
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js', () => {});
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js', () => {
         var script = document.createElement('script');
         script.innerHTML = 'pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js";';
         document.head.appendChild(script);
-        console.log('pdfjs loaded');
     });
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js', () => {console.log('jszip loaded');});
-    loadScript('https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.min.js', () => {console.log('epubjs loaded');});
-
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js', () => {});
+    loadScript('https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.min.js', () => {});
+    let modelIds = []
     function checkApiStatus() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -50,8 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(jsonData => {
             if (jsonData) {
-                const modelIds = jsonData.data.map(item => item.id);
-                populateDropdown(modelIds, 'Other models');
+                modelIds = jsonData.data.map(item => item.id);
+                populateDropdown(modelIds);
             }})
         .catch(e => {
             document.getElementById('apiStatusMessage').style.display = 'block';
@@ -63,16 +61,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    /**
-     * Populates a dropdown element with a list of model IDs and a separator option.
-     *
-     * @param {Array<string>} modelIds - An array of model IDs to populate the dropdown with.
-     * @param {string} separator - The text content of the separator option.
-     */
-    function populateDropdown(modelIds, separator) {
+
+    function populateDropdown(modelIds) {
         const dropdown = document.getElementById('modelDropdown');
+        dropdown.innerHTML = `<option disabled>Popular models</option>
+        <option value='gpt-4o'>gpt-4o</option>
+        <option value='claude-3-opus'>claude-3-opus</option>
+        <option value='llama-3-70b-chat'>llama-3-70b-chat</option>
+        <option value='auto'>auto</option>`;
+        const savedModels = localStorage.getItem('savedModels');
+        if (savedModels) {
+            const savedmodelsOption = document.createElement('option');
+            savedmodelsOption.textContent = 'Saved endpoints';
+            savedmodelsOption.disabled = true;
+            savedmodelsOption.selected = true;
+            const savedModelIds = JSON.parse(savedModels);
+            savedModelIds.forEach(id => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = id;
+                dropdown.appendChild(option);
+            });
+        }
         const defaultOption = document.createElement('option');
-        defaultOption.textContent = separator;
+        defaultOption.textContent = 'Other models';
         defaultOption.disabled = true;
         defaultOption.selected = true;
         dropdown.appendChild(defaultOption);
@@ -552,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalTitle.textContent = title;
         const closeButton = document.createElement('span');
         closeButton.classList.add('close');
-        closeButton.innerHTML = '&times;';
+        closeButton.textContent = '×';
         closeButton.addEventListener('click', () => {
             document.body.removeChild(modal);
         });
@@ -677,9 +689,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxTokensInput = document.getElementById('maxTokensInput');
     const temperatureInput = document.getElementById('temperatureInput');
     const top_pInput = document.getElementById('top_pInput');
+    const endpointsButton = document.getElementById('endpointsButton');
+    const endpointsModal = document.getElementById('endpointsModal');
+    const closeEndpointsModalButton = endpointsModal.querySelector('.close');
+    const endpointsList = document.getElementById('endpointsList');
+    const addEndpointButton = document.getElementById('addEndpointButton');
+    const endpointSettingsModal = document.getElementById('endpointSettingsModal');
+    const closeEndpointSettingsModalButton = endpointSettingsModal.querySelector('.close');
+    const endpointTitleInput = document.getElementById('endpointTitle');
+    const endpointUrlInput = document.getElementById('endpointUrl');
+    const endpointHeadersInput = document.getElementById('endpointHeaders');
+    const endpointModelInput = document.getElementById('endpointModel');
+    const endpointOutputInput = document.getElementById('endpointOutput');
+    const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
     let maxTokens = 4096;
     let temperature = 1;
     let top_p = 1;
+    let endpoints = [
+        {
+            title: 'OpenAI API GPT-4o',
+            url: 'https://api.openai.com/v1/chat/completions',
+            headers: "{'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY'}",
+            model: 'gpt-4o',
+            output: 'choices[0].message.content'
+        },
+        {
+            title: 'Anthropic API Claude 3 opus',
+            url: 'https://api.anthropic.com/v1/messages',
+            headers: "{'Content-Type': 'application/json', 'x-api-key': 'Bearer YOUR_API_KEY'}",
+            model: 'claude-3-opus-20240229',
+            output: 'content[0].text'
+        }
+    ];
     systemPromptInput.addEventListener('input', function() {
         adjustTextareaHeight(this);
     });
@@ -712,6 +753,13 @@ document.addEventListener('DOMContentLoaded', function() {
         settingsModal.style.display = 'none';
     });
     let copyToFileEnabled = true;
+    /**
+     * Loads settings from localStorage and updates the UI accordingly.
+     *
+     * This function retrieves the value of 'copyToFileEnabled' from localStorage and sets the corresponding checkbox in the UI.
+     * It also retrieves the value of 'webSearch' from localStorage and sets the corresponding radio button in the UI.
+     * Finally, it retrieves the value of 'endpoints' from localStorage and updates the 'endpoints' array.
+     */
     function loadSettings() {
         const savedCopyToFileEnabled = localStorage.getItem('copyToFileEnabled');
         if (savedCopyToFileEnabled !== null) {
@@ -722,10 +770,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (webSearchToggle !== null) {
             document.querySelector('input[name="webSearch"][value="' + webSearchToggle + '"]').checked = true;
         }
+        const savedEndpoints = localStorage.getItem('endpoints');
+        if (savedEndpoints !== null) {
+            endpoints = JSON.parse(savedEndpoints);
+        }
     }
+    /**
+     * Saves the current settings to the local storage.
+     */
     function saveSettings() {
         localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
         localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
+        localStorage.setItem('endpoints', JSON.stringify(endpoints));
     }
     saveSettingsButton.addEventListener('click', function() {
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
@@ -754,6 +810,150 @@ document.addEventListener('DOMContentLoaded', function() {
         adjustTextareaHeight(this);
     });
     let allowRetry = true;
+    endpointsButton.addEventListener('click', () => {
+        loadEndpoints();
+        endpointsModal.style.display = 'flex';
+    });
+    closeEndpointsModalButton.addEventListener('click', () => {
+        endpointsModal.style.display = 'none';
+    });
+    addEndpointButton.addEventListener('click', () => {
+        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "{'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY'}", model: 'Enter the model name here', output: 'choices[0].message.content' });
+        saveSettings();
+        loadEndpoints();
+        openEndpointSettings(endpoints.length - 1);
+    });
+    /**
+     * Loads the endpoints and displays them in the endpointsList element.
+     * Each endpoint is represented by an li element with the endpoint's title.
+     * Clicking on an endpoint triggers the openEndpointSettings function with the index of the endpoint.
+     * Each endpoint also has a delete button that, when clicked, prompts the user to confirm deletion.
+     * If confirmed, the endpoint is removed from the endpoints array, the settings are saved, and the endpoints are reloaded.
+     */
+    function loadEndpoints() {
+        endpointsList.innerHTML = '';
+        endpoints.forEach((endpoint, index) => {
+            const li = document.createElement('li');
+            li.textContent = endpoint.title;
+            li.addEventListener('click', () => openEndpointSettings(index));
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                if (confirm('Are you sure you want to delete this endpoint?')) {
+                    endpoints.splice(index, 1);
+                    const savedModels = JSON.parse(localStorage.getItem('savedModels')) || [];
+                    savedModels.splice(savedModels.indexOf(endpoint.title), 1);
+                    localStorage.setItem('savedModels', JSON.stringify(savedModels));
+                    populateDropdown(modelIds);
+                    saveSettings();
+                    loadEndpoints();
+                }
+            });
+            li.appendChild(deleteButton);
+            endpointsList.appendChild(li);
+        });
+    }
+    /**
+     * Opens the settings modal for the specified endpoint and initializes the input fields with the endpoint's values.
+     * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
+     *
+     * @param {number} index - The index of the endpoint in the endpoints array.
+     */
+    function openEndpointSettings(index) {
+        const endpoint = endpoints[index];
+        endpointTitleInput.value = endpoint.title;
+        endpointUrlInput.value = endpoint.url;
+        endpointHeadersInput.value = endpoint.headers;
+        endpointModelInput.value = endpoint.model;
+        endpointOutputInput.value = endpoint.output;
+        endpointSettingsModal.style.display = 'flex';
+        /**
+         * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
+         */
+        saveEndpointSettingsButton.onclick = () => {
+            const existingTitle = modelDropdown.querySelector(`option[value="${endpoint.title}"]`);
+            if (existingTitle) {
+                alert('An endpoint with the same title already exists. Please use a different title.');
+                return;
+            }
+            endpoints[index].title = endpointTitleInput.value;
+            endpoints[index].url = endpointUrlInput.value;
+            endpoints[index].headers = endpointHeadersInput.value;
+            endpoints[index].output = endpointOutputInput.value;
+            endpoints[index].model = endpointModelInput.value;
+            testEndpoint(endpoint).then(() => {
+                saveSettings();
+                const savedModels = localStorage.getItem('savedModels');
+                let savedModelIds = [];
+                if (savedModels) {
+                    savedModelIds = JSON.parse(savedModels);
+                }
+                savedModelIds.push(endpoint.title);
+                localStorage.setItem('savedModels', JSON.stringify(savedModelIds));
+                populateDropdown(modelIds);
+                alert(`Test request to the endpoint was successful! Model was ${endpoint.model} was added to the list of models.`)
+            })
+            endpointSettingsModal.style.display = 'none';
+            loadEndpoints();
+        }
+    }
+    closeEndpointSettingsModalButton.addEventListener('click', () => {
+        endpointSettingsModal.style.display = 'none';
+    });
+    /**
+     * Sends a test request to the specified endpoint and checks if the response is valid.
+     *
+     * @param {Object} endpoint - The endpoint object containing the URL, headers, model, and output.
+     * @param {string} endpoint.url - The URL of the endpoint.
+     * @param {string} endpoint.headers - The headers for the request in JSON format.
+     * @param {string} endpoint.model - The model name to use for the request.
+     * @param {string} endpoint.output - The path to the output data in the response.
+     * @return {Promise<void>} A promise that resolves if the test request is successful and rejects otherwise.
+     * @throws {Error} If the test request fails or the output data is not a string.
+     */
+    function testEndpoint(endpoint) {
+        const body = {
+            model: endpoint.model,
+            messages: [
+                {
+                    role: 'user',
+                    content: 'Hello, world'
+                }
+            ],
+            max_tokens: 10
+        }
+        return new Promise((resolve, reject) => {
+            fetch(endpoint.url.trim(), {
+                method: 'POST',
+                headers: JSON.parse(endpoint.headers.replace(/'/g, '"')),
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Test request failed: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                let output;
+                try {
+                    output = eval(`data.${endpoint.output}`);
+                } catch (e) {
+                    throw new Error(`Invalid output path: ${e.message}`);
+                }
+                if (typeof output !== 'string') {
+                    throw new Error(`Output is not a string: ${typeof output}`);
+                }
+                resolve();
+            })
+            .catch(e => {
+                alert(`Test request failed: ${e.message}`);
+                reject();
+            });
+        })
+    }
     /**
      * Adds a message to the conversation history.
      *
@@ -1294,8 +1494,93 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedModel = modelDropdown.value;
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
         const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens: maxTokens, temperature: temperature, top_p: top_p, stream: true } : body
-        fetchWithRetry(requestBody, quotes);
+        const endpoint = endpoints.find(endpoint => endpoint.title === selectedModel);
+        if (endpoint) {
+            delete requestBody.stream
+            delete requestBody.model
+            requestBody.model = endpoint.model
+            fetchEndpointWithRetry(requestBody, quotes, endpoint.url, endpoint.headers, endpoint.output)
+        } else {
+            fetchWithRetry(requestBody, quotes);
+        }
     }
+    function fetchEndpointWithRetry(requestBody, quotes, url, headers, path) {
+        const loadingMessage = displayMessage('Loading...', 'loading');
+        let retries = 0;
+        const maxRetries = 2;
+        let allContent = quotes || '';
+        function tryFetch() {
+            backButton.disabled = true;
+            abortController = new AbortController();
+            fetch(url, {
+                method: 'POST',
+                headers: JSON.parse(headers.replace(/'/g, '"')),
+                body: JSON.stringify(requestBody),
+                signal: abortController.signal
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Request to ${url} failed: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                let output;
+                try {
+                    output = eval(`data.${path}`);
+                } catch (e) {
+                    throw new Error(`Invalid output path: ${e.message}`);
+                }
+                if (typeof output !== 'string') {
+                    throw new Error(`Output is not a string: ${typeof output}`);
+                }
+                allContent += output;
+                document.getElementById('messageContainer').removeChild(loadingMessage);
+                if (allContent.trim() === '') {
+                    allContent = 'No response from the API.';
+                }
+                displayMessage(allContent.trim(), 'assistant');
+                conversationHistory.push({ role: 'assistant', content: allContent.trim() });
+                saveChatToHistory();
+                updateMessageCounters();
+                revertSendButton();
+                backButton.disabled = false;
+            })
+            .catch(e => {
+                if (e.name === 'AbortError') {
+                    allowRetry = false;
+                } else {
+                    console.error('Error:', e);
+                }
+                if (retries < maxRetries && allowRetry) {
+                    retries++;
+                    loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
+                    setTimeout(tryFetch, 1000);
+                } else {
+                    backButton.disabled = false;
+                    conversationHistory.pop();
+                    revertSendButton();
+                    if (allowRetry) {
+                        loadingMessage.textContent = 'Failed to load response after multiple retries.';
+                        loadingMessage.className = 'error-message';
+                    } else {
+                        loadingMessage.parentNode.removeChild(loadingMessage);
+                        if (allContent.trim()) {
+                            addMessageToHistory(allContent.trim(), 'assistant');
+                            saveChatToHistory();
+                        }
+                    }
+                }
+            });
+        }
+        tryFetch();
+    }
+    /**
+     * Fetches data from the server with retries.
+     *
+     * @param {Object} requestBody - The request body.
+     * @param {string} quotes - The quotes.
+     */
     function fetchWithRetry(requestBody, quotes) {
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
