@@ -38,7 +38,7 @@ Supports attachment and processing of:
 - PowerPoint presentations (`.pptx`)
 - EPUB files (`.epub`)
 - Rich Text Format files (`.rtf`)
-- Plain text files (`.txt`)
+- Plain text files (`.txt` and all other plain text extensions)
 
 ### Theme Toggle
 
