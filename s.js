@@ -836,7 +836,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const li = document.createElement('li');
             li.textContent = endpoint.title;
             li.addEventListener('click', () => openEndpointSettings(index));
-
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', (event) => {
