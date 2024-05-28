@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             savedmodelsOption.textContent = 'Saved endpoints';
             savedmodelsOption.disabled = true;
             savedmodelsOption.selected = true;
+            dropdown.appendChild(savedmodelsOption);
             const savedModelIds = JSON.parse(savedModels);
             savedModelIds.forEach(id => {
                 const option = document.createElement('option');
@@ -709,14 +710,14 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             title: 'OpenAI API GPT-4o',
             url: 'https://api.openai.com/v1/chat/completions',
-            headers: "{'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY'}",
+            headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}",
             model: 'gpt-4o',
             output: 'choices[0].message.content'
         },
         {
             title: 'Anthropic API Claude 3 opus',
-            url: 'https://api.anthropic.com/v1/messages',
-            headers: "{'Content-Type': 'application/json', 'x-api-key': 'Bearer YOUR_API_KEY'}",
+            url: 'https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://api.anthropic.com/v1/messages',
+            headers: "{'x-api-key': 'YOUR_API_KEY','Content-Type': 'application/json','anthropic-version': '2023-06-01'}",
             model: 'claude-3-opus-20240229',
             output: 'content[0].text'
         }
@@ -818,7 +819,7 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointsModal.style.display = 'none';
     });
     addEndpointButton.addEventListener('click', () => {
-        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "{'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY'}", model: 'Enter the model name here', output: 'choices[0].message.content' });
+        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}", model: 'Enter the model name here', output: 'choices[0].message.content' });
         saveSettings();
         loadEndpoints();
         openEndpointSettings(endpoints.length - 1);
