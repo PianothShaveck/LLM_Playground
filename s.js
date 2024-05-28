@@ -860,14 +860,84 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    /**
+    function fetchChatTitle(messageContent, chatIndex) {
+        const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
+        const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
+        const spinner = document.createElement('span');
+        spinner.className = 'loading-spinner';
+        generateButton.appendChild(spinner);
+        const requestBody = {
+            model: 'llama3-8b-8192',
+            messages: [
+                {
+                    role: 'user',
+                    content: `Your task is to generate a title for the following conversation:
+
+                    <conversation>
+                    ${messageContent}
+                    </conversation>
+                    
+                    The title should concisely summarize the main topic or key points of the conversation in a catchy and engaging way.
+                    
+                    Use plain text for the title with no markdown formatting.
+                    
+                    Do not include any text before or after the title, and only output one title.
+                    
+                    Make sure your title is short and concise.
+                    
+                    Output your title between \` characters, like this: \`example title\``
+                }
+            ],
+            max_tokens: 40
+        };
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        return new Promise((resolve, reject) => {
+            fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${gToken}`
+                },
+                body: JSON.stringify(requestBody)
+            }).then(response => {
+                clearTimeout(timeoutId);
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`Failed to fetch chat title: ${response.statusText}`);
+                }
+            }).then(data => {
+                let title = data.choices[0].message.content.trim();
+                if (title && title.startsWith('`') && title.endsWith('`')) {
+                    title = title.slice(1, -1);
+                    if (title.startsWith('"') && title.endsWith('"')) {
+                        title = title.slice(1, -1);
+                    }
+                    updateChatTitle(title, chatIndex);
+                    resolve(title);
+                } else {
+                    throw new Error('Invalid title response');
+                }
+            }).catch(e => {
+                generateButton.removeChild(spinner);
+                if (e.name === 'AbortError') {
+                    console.error('Fetch request for the chat title timed out.');
+                } else {
+                    console.error('Error fetching chat title:', e);
+                }
+                reject(e);
+            })
+        });
+    }
+    /** PREVIOUS FUNCTION BASED ON https://api.discord.rocks/ask
      * Fetches a chat title based on the provided message content using the GPT-4o model.
      *
      * @param {string} messageContent - The content of the message to generate the chat title from.
      * @param {number} chatIndex - The index of the chat.
      * @return {Promise<void>} A promise that resolves when the chat title is fetched and updated.
      *                         Rejects if there is an error fetching the chat title.
-     */
+     *
     function fetchChatTitle(messageContent, chatIndex) {
         const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
         const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
@@ -922,6 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    /*
     /**
      * Updates the title of the chat at the specified index in the chat history stored in the local storage.
      *
