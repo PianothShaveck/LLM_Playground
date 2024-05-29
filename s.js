@@ -703,6 +703,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endpointHeadersInput = document.getElementById('endpointHeaders');
     const endpointModelInput = document.getElementById('endpointModel');
     const endpointOutputInput = document.getElementById('endpointOutput');
+    const endpointStreamInput = document.getElementById('endpointStream');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
     let maxTokens = 4096;
     let temperature = 1;
@@ -820,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointsModal.style.display = 'none';
     });
     addEndpointButton.addEventListener('click', () => {
-        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}", model: 'Enter the model name here', output: 'choices[0].message.content' });
+        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}", model: 'Enter the model name here', output: 'choices[0].message.content', stream: true});
         saveSettings();
         loadEndpoints();
         openEndpointSettings(endpoints.length - 1);
@@ -869,6 +870,7 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointHeadersInput.value = endpoint.headers;
         endpointModelInput.value = endpoint.model;
         endpointOutputInput.value = endpoint.output;
+        endpointStreamInput.checked = endpoint.stream || true;
         endpointSettingsModal.style.display = 'flex';
         /**
          * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
@@ -884,8 +886,9 @@ document.addEventListener('DOMContentLoaded', function() {
             endpoints[index].title = endpointTitleInput.value;
             endpoints[index].url = endpointUrlInput.value;
             endpoints[index].headers = endpointHeadersInput.value;
-            endpoints[index].output = endpointOutputInput.value;
             endpoints[index].model = endpointModelInput.value;
+            endpoints[index].output = endpointOutputInput.value;
+            endpoints[index].stream = endpointStreamInput.checked;
             testEndpoint(endpoint)
                 .then(([url, output]) => {
                     endpoints[index].url = url
@@ -910,85 +913,116 @@ document.addEventListener('DOMContentLoaded', function() {
     closeEndpointSettingsModalButton.addEventListener('click', () => {
         endpointSettingsModal.style.display = 'none';
     });
-    /**
-     * Tests an endpoint by sending a POST request with specified headers and body.
-     *
-     * @param {Object} endpoint - The endpoint object containing the URL, headers, and model.
-     * @return {Promise<[string, string]>} A promise that resolves to an array containing the URL and the output path if the test is successful.
-     * @throws {Error} If the output path is invalid or the response is not JSON.
-     */
     function testEndpoint(endpoint) {
         const headers = JSON.parse(endpoint.headers.replace(/'/g, '"'));
         const body = JSON.stringify({
-          model: endpoint.model,
-          messages: [{ role: 'user', content: 'Hello, world' }],
-          max_tokens: 10,
+            model: endpoint.model,
+            messages: [{ role: 'user', content: 'Hello, world' }],
+            max_tokens: 10,
+            stream: endpoint.stream 
         });
         return new Promise((resolve, reject) => {
-        /**
-         * Tests the output of a given data object and returns the output path if it is a string.
-         * If the output is not a string, it checks for common paths in the data object and prompts the user to change the output path if they exist.
-         * If no valid output path is found, it throws an error with the invalid output path message.
-         *
-         * @param {Object} data - The data object to test the output of.
-         * @return {Promise<string>} A promise that resolves to the output path if it is a string.
-         * @throws {Error} If the output path is invalid or the response is not JSON.
-         */
-          function testOutput(data) {
-            return new Promise((res, rej) => {
-              try {
-                let output = data[endpoint.output];
-                if (typeof output !== 'string') {
-                  throw new Error(`Output is not a string: ${typeof output}`);
-                }
-                res(endpoint.output);
-              } catch (e) {
-                const commonPaths = {
-                  'choices[0].message.content': data?.choices?.[0]?.message?.content, 
-                  'content[0].text': data?.content?.[0]?.text,
-                  'response': data?.response,
-                };
-                for (const [key, value] of Object.entries(commonPaths)) {
-                  if (typeof value === 'string') {
-                    if (confirm(
-                      `${endpoint.output} isn't a valid path. However, '${key}' exists with this text: \n\n"${value}"\n\nChange output path to '${key}'?`
-                    )) {
-                      return res(key);
+            function testOutput(data, isStreaming) {
+                return new Promise((res, rej) => {
+                    if (isStreaming) {
+                        const events = data;
+                        const possiblePaths = [
+                            'choices[0].delta.content',  // OpenAI, Groq
+                            'content[0].delta.text',   // Anthropic
+                            'choices[0].text',         // Other potential paths
+                            'content',                  // Other potential paths
+                            'delta.content',           // Other potential paths
+                            'text'                     // Other potential paths
+                        ];
+                        for (const path of possiblePaths) {
+                            for (const event of events) {
+                                if (event.startsWith('data: ')) {
+                                    try {
+                                        const jsonData = JSON.parse(event.substring(5).trim());
+                                        let output = jsonData[path];
+                                        if (typeof output === 'string' && output.trim() !== '') {
+                                            if (confirm(
+                                                `Auto-detected output path as '${path}' for streaming response. Is this correct?`
+                                            )) {
+                                                return res(path);
+                                            }
+                                        }
+                                    } catch (e) {
+                                        // Ignore errors for invalid paths
+                                    }
+                                }
+                            }
+                        }
+                        rej(new Error('Failed to auto-detect output path for streaming response.'));
+                    } else {
+                        // Non-streaming response - use existing logic with additional paths
+                        try {
+                            let output = data[endpoint.output];
+                            if (typeof output !== 'string') {
+                                throw new Error(`Output is not a string: ${typeof output}`);
+                            }
+                            res(endpoint.output);
+                        } catch (e) {
+                            const commonPaths = {
+                                'choices[0].message.content': data?.choices?.[0]?.message?.content,
+                                'content[0].text': data?.content?.[0]?.text,
+                                'response': data?.response,
+                                'text': data?.text, // Bard
+                                'choices[0].message': data?.choices?.[0]?.message // Poe
+                            };
+                            for (const [key, value] of Object.entries(commonPaths)) {
+                                if (typeof value === 'string') {
+                                    if (confirm(
+                                        `${endpoint.output} isn't a valid path. However, '${key}' exists with this text: \n\n"${value}"\n\nChange output path to '${key}'?`
+                                    )) {
+                                        return res(key);
+                                    }
+                                }
+                            }
+                            rej(new Error(`Invalid output path: ${e.message}`));
+                        }
                     }
-                  }
+                });
+            }
+            function checkResponse(response) {
+                if (!response.ok) {
+                    throw new Error(`${response.statusText}`);
                 }
-                rej(new Error(`Invalid output path: ${e.message}`)); 
-              }
-            });
-          }
-        /**
-         * Checks the response for errors and returns the JSON data if the content type is application/json.
-         *
-         * @param {Response} response - The response object to check.
-         * @return {Promise<Object>} A promise that resolves to the JSON data if the content type is application/json.
-         * @throws {Error} If the response is not ok or the content type is not application/json.
-         */
-        function checkResponse(response) {
-            if (!response.ok) {
-                throw new Error(`${response.statusText}`);
+                if (endpoint.stream) {
+                    // Handle streaming response
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    let events = [];
+                    let buffer = '';
+                    return reader.read().then(function processText({ done, value }) {
+                        if (done) {
+                            return testOutput(events, true);
+                        }
+                        const text = decoder.decode(value, { stream: true });
+                        buffer += text;
+                        events = events.concat(buffer.split('\n\n'));
+                        buffer = events.pop(); // Keep the last incomplete event in the buffer
+                        return reader.read().then(processText);
+                    });
+                } else {
+                    // Handle non-streaming response
+                    if (response.headers.get('content-type')?.includes('application/json')) {
+                        return response.json().then(data => testOutput(data, false));
+                    }
+                    throw new Error('The response is not JSON');
+                }
             }
-            if (response.headers.get('content-type')?.includes('application/json')) {
-                return response.json();
-            }
-            throw new Error('The response is not JSON');
-        }
-        fetch(endpoint.url.trim(), { method: 'POST', headers, body })
-            .then(checkResponse)
-            .then(testOutput)
-            .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
-            .catch((e) => {
-            const bypassCORSUrl = `https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?${endpoint.url.trim()}`;
-            fetch(bypassCORSUrl, { method: 'POST', headers, body })
+            // Make the test request
+            fetch(endpoint.url.trim(), { method: 'POST', headers, body })
                 .then(checkResponse)
-                .then(testOutput)
-                .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
-                .catch((e) => reject(e));
-            });
+                .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
+                .catch((e) => {
+                    const bypassCORSUrl = `https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?${endpoint.url.trim()}`;
+                    fetch(bypassCORSUrl, { method: 'POST', headers, body })
+                        .then(checkResponse)
+                        .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
+                        .catch((e) => reject(e));
+                });
         });
     }
     /**
@@ -1533,15 +1567,128 @@ document.addEventListener('DOMContentLoaded', function() {
         const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens: maxTokens, temperature: temperature, top_p: top_p, stream: true } : body
         const endpoint = endpoints.find(endpoint => endpoint.title === selectedModel);
         if (endpoint) {
-            delete requestBody.stream
-            delete requestBody.model
             requestBody.model = endpoint.model
-            fetchEndpointWithRetry(requestBody, quotes, endpoint.url, endpoint.headers, endpoint.output)
+            if (endpoint.stream) {
+                fetchEndpointStream(requestBody, quotes, endpoint.url, endpoint.headers, endpoint.output)
+            } else {
+                delete requestBody.stream
+                fetchEndpointNonStream(requestBody, quotes, endpoint.url, endpoint.headers, endpoint.output)
+            }
         } else {
             fetchWithRetry(requestBody, quotes);
         }
     }
-    function fetchEndpointWithRetry(requestBody, quotes, url, headers, path) {
+    /**
+     * Fetches data from a streaming endpoint and updates the UI with the response.
+     *
+     * @param {Object} requestBody - The request body to be sent to the endpoint.
+     * @param {string} quotes - Optional quotes to be included in the response.
+     * @param {string} url - The URL of the endpoint.
+     * @param {string} headers - The headers to be included in the request.
+     * @param {string} path - The path to extract the response data from.
+     * @return {Promise} A promise that resolves when the response is received and the UI is updated.
+     */
+    function fetchEndpointStream(requestBody, quotes, url, headers, path) {
+        const loadingMessage = displayMessage('Loading...', 'loading');
+        loadingMessage.innerHTML = '';
+        const textSpan = document.createElement('span');
+        textSpan.classList.add('message-content');
+        loadingMessage.appendChild(textSpan);
+        let allContent = quotes || '';
+        let buffer = '';
+        backButton.disabled = true;
+        abortController = new AbortController();
+        fetch(url, {
+            method: 'POST',
+            headers: JSON.parse(headers.replace(/'/g, '"')),
+            body: JSON.stringify(requestBody),
+            signal: abortController.signal
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Request to ${url} failed: ${response.statusText}`);
+            }
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            return reader.read().then(function processText({ done, value }) {
+                if (done) {
+                    document.getElementById('messageContainer').removeChild(loadingMessage);
+                    if (allContent.trim() === '') {
+                        allContent = 'No response from the API.';
+                    }
+                    displayMessage(allContent.trim(), 'assistant');
+                    conversationHistory.push({ role: 'assistant', content: allContent.trim() });
+                    saveChatToHistory();
+                    updateMessageCounters();
+                    revertSendButton();
+                    backButton.disabled = false;
+                    return;
+                }
+                const text = decoder.decode(value, { stream: true });
+                buffer += text;
+                let events = buffer.split('\n\n');
+                buffer = events.pop();
+                events.forEach(event => {
+                    try {
+                        if (event.startsWith('data: ')) {
+                            const jsonData = event.split('data: ')[1];
+                            if (jsonData === '[DONE]') {
+                                return;
+                            }
+                            const eventData = JSON.parse(jsonData);
+                            console.log(event)
+                            let output = eventData[path];
+                            console.log(JSON.stringify(eventData), "\n\n", "path: ", path, "\n\n",eventData[path], "\n\n", output)
+                            if (output) {
+                                allContent += output;
+                                parseMarkdownToHTML(textSpan, allContent);
+                                loadingMessage.className = 'assistant-message';
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse event:', e, 'Event:', event);
+                    }
+                });
+                return reader.read().then(processText);
+            });
+        })
+        .catch(e => {
+            if (e.name === 'AbortError') {
+                allowRetry = false;
+            } else {
+                console.error('Error:', e);
+            }
+            if (retries < maxRetries && allowRetry) {
+                retries++;
+                loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
+                setTimeout(tryFetch, 1000);
+            } else {
+                backButton.disabled = false;
+                conversationHistory.pop();
+                revertSendButton();
+                if (allowRetry) {
+                    loadingMessage.textContent = 'Failed to load response after multiple retries.';
+                    loadingMessage.className = 'error-message';
+                } else {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                    if (allContent.trim()) {
+                        addMessageToHistory(allContent.trim(), 'assistant');
+                        saveChatToHistory();
+                    }
+                }
+            }
+        });
+    }
+    /**
+     * Fetches data from a non-streaming endpoint and updates the UI with the response.
+     *
+     * @param {Object} requestBody - The request body to be sent to the endpoint.
+     * @param {string} quotes - Optional quotes to be included in the response.
+     * @param {string} url - The URL of the endpoint.
+     * @param {string} headers - The headers to be included in the request.
+     * @param {string} path - The path to extract the response data from.
+     */
+    function fetchEndpointNonStream(requestBody, quotes, url, headers, path) {
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
         const maxRetries = 2;
@@ -1673,7 +1820,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     return;
                                 }
                                 const eventData = JSON.parse(jsonData);
-                                if (eventData.choices && eventData.choices[0].delta && eventData.choices[0].delta.content) {
+                                if (eventData.choices[0].delta.content) {
                                     allContent += eventData.choices[0].delta.content;
                                     parseMarkdownToHTML(textSpan, allContent);
                                     loadingMessage.className = 'assistant-message';

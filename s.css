@@ -558,6 +558,7 @@ button.show-more-button {
 #settingsContent>input {
     width: 100px;
     border: 1px solid #ccc;
+    padding: 5px 10px;
     background-color: #333
 }
 
