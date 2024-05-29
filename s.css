@@ -555,6 +555,12 @@ button.show-more-button {
     background-color: #8f564c
 }
 
+#settingsContent #apiKey {
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 10px
+}
+
 #settingsContent>input {
     width: 100px;
     padding: 5px 10px;

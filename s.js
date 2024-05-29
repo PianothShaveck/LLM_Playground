@@ -688,6 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeModalButton = settingsModal.querySelector('.close');
     const saveSettingsButton = document.getElementById('saveSettingsButton');
     const saveSettingsButton2 = document.getElementById('saveSettingsButton2');
+    const apiKeyInput = document.getElementById('apiKey');
     const systemPromptInput = document.getElementById('systemPromptInput');
     const maxTokensInput = document.getElementById('maxTokensInput');
     const temperatureInput = document.getElementById('temperatureInput');
@@ -706,6 +707,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endpointOutputInput = document.getElementById('endpointOutput');
     const endpointStreamInput = document.getElementById('endpointStream');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
+    let apiKey = ''
     let maxTokens = 4096;
     let temperature = 1;
     let top_p = 1;
@@ -719,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             title: 'Anthropic API Claude 3 opus',
-            url: 'https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://api.anthropic.com/v1/messages',
+            url: 'https://api.anthropic.com/v1/messages',
             headers: "{'x-api-key': 'YOUR_API_KEY','Content-Type': 'application/json','anthropic-version': '2023-06-01'}",
             model: 'claude-3-opus-20240229',
             output: 'content[0].text'
@@ -747,6 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     settingsButton.addEventListener('click', function() {
+        apiKeyInput.value = document.getElementById('apiKey').value;
         systemPromptInput.value = document.getElementById('systemPromptInput').value;
         maxTokensInput.value = maxTokens;
         temperatureInput.value = temperature;
@@ -758,11 +761,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     let copyToFileEnabled = true;
     /**
-     * Loads settings from localStorage and updates the UI accordingly.
-     *
-     * This function retrieves the value of 'copyToFileEnabled' from localStorage and sets the corresponding checkbox in the UI.
-     * It also retrieves the value of 'webSearch' from localStorage and sets the corresponding radio button in the UI.
-     * Finally, it retrieves the value of 'endpoints' from localStorage and updates the 'endpoints' array.
+     * Loads the settings from the local storage and updates the corresponding UI elements.
      */
     function loadSettings() {
         const savedCopyToFileEnabled = localStorage.getItem('copyToFileEnabled');
@@ -778,15 +777,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (savedEndpoints !== null) {
             endpoints = JSON.parse(savedEndpoints);
         }
+        apiKey = localStorage.getItem('apiKey');
+        if (apiKey !== null) {
+            document.getElementById('apiKey').value = apiKey;
+        }
     }
     /**
      * Saves the current settings to the local storage.
      */
     function saveSettings() {
+        localStorage.setItem('apiKey', JSON.stringify(apiKey));
         localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
         localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
         localStorage.setItem('endpoints', JSON.stringify(endpoints));
     }
+    /**
+     * Saves the current settings and updates the UI accordingly.
+     */
     function saveSettingsButtonEvent() {
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
@@ -1157,6 +1164,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    /**
+     * Fetches a chat title based on the provided message content using the GPT-4 model.
+     *
+     * @param {string} messageContent - The content of the message to generate the chat title from.
+     * @param {number} chatIndex - The index of the chat.
+     * @return {Promise<string>} A promise that resolves with the generated chat title.
+     *                           Rejects if there is an error fetching the chat title.
+     */
     function fetchChatTitle(messageContent, chatIndex) {
         const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
         const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
@@ -1778,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', function() {
             abortController = new AbortController();
             fetch('https://api.discord.rocks/chat/completions', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
                 body: JSON.stringify(requestBody),
                 signal: abortController.signal
             })
