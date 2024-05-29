@@ -554,6 +554,8 @@ button.show-more-button {
 #settingsContent>input {
     width: 100px;
     background-color: #333;
+    border: 1px solid #ccc;
+    border-radius: 2vw;
     color: #f1f1f1
 }
 
@@ -816,7 +818,7 @@ body.light-mode button:hover {
     background-color: #ccc
 }
 
-body.light-mode #searchTextarea,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
+body.light-mode #searchTextarea,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea,body.light-mode #settingsModal input,body.light-mode #endpointSettingsModal input,body.light-mode #endpointSettingsModal textarea{
     color: #333;
     background: #fff
 }
