@@ -777,14 +777,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         apiKey = localStorage.getItem('apiKey');
         if (apiKey !== null) {
-            document.getElementById('apiKey').value = apiKey;
+            apiKeyInput.value = apiKey;
         }
     }
     /**
      * Saves the current settings to the local storage.
      */
     function saveSettings() {
-        localStorage.setItem('apiKey', JSON.stringify(apiKey));
+        localStorage.setItem('apiKey', apiKey);
         localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
         localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
         localStorage.setItem('endpoints', JSON.stringify(endpoints));
@@ -796,7 +796,6 @@ document.addEventListener('DOMContentLoaded', function() {
         apiKey = apiKeyInput.value;
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
-        document.getElementById('systemPromptInput').value = systemPromptInput.value;
         maxTokens = parseInt(maxTokensInput.value) || 4096;
         temperature = parseFloat(temperatureInput.value) || 1;
         top_p = parseFloat(top_pInput.value) || 1;
