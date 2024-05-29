@@ -717,14 +717,14 @@ document.addEventListener('DOMContentLoaded', function() {
             url: 'https://api.openai.com/v1/chat/completions',
             headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}",
             model: 'gpt-4o',
-            output: 'choices[0].message.content'
+            output: 'choices[0].delta.content'
         },
         {
             title: 'Anthropic API Claude 3 opus',
             url: 'https://api.anthropic.com/v1/messages',
             headers: "{'x-api-key': 'YOUR_API_KEY','Content-Type': 'application/json','anthropic-version': '2023-06-01'}",
             model: 'claude-3-opus-20240229',
-            output: 'content[0].text'
+            output: 'delta.text'
         }
     ];
     systemPromptInput.addEventListener('input', function() {
@@ -1610,14 +1610,12 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} url - The URL of the endpoint.
      * @param {string} headers - The headers to be included in the request.
      * @param {string} path - The path to extract the response data from.
-     * @return {Promise} A promise that resolves when the response is received and the UI is updated.
+     * @return {void} This function does not return anything.
      */
     function fetchEndpointStream(requestBody, quotes, url, headers, path) {
         const loadingMessage = displayMessage('Loading...', 'loading');
-        loadingMessage.innerHTML = '';
-        const textSpan = document.createElement('span');
-        textSpan.classList.add('message-content');
-        loadingMessage.appendChild(textSpan);
+        let retries = 0;
+        const maxRetries = 2;
         let allContent = quotes || '';
         let buffer = '';
         function tryFetch() {
@@ -1635,7 +1633,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder('utf-8');
-                return reader.read().then(function processText({ done, value }) {
+                loadingMessage.innerHTML = ''
+                const textSpan = document.createElement('span');
+                textSpan.classList.add('message-content');
+                loadingMessage.appendChild(textSpan);
+                /**
+                * Processes the text received from the reader.
+                *
+                * @param {Object} options - The options object.
+                * @param {boolean} options.done - Indicates if the reading is done.
+                * @param {ArrayBuffer} options.value - The value received from the reader.
+                */
+                function processText({ done, value }) {
                     if (done) {
                         document.getElementById('messageContainer').removeChild(loadingMessage);
                         if (allContent.trim() === '') {
@@ -1673,8 +1682,22 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.error('Failed to parse event:', e, 'Event:', event);
                         }
                     });
-                    return reader.read().then(processText);
-                });
+                    reader.read().then(processText).catch(e => {
+                        if (e.name === 'AbortError') {
+                            document.getElementById('messageContainer').removeChild(loadingMessage);
+                            conversationHistory.pop();
+                            backButton.disabled = false;
+                            if (allContent.trim()) {
+                                addMessageToHistory(allContent.trim(), 'assistant');
+                                saveChatToHistory();
+                                updateMessageCounters();
+                            }
+                        } else {
+                            console.error('Error:', e);
+                        }
+                    });
+                }
+                reader.read().then(processText);
             })
             .catch(e => {
                 if (e.name === 'AbortError') {
