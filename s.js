@@ -749,8 +749,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     settingsButton.addEventListener('click', function() {
-        apiKeyInput.value = document.getElementById('apiKey').value;
-        systemPromptInput.value = document.getElementById('systemPromptInput').value;
         maxTokensInput.value = maxTokens;
         temperatureInput.value = temperature;
         top_pInput.value = top_p;
@@ -795,6 +793,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * Saves the current settings and updates the UI accordingly.
      */
     function saveSettingsButtonEvent() {
+        apiKey = apiKeyInput.value;
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
         document.getElementById('systemPromptInput').value = systemPromptInput.value;
