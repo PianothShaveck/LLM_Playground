@@ -687,6 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const settingsModal = document.getElementById('settingsModal');
     const closeModalButton = settingsModal.querySelector('.close');
     const saveSettingsButton = document.getElementById('saveSettingsButton');
+    const saveSettingsButton2 = document.getElementById('saveSettingsButton2');
     const systemPromptInput = document.getElementById('systemPromptInput');
     const maxTokensInput = document.getElementById('maxTokensInput');
     const temperatureInput = document.getElementById('temperatureInput');
@@ -786,7 +787,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
         localStorage.setItem('endpoints', JSON.stringify(endpoints));
     }
-    saveSettingsButton.addEventListener('click', function() {
+    function saveSettingsButtonEvent() {
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
         document.getElementById('systemPromptInput').value = systemPromptInput.value;
@@ -794,7 +795,9 @@ document.addEventListener('DOMContentLoaded', function() {
         temperature = parseFloat(temperatureInput.value) || 1;
         top_p = parseFloat(top_pInput.value) || 1;
         settingsModal.style.display = 'none';
-    });
+    }
+    saveSettingsButton.addEventListener('click', saveSettingsButtonEvent);
+    saveSettingsButton2.addEventListener('click', saveSettingsButtonEvent);
     window.addEventListener('click', function(event) {
         if (event.target === settingsModal) {
             settingsModal.style.display = 'none';
@@ -913,6 +916,17 @@ document.addEventListener('DOMContentLoaded', function() {
     closeEndpointSettingsModalButton.addEventListener('click', () => {
         endpointSettingsModal.style.display = 'none';
     });
+    /**
+     * Extracts data from a JSON object based on a given path string.
+     *
+     * @param {Object} data - The JSON object to extract data from.
+     * @param {string} path - The path string indicating the location of the desired data.
+     * @return {*} The extracted data, or undefined if the path does not exist.
+     */
+    function extractData(data, path) {
+        const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+        return keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, data);
+    }
     function testEndpoint(endpoint) {
         const headers = JSON.parse(endpoint.headers.replace(/'/g, '"'));
         const body = JSON.stringify({
@@ -927,25 +941,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (isStreaming) {
                         const events = data;
                         const possiblePaths = [
-                            'choices[0].delta.content',  // OpenAI, Groq
-                            'content[0].delta.text',   // Anthropic
-                            'choices[0].text',         // Other potential paths
-                            'content',                  // Other potential paths
-                            'delta.content',           // Other potential paths
-                            'text'                     // Other potential paths
+                            'choices[0].delta.content',
+                            'content[0].delta.text',
+                            'choices[0].text',
+                            'content',
+                            'delta.content',
+                            'delta.text',
+                            'text'
                         ];
                         for (const path of possiblePaths) {
                             for (const event of events) {
                                 if (event.startsWith('data: ')) {
                                     try {
                                         const jsonData = JSON.parse(event.substring(5).trim());
-                                        let output = jsonData[path];
+                                        let output = extractData(jsonData, path);
                                         if (typeof output === 'string' && output.trim() !== '') {
-                                            if (confirm(
-                                                `Auto-detected output path as '${path}' for streaming response. Is this correct?`
-                                            )) {
-                                                return res(path);
-                                            }
+                                            return res(path);
                                         }
                                     } catch (e) {
                                         // Ignore errors for invalid paths
@@ -955,11 +966,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         rej(new Error('Failed to auto-detect output path for streaming response.'));
                     } else {
-                        // Non-streaming response - use existing logic with additional paths
                         try {
-                            let output = data[endpoint.output];
+                            let output = extractData(data, endpoint.output);
                             if (typeof output !== 'string') {
                                 throw new Error(`Output is not a string: ${typeof output}`);
+                            }
+                            if (output.trim() === '') {
+                                throw new Error('Output is empty');
                             }
                             res(endpoint.output);
                         } catch (e) {
@@ -967,16 +980,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                 'choices[0].message.content': data?.choices?.[0]?.message?.content,
                                 'content[0].text': data?.content?.[0]?.text,
                                 'response': data?.response,
-                                'text': data?.text, // Bard
-                                'choices[0].message': data?.choices?.[0]?.message // Poe
+                                'text': data?.text,
+                                'choices[0].message': data?.choices?.[0]?.message
                             };
                             for (const [key, value] of Object.entries(commonPaths)) {
                                 if (typeof value === 'string') {
-                                    if (confirm(
-                                        `${endpoint.output} isn't a valid path. However, '${key}' exists with this text: \n\n"${value}"\n\nChange output path to '${key}'?`
-                                    )) {
-                                        return res(key);
-                                    }
+                                    return res(key);
                                 }
                             }
                             rej(new Error(`Invalid output path: ${e.message}`));
@@ -989,7 +998,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(`${response.statusText}`);
                 }
                 if (endpoint.stream) {
-                    // Handle streaming response
                     const reader = response.body.getReader();
                     const decoder = new TextDecoder('utf-8');
                     let events = [];
@@ -1001,18 +1009,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         const text = decoder.decode(value, { stream: true });
                         buffer += text;
                         events = events.concat(buffer.split('\n\n'));
-                        buffer = events.pop(); // Keep the last incomplete event in the buffer
+                        buffer = events.pop();
                         return reader.read().then(processText);
                     });
                 } else {
-                    // Handle non-streaming response
                     if (response.headers.get('content-type')?.includes('application/json')) {
                         return response.json().then(data => testOutput(data, false));
                     }
                     throw new Error('The response is not JSON');
                 }
             }
-            // Make the test request
             fetch(endpoint.url.trim(), { method: 'POST', headers, body })
                 .then(checkResponse)
                 .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
@@ -1596,88 +1602,89 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingMessage.appendChild(textSpan);
         let allContent = quotes || '';
         let buffer = '';
-        backButton.disabled = true;
-        abortController = new AbortController();
-        fetch(url, {
-            method: 'POST',
-            headers: JSON.parse(headers.replace(/'/g, '"')),
-            body: JSON.stringify(requestBody),
-            signal: abortController.signal
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Request to ${url} failed: ${response.statusText}`);
-            }
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder('utf-8');
-            return reader.read().then(function processText({ done, value }) {
-                if (done) {
-                    document.getElementById('messageContainer').removeChild(loadingMessage);
-                    if (allContent.trim() === '') {
-                        allContent = 'No response from the API.';
-                    }
-                    displayMessage(allContent.trim(), 'assistant');
-                    conversationHistory.push({ role: 'assistant', content: allContent.trim() });
-                    saveChatToHistory();
-                    updateMessageCounters();
-                    revertSendButton();
-                    backButton.disabled = false;
-                    return;
+        function tryFetch() {
+            backButton.disabled = true;
+            abortController = new AbortController();
+            fetch(url, {
+                method: 'POST',
+                headers: JSON.parse(headers.replace(/'/g, '"')),
+                body: JSON.stringify(requestBody),
+                signal: abortController.signal
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Request to ${url} failed: ${response.statusText}`);
                 }
-                const text = decoder.decode(value, { stream: true });
-                buffer += text;
-                let events = buffer.split('\n\n');
-                buffer = events.pop();
-                events.forEach(event => {
-                    try {
-                        if (event.startsWith('data: ')) {
-                            const jsonData = event.split('data: ')[1];
-                            if (jsonData === '[DONE]') {
-                                return;
-                            }
-                            const eventData = JSON.parse(jsonData);
-                            console.log(event)
-                            let output = eventData[path];
-                            console.log(JSON.stringify(eventData), "\n\n", "path: ", path, "\n\n",eventData[path], "\n\n", output)
-                            if (output) {
-                                allContent += output;
-                                parseMarkdownToHTML(textSpan, allContent);
-                                loadingMessage.className = 'assistant-message';
-                            }
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                return reader.read().then(function processText({ done, value }) {
+                    if (done) {
+                        document.getElementById('messageContainer').removeChild(loadingMessage);
+                        if (allContent.trim() === '') {
+                            allContent = 'No response from the API.';
                         }
-                    } catch (e) {
-                        console.error('Failed to parse event:', e, 'Event:', event);
-                    }
-                });
-                return reader.read().then(processText);
-            });
-        })
-        .catch(e => {
-            if (e.name === 'AbortError') {
-                allowRetry = false;
-            } else {
-                console.error('Error:', e);
-            }
-            if (retries < maxRetries && allowRetry) {
-                retries++;
-                loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
-                setTimeout(tryFetch, 1000);
-            } else {
-                backButton.disabled = false;
-                conversationHistory.pop();
-                revertSendButton();
-                if (allowRetry) {
-                    loadingMessage.textContent = 'Failed to load response after multiple retries.';
-                    loadingMessage.className = 'error-message';
-                } else {
-                    loadingMessage.parentNode.removeChild(loadingMessage);
-                    if (allContent.trim()) {
-                        addMessageToHistory(allContent.trim(), 'assistant');
+                        displayMessage(allContent.trim(), 'assistant');
+                        conversationHistory.push({ role: 'assistant', content: allContent.trim() });
                         saveChatToHistory();
+                        updateMessageCounters();
+                        revertSendButton();
+                        backButton.disabled = false;
+                        return;
+                    }
+                    const text = decoder.decode(value, { stream: true });
+                    buffer += text;
+                    let events = buffer.split('\n\n');
+                    buffer = events.pop();
+                    events.forEach(event => {
+                        try {
+                            if (event.startsWith('data: ')) {
+                                const jsonData = event.split('data: ')[1];
+                                if (jsonData === '[DONE]') {
+                                    return;
+                                }
+                                const eventData = JSON.parse(jsonData);
+                                let output = extractData(eventData, path);
+                                if (output) {
+                                    allContent += output;
+                                    parseMarkdownToHTML(textSpan, allContent);
+                                    loadingMessage.className = 'assistant-message';
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse event:', e, 'Event:', event);
+                        }
+                    });
+                    return reader.read().then(processText);
+                });
+            })
+            .catch(e => {
+                if (e.name === 'AbortError') {
+                    allowRetry = false;
+                } else {
+                    console.error('Error:', e);
+                }
+                if (retries < maxRetries && allowRetry) {
+                    retries++;
+                    loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
+                    setTimeout(tryFetch, 1000);
+                } else {
+                    backButton.disabled = false;
+                    conversationHistory.pop();
+                    revertSendButton();
+                    if (allowRetry) {
+                        loadingMessage.textContent = 'Failed to load response after multiple retries.';
+                        loadingMessage.className = 'error-message';
+                    } else {
+                        loadingMessage.parentNode.removeChild(loadingMessage);
+                        if (allContent.trim()) {
+                            addMessageToHistory(allContent.trim(), 'assistant');
+                            saveChatToHistory();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+        tryFetch();
     }
     /**
      * Fetches data from a non-streaming endpoint and updates the UI with the response.
@@ -1709,12 +1716,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                let output;
-                try {
-                    output = eval(`data.${path}`);
-                } catch (e) {
-                    throw new Error(`Invalid output path: ${e.message}`);
-                }
+                let output = extractData(data, path);
                 if (typeof output !== 'string') {
                     throw new Error(`Output is not a string: ${typeof output}`);
                 }

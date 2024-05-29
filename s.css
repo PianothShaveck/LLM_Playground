@@ -248,12 +248,12 @@ textarea {
     grid-template-columns: repeat(3,auto)
 }
 
-#endpointsButton,#saveSettingsButton,#sendButton,#settingsContent>input,textarea {
+#endpointsButton,#saveSettingsButton,#saveSettingsButton2,#sendButton,#settingsContent>input,textarea {
     color: #f1f1f1;
     border-radius: 2vw
 }
 
-#endpointsButton,#saveSettingsButton,#sendButton {
+#endpointsButton,#saveSettingsButton,#saveSettingsButton2,#sendButton {
     font-size: 14px;
     background-color: #8f564c
 }
@@ -272,14 +272,14 @@ textarea {
     border-radius: 2vw
 }
 
-#addButton,#endpointsButton,#runButton,#saveSettingsButton,#sendButton {
+#addButton,#endpointsButton,#runButton,#saveSettingsButton,#saveSettingsButton2,#sendButton {
     margin-top: 10px;
     cursor: pointer;
     border: 0;
     grid-column: auto
 }
 
-#attachButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
+#attachButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSettingsButton2:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
     background-color: #8f564cd5
 }
 
