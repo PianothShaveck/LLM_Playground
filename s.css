@@ -274,7 +274,9 @@ textarea {
     margin-top: 10px;
     cursor: pointer;
     border: 0;
-    grid-column: auto
+    grid-column: auto;
+    width: 25px;            
+    height: 25px;
 }
 
 #attachButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
