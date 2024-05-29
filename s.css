@@ -248,7 +248,7 @@ textarea {
     grid-template-columns: repeat(3,auto)
 }
 
-#endpointsButton,#saveSettingsButton,#sendButton,textarea {
+#endpointsButton,#saveSettingsButton,#sendButton,#settingsContent>input,textarea {
     color: #f1f1f1;
     border-radius: 2vw
 }
@@ -263,9 +263,9 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 100%;
-    width: 25px;            
+    width: 25px;
     height: 25px;
+    border-radius: 100%
 }
 
 #runButton {
@@ -510,19 +510,23 @@ button.show-more-button {
     background-color: #555
 }
 
-#addEndpointButton,#endpointsList li button {
+#addEndpointButton {
+    cursor: pointer;
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color .3s;
+    background-color: #8f564c
+}
+
+#endpointsList li button,#systemPromptsList li button {
     padding: 5px 10px;
     cursor: pointer;
     color: #fff;
     border: 0;
     border-radius: 5px;
     background-color: #dc3545
-}
-
-#addEndpointButton {
-    padding: 10px 20px;
-    transition: background-color .3s;
-    background-color: #8f564c
 }
 
 #addEndpointButton:hover,#saveEndpointSettingsButton:hover {
@@ -553,10 +557,8 @@ button.show-more-button {
 
 #settingsContent>input {
     width: 100px;
-    background-color: #333;
     border: 1px solid #ccc;
-    border-radius: 2vw;
-    color: #f1f1f1
+    background-color: #333
 }
 
 #settingsContent>button {
@@ -633,12 +635,9 @@ button.export-button {
 
 .file-bubble .close-btn {
     font-size: .8em;
-    position: absolute;
     top: 2px;
     right: 2px;
     padding: 2px 5px;
-    cursor: pointer;
-    color: #f1f1f1;
     border: 0;
     border-radius: 50%
 }
@@ -652,21 +651,26 @@ button.export-button {
     width: 90%
 }
 
-#attachButton,.modal-header .close {
-    padding: 0 5px;
+#attachButton,.file-bubble .close-btn {
     cursor: pointer;
-    border-radius: 100%
+    position: absolute;
+    color: #f1f1f1
 }
 
 #attachButton {
-    position: absolute;
+    border-radius: 100%;
     z-index: 1;
     top: 50%;
     left: 10px;
     padding: 1px 5px;
     transform: translateY(-50%);
-    color: #f1f1f1;
     background-color: transparent
+}
+
+.modal-header .close {
+    padding: 0 5px;
+    cursor: pointer;
+    border-radius: 100%
 }
 
 .modal {
@@ -696,8 +700,7 @@ button.export-button {
 .modal-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px
+    justify-content: space-between
 }
 
 .file-bubble .close-btn,.modal-header .close,body.light-mode .modal-header .close {
@@ -709,11 +712,7 @@ button.export-button {
     flex-direction: column
 }
 
-#settingsContent>* {
-    margin-bottom: 10px
-}
-
-.web-search-toggle {
+#settingsContent>*,.modal-header,.web-search-toggle {
     margin-bottom: 10px
 }
 
@@ -721,7 +720,7 @@ button.export-button {
     margin-right: 10px
 }
 
-.web-search-options,.web-search-toggle {
+.toggle-container,.web-search-options,.web-search-toggle {
     display: flex;
     align-items: center
 }
@@ -818,7 +817,7 @@ body.light-mode button:hover {
     background-color: #ccc
 }
 
-body.light-mode #searchTextarea,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea,body.light-mode #settingsModal input,body.light-mode #endpointSettingsModal input,body.light-mode #endpointSettingsModal textarea{
+body.light-mode #endpointSettingsModal input,body.light-mode #endpointSettingsModal textarea,body.light-mode #searchTextarea,body.light-mode #settingsModal input,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
     color: #333;
     background: #fff
 }
@@ -839,11 +838,6 @@ body.light-mode .file-bubble {
 
 body.light-mode #attachButton,body.light-mode .model-selector label {
     color: #333
-}
-
-.toggle-container {
-    display: flex;
-    align-items: center
 }
 
 .switch {
@@ -934,23 +928,14 @@ input:checked+.slider:before {
 }
 
 #loadSystemPromptButton,#saveSystemPromptButton {
-    cursor: pointer;
-    color: #fff;
-    border: 0;
-    border-radius: 5px;
     margin: 10px;
     padding: 10px 20px;
-    transition: background-color .3s;
-    background-color: #8f564c
-}
-
-#systemPromptsList li button {
-    padding: 5px 10px;
     cursor: pointer;
+    transition: background-color .3s;
     color: #fff;
     border: 0;
     border-radius: 5px;
-    background-color: #dc3545
+    background-color: #8f564c
 }
 
 #systemPromptName {
