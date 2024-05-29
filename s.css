@@ -511,12 +511,12 @@ button.show-more-button {
 }
 
 #addEndpointButton {
+    padding: 10px 20px;
     cursor: pointer;
+    transition: background-color .3s;
     color: #fff;
     border: 0;
     border-radius: 5px;
-    padding: 10px 20px;
-    transition: background-color .3s;
     background-color: #8f564c
 }
 
@@ -557,8 +557,8 @@ button.show-more-button {
 
 #settingsContent>input {
     width: 100px;
-    border: 1px solid #ccc;
     padding: 5px 10px;
+    border: 1px solid #ccc;
     background-color: #333
 }
 
@@ -653,46 +653,46 @@ button.export-button {
 }
 
 #attachButton,.file-bubble .close-btn {
-    cursor: pointer;
     position: absolute;
+    cursor: pointer;
     color: #f1f1f1
 }
 
 #attachButton {
-    border-radius: 100%;
     z-index: 1;
     top: 50%;
     left: 10px;
     padding: 1px 5px;
     transform: translateY(-50%);
+    border-radius: 100%;
     background-color: transparent
 }
 
 .modal-header .close {
+    position: relative;
     display: inline-block;
     width: 20px;
     height: 20px;
-    border-radius: 50%;
-    background-color: #dc3545; /* couleur de fond */
-    position: relative;
+    cursor: pointer;
+    border-radius: 50%
 }
 
-.modal-header .close::before, .modal-header .close::after {
+.modal-header .close::after,.modal-header .close::before {
     position: absolute;
-    content: '';
-    width: 60%;
-    height: 1.5px; /* épaisseur de la croix */
-    background-color: #f1f1f1; /* couleur de la croix */
     top: 50%;
     left: 50%;
+    width: 60%;
+    height: 1.5px;
+    content: "";
+    background-color: #f1f1f1
 }
 
 .modal-header .close::before {
-    transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%,-50%) rotate(45deg)
 }
 
 .modal-header .close::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
+    transform: translate(-50%,-50%) rotate(-45deg)
 }
 
 .modal {
