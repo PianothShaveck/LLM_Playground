@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sanitizer: true,
             sanitize: true,
         });
+        populateDropdown(modelIds);
         loadChatFromUrl();
         loadSettings();
         updateMessageCounters();
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Fetch request timed out.');
                 document.getElementById('apiStatusMessage').textContent = 'Request to api.discord.rocks timed out.'
             } else {
-                console.error('Error fetching GPT API data:', e);
+                console.error('Error fetching api.discord.rocks data:', e);
             }
         });
     }
@@ -873,28 +874,35 @@ document.addEventListener('DOMContentLoaded', function() {
          * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
          */
         saveEndpointSettingsButton.onclick = () => {
-            const existingTitle = modelDropdown.querySelector(`option[value="${endpoint.title}"]`);
-            if (existingTitle) {
-                alert('An endpoint with the same title already exists. Please use a different title.');
-                return;
+            if (endpointTitleInput.value !== endpoint.title) {
+                const existingTitle = modelDropdown.querySelector(`option[value="${endpointTitleInput.value}"]`);
+                if (existingTitle) {
+                    alert('An endpoint with the same title already exists. Please use a different title.');
+                    return;
+                }
             }
             endpoints[index].title = endpointTitleInput.value;
             endpoints[index].url = endpointUrlInput.value;
             endpoints[index].headers = endpointHeadersInput.value;
             endpoints[index].output = endpointOutputInput.value;
             endpoints[index].model = endpointModelInput.value;
-            testEndpoint(endpoint).then(() => {
-                saveSettings();
-                const savedModels = localStorage.getItem('savedModels');
-                let savedModelIds = [];
-                if (savedModels) {
-                    savedModelIds = JSON.parse(savedModels);
-                }
-                savedModelIds.push(endpoint.title);
-                localStorage.setItem('savedModels', JSON.stringify(savedModelIds));
-                populateDropdown(modelIds);
-                alert(`Test request to the endpoint was successful! Model was ${endpoint.model} was added to the list of models.`)
-            })
+            testEndpoint(endpoint)
+                .then(([url, output]) => {
+                    endpoints[index].url = url
+                    endpoints[index].output = output
+                    saveSettings();
+                    const savedModels = localStorage.getItem('savedModels');
+                    let savedModelIds = [];
+                    if (savedModels) {
+                        savedModelIds = JSON.parse(savedModels);
+                    }
+                    savedModelIds.push(endpoint.title);
+                    localStorage.setItem('savedModels', JSON.stringify(savedModelIds));
+                    populateDropdown(modelIds);
+                    alert(`Test request to the endpoint was successful! Model was ${endpoint.model} was added to the list of models.`)
+                }, (e) => {
+                    alert(`Test request to the endpoint failed! ${e.message}`)
+                })
             endpointSettingsModal.style.display = 'none';
             loadEndpoints();
         }
@@ -903,56 +911,85 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointSettingsModal.style.display = 'none';
     });
     /**
-     * Sends a test request to the specified endpoint and checks if the response is valid.
+     * Tests an endpoint by sending a POST request with specified headers and body.
      *
-     * @param {Object} endpoint - The endpoint object containing the URL, headers, model, and output.
-     * @param {string} endpoint.url - The URL of the endpoint.
-     * @param {string} endpoint.headers - The headers for the request in JSON format.
-     * @param {string} endpoint.model - The model name to use for the request.
-     * @param {string} endpoint.output - The path to the output data in the response.
-     * @return {Promise<void>} A promise that resolves if the test request is successful and rejects otherwise.
-     * @throws {Error} If the test request fails or the output data is not a string.
+     * @param {Object} endpoint - The endpoint object containing the URL, headers, and model.
+     * @return {Promise<[string, string]>} A promise that resolves to an array containing the URL and the output path if the test is successful.
+     * @throws {Error} If the output path is invalid or the response is not JSON.
      */
     function testEndpoint(endpoint) {
-        const body = {
-            model: endpoint.model,
-            messages: [
-                {
-                    role: 'user',
-                    content: 'Hello, world'
-                }
-            ],
-            max_tokens: 10
-        }
+        const headers = JSON.parse(endpoint.headers.replace(/'/g, '"'));
+        const body = JSON.stringify({
+          model: endpoint.model,
+          messages: [{ role: 'user', content: 'Hello, world' }],
+          max_tokens: 10,
+        });
         return new Promise((resolve, reject) => {
-            fetch(endpoint.url.trim(), {
-                method: 'POST',
-                headers: JSON.parse(endpoint.headers.replace(/'/g, '"')),
-                body: JSON.stringify(body)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Test request failed: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                let output;
-                try {
-                    output = eval(`data.${endpoint.output}`);
-                } catch (e) {
-                    throw new Error(`Invalid output path: ${e.message}`);
-                }
+        /**
+         * Tests the output of a given data object and returns the output path if it is a string.
+         * If the output is not a string, it checks for common paths in the data object and prompts the user to change the output path if they exist.
+         * If no valid output path is found, it throws an error with the invalid output path message.
+         *
+         * @param {Object} data - The data object to test the output of.
+         * @return {Promise<string>} A promise that resolves to the output path if it is a string.
+         * @throws {Error} If the output path is invalid or the response is not JSON.
+         */
+          function testOutput(data) {
+            return new Promise((res, rej) => {
+              try {
+                let output = data[endpoint.output];
                 if (typeof output !== 'string') {
-                    throw new Error(`Output is not a string: ${typeof output}`);
+                  throw new Error(`Output is not a string: ${typeof output}`);
                 }
-                resolve();
-            })
-            .catch(e => {
-                alert(`Test request failed: ${e.message}`);
-                reject();
+                res(endpoint.output);
+              } catch (e) {
+                const commonPaths = {
+                  'choices[0].message.content': data?.choices?.[0]?.message?.content, 
+                  'content[0].text': data?.content?.[0]?.text,
+                  'response': data?.response,
+                };
+                for (const [key, value] of Object.entries(commonPaths)) {
+                  if (typeof value === 'string') {
+                    if (confirm(
+                      `${endpoint.output} isn't a valid path. However, '${key}' exists with this text: \n\n"${value}"\n\nChange output path to '${key}'?`
+                    )) {
+                      return res(key);
+                    }
+                  }
+                }
+                rej(new Error(`Invalid output path: ${e.message}`)); 
+              }
             });
-        })
+          }
+        /**
+         * Checks the response for errors and returns the JSON data if the content type is application/json.
+         *
+         * @param {Response} response - The response object to check.
+         * @return {Promise<Object>} A promise that resolves to the JSON data if the content type is application/json.
+         * @throws {Error} If the response is not ok or the content type is not application/json.
+         */
+        function checkResponse(response) {
+            if (!response.ok) {
+                throw new Error(`${response.statusText}`);
+            }
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            }
+            throw new Error('The response is not JSON');
+        }
+        fetch(endpoint.url.trim(), { method: 'POST', headers, body })
+            .then(checkResponse)
+            .then(testOutput)
+            .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
+            .catch((e) => {
+            const bypassCORSUrl = `https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?${endpoint.url.trim()}`;
+            fetch(bypassCORSUrl, { method: 'POST', headers, body })
+                .then(checkResponse)
+                .then(testOutput)
+                .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
+                .catch((e) => reject(e));
+            });
+        });
     }
     /**
      * Adds a message to the conversation history.
