@@ -237,7 +237,7 @@ textarea {
 
 #systemPromptInput {
     width: 90%;
-    margin-bottom: 10px;
+    margin: 0 auto;
     color: #ccc;
     background: #333
 }
@@ -531,12 +531,13 @@ button.show-more-button {
 
 #endpointSettingsModal input[type=text],#endpointSettingsModal textarea {
     width: 100%;
+    margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    color: #fff;
+    color: #f1f1f1;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #222
+    border-radius: 2vw;
+    background-color: #333
 }
 
 #endpointUrl {
@@ -548,6 +549,16 @@ button.show-more-button {
     transition: background-color .3s;
     border: 0;
     background-color: #8f564c
+}
+
+#settingsContent>input {
+    width: 100px;
+    background-color: #333;
+    color: #f1f1f1
+}
+
+#settingsContent>button {
+    padding: 8px
 }
 
 #saveEndpointSettingsButton {
@@ -691,13 +702,8 @@ button.export-button {
     background-color: #dc3545
 }
 
-.modal-body {
-    white-space: pre-wrap
-}
-
 #settingsContent {
     display: flex;
-    align-items: center;
     flex-direction: column
 }
 
@@ -706,7 +712,6 @@ button.export-button {
 }
 
 .web-search-toggle {
-    justify-content: space-between;
     margin-bottom: 10px
 }
 
@@ -836,8 +841,7 @@ body.light-mode #attachButton,body.light-mode .model-selector label {
 
 .toggle-container {
     display: flex;
-    align-items: center;
-    justify-content: space-between
+    align-items: center
 }
 
 .switch {
