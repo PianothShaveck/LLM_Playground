@@ -264,6 +264,8 @@ textarea {
     align-items: center;
     justify-content: center;
     border-radius: 100%
+    width: 25px;            
+    height: 25px;
 }
 
 #runButton {
