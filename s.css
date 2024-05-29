@@ -668,9 +668,30 @@ button.export-button {
 }
 
 .modal-header .close {
-    padding: 0 5px;
-    cursor: pointer;
-    border-radius: 100%
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #dc3545; /* couleur de fond */
+    position: relative;
+}
+
+.modal-header .close::before, .modal-header .close::after {
+    position: absolute;
+    content: '';
+    width: 60%;
+    height: 1.5px; /* épaisseur de la croix */
+    background-color: #f1f1f1; /* couleur de la croix */
+    top: 50%;
+    left: 50%;
+}
+
+.modal-header .close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modal-header .close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .modal {
