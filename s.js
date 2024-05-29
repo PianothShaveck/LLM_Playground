@@ -909,7 +909,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (savedModels) {
                         savedModelIds = JSON.parse(savedModels);
                     }
-                    savedModelIds.push(endpoint.title);
+                    if (!savedModelIds.includes(endpoint.title)) {
+                        savedModelIds.push(endpoint.title);
+                    }
                     localStorage.setItem('savedModels', JSON.stringify(savedModelIds));
                     populateDropdown(modelIds);
                     alert(`Test request to the endpoint was successful! Model was ${endpoint.model} was added to the list of models.`)
@@ -958,15 +960,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         ];
                         for (const path of possiblePaths) {
                             for (const event of events) {
-                                if (event.startsWith('data: ')) {
+                                const dataMatch = event.match(/data:\s*({.+?})\s*$/);
+                                if (dataMatch) {
                                     try {
-                                        const jsonData = JSON.parse(event.substring(5).trim());
+                                        const jsonData = JSON.parse(dataMatch[1]);
                                         let output = extractData(jsonData, path);
                                         if (typeof output === 'string' && output.trim() !== '') {
                                             return res(path);
                                         }
                                     } catch (e) {
-                                        // Ignore errors for invalid paths
+                                        console.error(e)
                                     }
                                 }
                             }
@@ -1652,8 +1655,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     buffer = events.pop();
                     events.forEach(event => {
                         try {
-                            if (event.startsWith('data: ')) {
-                                const jsonData = event.split('data: ')[1];
+                            const dataMatch = event.match(/data:\s*({.+?})\s*$/);
+                            if (dataMatch) {
+                                const jsonData = dataMatch[1];
                                 if (jsonData === '[DONE]') {
                                     return;
                                 }
