@@ -708,7 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endpointStreamInput = document.getElementById('endpointStream');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
     let apiKey = ''
-    let maxTokens = 4096;
+    let max_tokens = 4096;
     let temperature = 1;
     let top_p = 1;
     let endpoints = [
@@ -749,7 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     settingsButton.addEventListener('click', function() {
-        maxTokensInput.value = maxTokens;
+        maxTokensInput.value = max_tokens;
         temperatureInput.value = temperature;
         top_pInput.value = top_p;
         settingsModal.style.display = '';
@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', function() {
         apiKey = apiKeyInput.value;
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
-        maxTokens = parseInt(maxTokensInput.value) || 4096;
+        max_tokens = parseInt(maxTokensInput.value) || 4096;
         temperature = parseFloat(temperatureInput.value) || 1;
         top_p = parseFloat(top_pInput.value) || 1;
         settingsModal.style.display = 'none';
@@ -1166,7 +1166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     /**
-     * Fetches a chat title based on the provided message content using the GPT-4 model.
+     * Fetches a chat title based on the provided message content using the LLaMA 8B model.
      *
      * @param {string} messageContent - The content of the message to generate the chat title from.
      * @param {number} chatIndex - The index of the chat.
@@ -1179,40 +1179,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const spinner = document.createElement('span');
         spinner.className = 'loading-spinner';
         generateButton.appendChild(spinner);
-        const requestBody = {
-            model: 'llama3-8b-8192',
-            messages: [
-                {
-                    role: 'user',
-                    content: `Your task is to generate a title for the following conversation:
-
-                    <conversation>
-                    ${messageContent}
-                    </conversation>
-                    
-                    The title should concisely summarize the main topic or key points of the conversation in a catchy and engaging way.
-                    
-                    Use plain text for the title with no markdown formatting.
-                    
-                    Do not include any text before or after the title, and only output one title.
-                    
-                    Make sure your title is short and concise.
-                    
-                    Output your title between \` characters, like this: \`example title\``
-                }
-            ],
-            max_tokens: 40
-        };
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         return new Promise((resolve, reject) => {
-            fetch('https://api.groq.com/openai/v1/chat/completions', {
+            fetch('https://qualified-tea-403716.oa.r.appspot.com/api/title', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${gToken}`
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify({ messageContent })
             }).then(response => {
                 clearTimeout(timeoutId);
                 if (response.ok) {
@@ -1221,16 +1196,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(`Failed to fetch chat title: ${response.statusText}`);
                 }
             }).then(data => {
-                let title = data.choices[0].message.content.trim();
-                if (title && title.startsWith('`') && title.endsWith('`')) {
-                    title = title.slice(1, -1);
-                    if (title.startsWith('"') && title.endsWith('"')) {
-                        title = title.slice(1, -1);
-                    }
-                    updateChatTitle(title, chatIndex);
-                    resolve(title);
+                if (data.title) {
+                  updateChatTitle(data.title, chatIndex);
+                  resolve(data.title);
                 } else {
-                    throw new Error('Invalid title response');
+                  throw new Error('Invalid title response');
                 }
             }).catch(e => {
                 generateButton.removeChild(spinner);
@@ -1243,69 +1213,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         });
     }
-    /** PREVIOUS FUNCTION BASED ON https://api.discord.rocks/ask
-     * Fetches a chat title based on the provided message content using the GPT-4o model.
-     *
-     * @param {string} messageContent - The content of the message to generate the chat title from.
-     * @param {number} chatIndex - The index of the chat.
-     * @return {Promise<void>} A promise that resolves when the chat title is fetched and updated.
-     *                         Rejects if there is an error fetching the chat title.
-     *
-    function fetchChatTitle(messageContent, chatIndex) {
-        const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
-        const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
-        const spinner = document.createElement('span');
-        spinner.className = 'loading-spinner';
-        generateButton.appendChild(spinner);
-        const requestBody = {
-            model: 'gpt-4o',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You generate title to conversations. You do NOT respond to the message. You do NOT continue the conversation. You use plain text, no markdown.'
-                },
-                {
-                    role: 'user',
-                    content: 'IMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.\n\n---\n\nCONTEXT:\n\n' + messageContent + '\n\n---\n\nIMPORTANT: Only create a title for the chat based on the message or conversation. Do NOT respond to the message. Do NOT continue the conversation. Only generate a title. Use plain text, no markdown.'
-                }
-            ],
-            max_tokens: 20
-        };
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch('https://api.discord.rocks/ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
-            signal: controller.signal
-        })
-        .then(response => {
-            clearTimeout(timeoutId);
-            if (!response.ok) {
-                console.error('API returned error status:', response.status);
-                return;
-            }
-            return response.json();
-        })
-        .then(jsonData => {
-            if (jsonData.response && jsonData.response.length > 0) {
-                let title = jsonData.response.trim();
-                if (title.startsWith('"')) {
-                    title = title.endsWith('"') ? title.slice(1, -1) : title.slice(1);
-                }
-                updateChatTitle(title, chatIndex);
-            }
-        })
-        .catch(e => {
-            generateButton.removeChild(spinner);
-            if (e.name === 'AbortError') {
-                console.error('Fetch request for the chat title timed out.');
-            } else {
-                console.error('Error fetching chat title:', e);
-            }
-        });
-    }
-    /*
     /**
      * Updates the title of the chat at the specified index in the chat history stored in the local storage.
      *
@@ -1323,106 +1230,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Decides whether to fetch a web search query based on the provided message content using the LLaMA 8B model.
-     *
-     * @param {string} messageContent - The content of the message to generate the search query from.
-     * @return {Promise<string>} A promise that resolves with the generated search query or the string 'FwFCQI69pikGw6SQE2z6', or rejects with an error.
-     */
-    function fetchAutoWebSearchQuery(messageContent) {
-        const today = new Date();
-        const requestBody = {
-            model: 'llama3-8b-8192',
-            messages: [
-                {
-                    role: 'user',
-                    content: `Here is a conversation from the user:
-                    <conversation>
-                    ${JSON.stringify(messageContent)}
-                    </conversation>
-                    
-                    Please carefully analyze the conversation to determine if a web search is needed in order for you to provide an appropriate response to the latest message. 
-
-                    If you don't think you need to do a web search in order to respond, just reply with a very short message saying "NO".
-
-                    If you believe a search is necessary, generate a search query that you would enter into the DuckDuckGo search engine to find the most relevant information to help you respond.
-                    
-                    Keep it simple and short. Output your search query between \` characters, like this: \`example search query\`
-
-                    Respond with plain text only. Do not use any markdown formatting. Do not include any text before or after the search query.
-
-                    Remember, today's date is ${today.toDateString()}. Keep this date in mind to provide time-relevant context in your search query if needed.
-                    
-                    Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
-                }
-            ],
-            max_tokens: 40
-        };
-        return new Promise((resolve, reject) => {
-            fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${gToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                response = data.choices[0].message.content
-                if (response && response.startsWith('`') && response.endsWith('`')) {
-                    response = response.slice(1, -1);
-                    if (response.startsWith('"') && response.endsWith('"')) {
-                        response = response.slice(1, -1);
-                    }
-                    resolve(response);
-                } else {
-                    resolve('FwFCQI69pikGw6SQE2z6');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching web search query:', error);
-                reject(error);
-            });
-        });
-    }
-    /**
      * Fetches a web search query based on the provided message content using the LLaMA 8B model.
      *
      * @param {string} messageContent - The content of the message to generate the search query from.
-     * @return {Promise<string>} A promise that resolves with the generated search query, or rejects with an error.
+     * @param {boolean} [auto=false] - Whether to use the auto option for the API.
+     * @return {Promise<string>} A promise that resolves with the generated search query or rejects with an error.
      */
-    function fetchWebSearchQuery(messageContent) {
-        const today = new Date();
-        const requestBody = {
-            model: 'llama3-8b-8192',
-            messages: [
-                {
-                    role: 'user',
-                    content: `Here is a conversation from the user:
-                    <conversation>
-                    ${JSON.stringify(messageContent)}
-                    </conversation>
-                    
-                    Your task is to generate a search query that you would enter into the DuckDuckGo search engine to find information that could help respond to the user's message. Do not attempt to directly answer the message yourself. Instead, focus on creating a search query that would surface the most relevant information from DuckDuckGo.
-                    
-                    Keep it simple and short. Output your search query between \` characters, like this: \`example search query\`
-                    
-                    Respond with plain text only. Do not use any markdown formatting. Do not include any text before or after the search query.
-                    
-                    Remember, today's date is ${today.toDateString()}. Keep this date in mind to provide time-relevant context in your search query if needed.
-                    
-                    Focus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`
-                }
-            ],
-            max_tokens: 40
-        };
+    function fetchAutoWebSearchQuery(messageContent, auto = false) {
         return new Promise((resolve, reject) => {
-            fetch('https://api.groq.com/openai/v1/chat/completions', {
+            fetch('https://qualified-tea-403716.oa.r.appspot.com/api/search', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${gToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messageContent, auto })
             })
             .then(response => {
                 if (!response.ok) {
@@ -1431,16 +1250,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                response = data.choices[0].message.content
-                if (response && response.startsWith('`') && response.endsWith('`')) {
-                    response = response.slice(1, -1);
-                    if (response.startsWith('"') && response.endsWith('"')) {
-                        response = response.slice(1, -1);
-                    }
-                    resolve(response);
+                if (data.searchQuery) { 
+                    resolve(data.searchQuery);
                 } else {
-                    console.error('Invalid response from the API:', data);
-                    reject(new Error('Invalid response from the API'));
+                    reject(new Error('No search string found'));
                 }
             })
             .catch(error => {
@@ -1527,7 +1340,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
         if (webSearchToggle === 'on') {
             const loadingMessage = displayMessage('Thinking...', 'loading');
-            fetchWebSearchQuery(conversationHistory)
+            fetchAutoWebSearchQuery(conversationHistory)
                 .then(searchQuery => {
                     handleSendMessageWithSearch(loadingMessage, searchQuery)
                 })
@@ -1540,9 +1353,9 @@ document.addEventListener('DOMContentLoaded', function() {
             handleSendMessage();
         } else {
             const loadingMessage = displayMessage('Thinking...', 'loading');
-            fetchAutoWebSearchQuery(conversationHistory)
+            fetchAutoWebSearchQuery(conversationHistory, true)
                 .then(searchQuery => {
-                    if (!searchQuery || searchQuery === 'FwFCQI69pikGw6SQE2z6') {
+                    if (!searchQuery) {
                         document.getElementById('messageContainer').removeChild(loadingMessage)
                         handleSendMessage();
                     } else {
@@ -1570,7 +1383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1].\n\nIf you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2].\n\nThe links will be automatically filled, you don't have to include them if you use this format.`;
                 const selectedModel = modelDropdown.value;
                 const systemMessage = document.getElementById('systemPromptInput').value.trim();
-                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens: maxTokens, temperature: temperature, top_p: top_p, stream: true }
+                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens, temperature, top_p, stream: true }
                 document.getElementById('messageContainer').removeChild(loadingMessage)
                 handleSendMessage(body, searchResults.map((result, i) => `[${i + 1}]: ${result[1]}`).join('\n') + '\n')
             })
@@ -1586,7 +1399,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSendMessage(body = null, quotes = null) {
         const selectedModel = modelDropdown.value;
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
-        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens: maxTokens, temperature: temperature, top_p: top_p, stream: true } : body
+        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
         const endpoint = endpoints.find(endpoint => endpoint.title === selectedModel);
         if (endpoint) {
             requestBody.model = endpoint.model
@@ -2571,11 +2384,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function reverseString(str) {
         return str.split('').reverse().join('');
     }
-    // //Public tokens used only for LLM Playground
-    const encodedReversedToken = 'azFaTWlKNDBMeXhtMFQzMmZxcW4yYXlkOGxpWnJPT0VZbEhWNEtfcGhneDk=';
-    const encodedReversedGToken = 'c3A3ck9wM3JRbEgxckFKdHBlNWJPYjE5NkRtWUYzYnlkR1c3eDdMR1hIMlEzVmtndkQwRVpQaV9rc2c5eDE=';
-    const token = reverseString(atob(encodedReversedToken)).slice(2,-2);
-    const gToken = reverseString(atob(encodedReversedGToken)).slice(3,-3);
     /**
      * Saves the chat data to a GitHub Gist.
      *
@@ -2583,21 +2391,13 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {Promise} A promise that resolves when the chat data is successfully saved, or rejects with an error if there was a problem.
      */
     function saveChatToGist(chatData) {
-        const apiUrl = 'https://api.github.com/gists';
+        const apiUrl = 'https://qualified-tea-403716.oa.r.appspot.com/api/gist';
         fetch(apiUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `token ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                description: 'LLM Playground Chat',
-                public: true,
-                files: {
-                    'chat.json': {
-                        content: JSON.stringify(chatData)
-                    }
-                }
+                action: 'create',
+                content: JSON.stringify(chatData)
             })
         })
         .then(response => response.json())
