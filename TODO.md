@@ -1,11 +1,16 @@
 # Features to be implemented
 
-- Add support for other endpoints
+- Api key instead of headers for endpoints, and also hide the text of input
+- Remove "savedModels" and autocreate the list instead from valid endpoints instead
+- 
+- favorite model that auto-selects when calling the populateDropdown function
+- Mark in some way messages that contain quotes at the beginning of the message (after web search)
+- redesign settings window for other endpoints
 - Let users put their GitHub Gists key, in order to save the chats with no limits
-- Create a free backend (serverless? ideally without limits) to store the public tokens for groq and github gists
 - Possibility of moving messages up and down the history
+- image support (mainly for other endpoints)
 - advanced mode for web search
 - Prompt enhancement toggle
 - multiple language support
 - "Run and overwrite" button on messages?
-- (Redesign UI and make it more accessible)
+- (Gradually redesign UI and make it more accessible)
