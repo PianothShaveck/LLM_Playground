@@ -16,9 +16,31 @@ document.addEventListener('DOMContentLoaded', function() {
             sanitizer: true,
             sanitize: true,
         });
+        loadSettings();
+        endpoints.forEach(endpoint => {
+            if (endpoint.headers.includes('{')) {
+                try {
+                    endpoint.headers = endpoint.headers.replace(/'/g, '"');
+                    const parsedHeaders = JSON.parse(endpoint.headers);
+                    if (parsedHeaders.Authorization) {
+                        const apiKey = parsedHeaders.Authorization.split(' ')[1];
+                        if (apiKey) {
+                            endpoint.headers = apiKey;
+                        }
+                    } else if (parsedHeaders['x-api-key']) {
+                        const apiKey = parsedHeaders['x-api-key'];
+                        if (apiKey) {
+                            endpoint.headers = apiKey;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error parsing endpoint header:', error);
+                    endpoint.headers = '';
+                }
+            }
+        });
         populateDropdown(modelIds);
         loadChatFromUrl();
-        loadSettings();
         updateMessageCounters();
     });
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {});
@@ -72,17 +94,28 @@ document.addEventListener('DOMContentLoaded', function() {
         <option value='auto'>auto</option>`;
         const savedModels = localStorage.getItem('savedModels');
         if (savedModels) {
+            const savedModelIds = JSON.parse(savedModels);
+            savedModelIds.forEach(id => {
+                const endpoint = endpoints.find(endpoint => endpoint.title === id);
+                if (endpoint) {
+                    endpoint.tested = true;
+                }
+            });
+            localStorage.removeItem('savedModels');
+            localStorage.setItem('endpoints', JSON.stringify(endpoints));
+        }
+        if (endpoints.some(endpoint => endpoint.tested)) {
             const savedmodelsOption = document.createElement('option');
             savedmodelsOption.textContent = 'Saved endpoints';
             savedmodelsOption.disabled = true;
-            savedmodelsOption.selected = true;
             dropdown.appendChild(savedmodelsOption);
-            const savedModelIds = JSON.parse(savedModels);
-            savedModelIds.forEach(id => {
-                const option = document.createElement('option');
-                option.value = id;
-                option.textContent = id;
-                dropdown.appendChild(option);
+            endpoints.forEach(endpoint => {
+                if (endpoint.tested) {
+                    const option = document.createElement('option');
+                    option.value = endpoint.title;
+                    option.textContent = endpoint.title;
+                    dropdown.appendChild(option);
+                }
             });
         }
         const defaultOption = document.createElement('option');
@@ -715,14 +748,14 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             title: 'OpenAI API GPT-4o',
             url: 'https://api.openai.com/v1/chat/completions',
-            headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}",
+            headers: "YOUR_API_KEY",
             model: 'gpt-4o',
             output: 'choices[0].delta.content'
         },
         {
             title: 'Anthropic API Claude 3 opus',
             url: 'https://api.anthropic.com/v1/messages',
-            headers: "{'x-api-key': 'YOUR_API_KEY','Content-Type': 'application/json','anthropic-version': '2023-06-01'}",
+            headers: "YOUR_API_KEY",
             model: 'claude-3-opus-20240229',
             output: 'delta.text'
         }
@@ -853,9 +886,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.stopPropagation();
                 if (confirm('Are you sure you want to delete this endpoint?')) {
                     endpoints.splice(index, 1);
-                    const savedModels = JSON.parse(localStorage.getItem('savedModels')) || [];
-                    savedModels.splice(savedModels.indexOf(endpoint.title), 1);
-                    localStorage.setItem('savedModels', JSON.stringify(savedModels));
                     populateDropdown(modelIds);
                     saveSettings();
                     loadEndpoints();
@@ -901,16 +931,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(([url, output]) => {
                     endpoints[index].url = url
                     endpoints[index].output = output
+                    endpoints[index].tested = true
                     saveSettings();
-                    const savedModels = localStorage.getItem('savedModels');
-                    let savedModelIds = [];
-                    if (savedModels) {
-                        savedModelIds = JSON.parse(savedModels);
-                    }
-                    if (!savedModelIds.includes(endpoint.title)) {
-                        savedModelIds.push(endpoint.title);
-                    }
-                    localStorage.setItem('savedModels', JSON.stringify(savedModelIds));
                     populateDropdown(modelIds);
                     alert(`Test request to the endpoint was successful! Model was ${endpoint.model} was added to the list of models.`)
                 }, (e) => {
@@ -935,7 +957,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, data);
     }
     function testEndpoint(endpoint) {
-        const headers = JSON.parse(endpoint.headers.replace(/'/g, '"'));
+        const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
         const body = JSON.stringify({
             model: endpoint.model,
             messages: [{ role: 'user', content: 'Hello, world' }],
@@ -1401,13 +1423,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
         const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
         const endpoint = endpoints.find(endpoint => endpoint.title === selectedModel);
+        const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
         if (endpoint) {
             requestBody.model = endpoint.model
             if (endpoint.stream) {
-                fetchEndpointStream(requestBody, quotes, endpoint.url, endpoint.headers, endpoint.output)
+                fetchEndpointStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
             } else {
                 delete requestBody.stream
-                fetchEndpointNonStream(requestBody, quotes, endpoint.url, endpoint.headers, endpoint.output)
+                fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
             }
         } else {
             fetchWithRetry(requestBody, quotes);
@@ -1434,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', function() {
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
-                headers: JSON.parse(headers.replace(/'/g, '"')),
+                headers,
                 body: JSON.stringify(requestBody),
                 signal: abortController.signal
             })
@@ -1558,7 +1581,7 @@ document.addEventListener('DOMContentLoaded', function() {
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
-                headers: JSON.parse(headers.replace(/'/g, '"')),
+                headers,
                 body: JSON.stringify(requestBody),
                 signal: abortController.signal
             })

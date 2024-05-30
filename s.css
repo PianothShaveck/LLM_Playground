@@ -533,7 +533,7 @@ button.show-more-button {
     background-color: #8f564cd5
 }
 
-#endpointSettingsModal input[type=text],#endpointSettingsModal textarea {
+#endpointSettingsModal input {
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -845,7 +845,7 @@ body.light-mode button:hover {
     background-color: #ccc
 }
 
-body.light-mode #endpointSettingsModal input,body.light-mode #endpointSettingsModal textarea,body.light-mode #searchTextarea,body.light-mode #settingsModal input,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
+body.light-mode #endpointSettingsModal input,body.light-mode #searchTextarea,body.light-mode #settingsModal input,body.light-mode #systemPromptInput,body.light-mode pre,body.light-mode select,body.light-mode textarea {
     color: #333;
     background: #fff
 }

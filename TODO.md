@@ -1,7 +1,5 @@
 # Features to be implemented
 
-- Api key instead of headers for endpoints, and also hide the text of input
-- Remove "savedModels" and autocreate the list instead from valid endpoints instead
 - let users add multiple models for each endpoint
 - favorite model that auto-selects when calling the populateDropdown function
 - Mark in some way messages that contain quotes at the beginning of the message (after web search)
