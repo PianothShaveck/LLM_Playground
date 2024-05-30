@@ -956,6 +956,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
         return keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, data);
     }
+    /**
+     * Tests an endpoint by sending a POST request to the specified URL with the provided headers and body.
+     * If the endpoint is streaming, it reads the response and tries to auto-detect the output path.
+     * If the endpoint is not streaming, it checks the output path specified in the endpoint object.
+     *
+     * @param {Object} endpoint - The endpoint object containing the URL, headers, model, messages, max_tokens, and stream properties.
+     * @return {Promise<[string, string]>} A promise that resolves with an array containing the tested URL and the output path.
+     * @throws {Error} If the response is not OK or if the output path cannot be determined.
+     */
     function testEndpoint(endpoint) {
         const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
         const body = JSON.stringify({
@@ -965,6 +974,15 @@ document.addEventListener('DOMContentLoaded', function() {
             stream: endpoint.stream 
         });
         return new Promise((resolve, reject) => {
+            /**
+             * Tests the output of a given data object based on whether the endpoint is streaming or not.
+             * If the endpoint is streaming, it tries to auto-detect the output path from the data events.
+             * If the endpoint is not streaming, it checks the output path specified in the endpoint object.
+             *
+             * @param {Object} data - The data object to test the output from.
+             * @param {boolean} isStreaming - Indicates whether the endpoint is streaming or not.
+             * @return {Promise<string>} A promise that resolves with the output path if successful, or rejects with an error if the output path cannot be determined.
+             */
             function testOutput(data, isStreaming) {
                 return new Promise((res, rej) => {
                     if (isStreaming) {
@@ -1023,6 +1041,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+            /**
+             * Checks the response from a fetch request and throws an error if the response is not OK.
+             * If the response is streaming, it reads the response and tries to auto-detect the output path.
+             * If the response is not streaming, it checks the content type of the response and returns the output data.
+             *
+             * @param {Response} response - The response object from a fetch request.
+             * @return {Promise<[string, string]> | void} - A promise that resolves with an array containing the tested URL and the output path, or void if the response is not streaming.
+             * @throws {Error} - Throws an error if the response is not OK or if the response is not JSON.
+             */
             function checkResponse(response) {
                 if (!response.ok) {
                     throw new Error(`${response.statusText}`);
@@ -1423,8 +1450,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
         const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
         const endpoint = endpoints.find(endpoint => endpoint.title === selectedModel);
-        const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
         if (endpoint) {
+            const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
             requestBody.model = endpoint.model
             if (endpoint.stream) {
                 fetchEndpointStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
@@ -1433,7 +1460,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
             }
         } else {
-            fetchWithRetry(requestBody, quotes);
+            fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, 'choices[0].delta.content');
         }
     }
     /**
@@ -1607,123 +1634,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateMessageCounters();
                 revertSendButton();
                 backButton.disabled = false;
-            })
-            .catch(e => {
-                if (e.name === 'AbortError') {
-                    allowRetry = false;
-                } else {
-                    console.error('Error:', e);
-                }
-                if (retries < maxRetries && allowRetry) {
-                    retries++;
-                    loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
-                    setTimeout(tryFetch, 1000);
-                } else {
-                    backButton.disabled = false;
-                    conversationHistory.pop();
-                    revertSendButton();
-                    if (allowRetry) {
-                        loadingMessage.textContent = 'Failed to load response after multiple retries.';
-                        loadingMessage.className = 'error-message';
-                    } else {
-                        loadingMessage.parentNode.removeChild(loadingMessage);
-                        if (allContent.trim()) {
-                            addMessageToHistory(allContent.trim(), 'assistant');
-                            saveChatToHistory();
-                        }
-                    }
-                }
-            });
-        }
-        tryFetch();
-    }
-    /**
-     * Fetches data from the server with retries.
-     *
-     * @param {Object} requestBody - The request body.
-     * @param {string} quotes - The quotes.
-     */
-    function fetchWithRetry(requestBody, quotes) {
-        const loadingMessage = displayMessage('Loading...', 'loading');
-        let retries = 0;
-        const maxRetries = 2;
-        let allContent = quotes || '';
-        let buffer = '';
-        function tryFetch() {
-            backButton.disabled = true;
-            abortController = new AbortController();
-            fetch('https://api.discord.rocks/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-                body: JSON.stringify(requestBody),
-                signal: abortController.signal
-            })
-            .then(response => {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                loadingMessage.innerHTML = ''
-                const textSpan = document.createElement('span');
-                textSpan.classList.add('message-content');
-                loadingMessage.appendChild(textSpan);
-                /**
-                 * Processes the text received from the reader.
-                 *
-                 * @param {Object} options - The options object.
-                 * @param {boolean} options.done - Indicates if the reading is done.
-                 * @param {ArrayBuffer} options.value - The value received from the reader.
-                 */
-                function processText({ done, value }) {
-                    if (done) {
-                        document.getElementById('messageContainer').removeChild(loadingMessage);
-                        if (allContent.trim() === '') {
-                            allContent = 'No response from the API.';
-                        }
-                        displayMessage(allContent.trim(), 'assistant');
-                        conversationHistory.push({ role: 'assistant', content: allContent.trim() });
-                        saveChatToHistory();
-                        updateMessageCounters();
-                        revertSendButton();
-                        backButton.disabled = false;
-                        return;
-                    }
-                    const text = decoder.decode(value, { stream: true });
-                    buffer += text;
-                    let events = buffer.split('\n\n');
-                    buffer = events.pop();
-                    events.forEach(event => {
-                        try {
-                            if (event.startsWith('data: ')) {
-                                const jsonData = event.split('data: ')[1];
-                                if (jsonData === '[DONE]') {
-                                    return;
-                                }
-                                const eventData = JSON.parse(jsonData);
-                                if (eventData.choices[0].delta.content) {
-                                    allContent += eventData.choices[0].delta.content;
-                                    parseMarkdownToHTML(textSpan, allContent);
-                                    loadingMessage.className = 'assistant-message';
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Failed to parse event:', e, 'Event:', event);
-                        }
-                    });
-                    reader.read().then(processText).catch(e => {
-                        if (e.name === 'AbortError') {
-                            document.getElementById('messageContainer').removeChild(loadingMessage);
-                            conversationHistory.pop();
-                            backButton.disabled = false;
-                            if (allContent.trim()) {
-                                addMessageToHistory(allContent.trim(), 'assistant');
-                                saveChatToHistory();
-                                updateMessageCounters();
-                            }
-                        } else {
-                            console.error('Error:', e);
-                        }
-                    });
-                }
-                reader.read().then(processText);
             })
             .catch(e => {
                 if (e.name === 'AbortError') {
