@@ -112,8 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
             endpoints.forEach(endpoint => {
                 if (endpoint.tested) {
                     const option = document.createElement('option');
-                    option.value = endpoint.title;
-                    option.textContent = endpoint.title;
+                    const title = `${endpoint.title} - ${endpoint.model}`
+                    option.value = title;
+                    option.textContent = title;
                     dropdown.appendChild(option);
                 }
             });
@@ -914,8 +915,8 @@ document.addEventListener('DOMContentLoaded', function() {
          * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
          */
         saveEndpointSettingsButton.onclick = () => {
-            if (endpointTitleInput.value !== endpoint.title) {
-                const existingTitle = modelDropdown.querySelector(`option[value="${endpointTitleInput.value}"]`);
+            if (endpointTitleInput.value !== endpoint.title || endpointModelInput.value !== endpoint.model) {
+                const existingTitle = modelDropdown.querySelector(`option[value="${endpointTitleInput.value} - ${endpointModelInput.value}"]`);
                 if (existingTitle) {
                     alert('An endpoint with the same title already exists. Please use a different title.');
                     return;
@@ -1449,7 +1450,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedModel = modelDropdown.value;
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
         const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
-        const endpoint = endpoints.find(endpoint => endpoint.title === selectedModel);
+        const endpoint = endpoints.find(endpoint => `${endpoint.title} - ${endpoint.model}` === selectedModel);
         if (endpoint) {
             const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
             requestBody.model = endpoint.model
