@@ -682,9 +682,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addButton.addEventListener('click', () => addMessageToHistory(messageBox.value.trim()));
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
-    backButton.addEventListener('click', () => {
-        abortMessageSending().then(setTimeout(endChatSession, 0));
-    });
+    backButton.addEventListener('click', endChatSession);
     infoLink.addEventListener('click', showInfo);
     /**
      * Displays information about the application and prompts the user to visit the Discord Rocks API website if confirmed.
@@ -1548,6 +1546,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let allContent = quotes || '';
         let buffer = '';
         function tryFetch() {
+            backButton.disabled = true;
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
@@ -1583,6 +1582,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         saveChatToHistory();
                         updateMessageCounters();
                         revertSendButton();
+                        backButton.disabled = false;
                         return;
                     }
                     const text = decoder.decode(value, { stream: true });
@@ -1613,6 +1613,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (e.name === 'AbortError') {
                             document.getElementById('messageContainer').removeChild(loadingMessage);
                             conversationHistory.pop();
+                            backButton.disabled = false;
                             if (allContent.trim()) {
                                 addMessageToHistory(allContent.trim(), 'assistant');
                                 saveChatToHistory();
@@ -1636,6 +1637,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
                     setTimeout(tryFetch, 1000);
                 } else {
+                    backButton.disabled = false;
                     conversationHistory.pop();
                     revertSendButton();
                     if (allowRetry) {
@@ -1668,6 +1670,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const maxRetries = 2;
         let allContent = quotes || '';
         function tryFetch() {
+            backButton.disabled = true;
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
@@ -1696,6 +1699,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveChatToHistory();
                 updateMessageCounters();
                 revertSendButton();
+                backButton.disabled = false;
             })
             .catch(e => {
                 if (e.name === 'AbortError') {
@@ -1708,6 +1712,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
                     setTimeout(tryFetch, 1000);
                 } else {
+                    backButton.disabled = false;
                     conversationHistory.pop();
                     revertSendButton();
                     if (allowRetry) {
@@ -1737,16 +1742,17 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.removeEventListener('click', handleAbortClick);
         sendButton.addEventListener('click', handleSendClick);
         sendButton.className = '';
-    }
+    }    
     /**
      * Aborts the current message sending process, saves the chat to history, adds the last message to the conversation history,
      * aborts the current request, creates a new AbortController, and reverts the send button.
      *
-     * @return {Promise<void>} A promise that resolves when the message sending process is aborted.
+     * @return {Promise<void>} A promise that resolves when the abort process is complete.
      */
     function abortMessageSending() {
         return new Promise(resolve => {
             saveChatToHistory();
+            conversationHistory.push(conversationHistory.slice(-1)[0]);
             abortController.abort();
             abortController = new AbortController();
             revertSendButton();
