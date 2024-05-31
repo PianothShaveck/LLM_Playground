@@ -224,6 +224,7 @@ select.role-selector:focus,select:focus {
 }
 
 textarea {
+    font-family: Arial, sans-serif;
     overflow-y: auto;
     flex-grow: 1;
     box-sizing: border-box;
@@ -693,7 +694,7 @@ button.export-button {
 
 #attachButton {
     z-index: 1;
-    top: 50%;
+    top: 25.5px;
     left: 10px;
     width: 25px;
     height: 25px;
@@ -1090,5 +1091,9 @@ input:checked+.slider:before {
     #addButton {
         width: 35px;            
         height: 35px;
+    }
+
+    #addModelButton,#attachButton {
+        padding: 0px
     }
 }

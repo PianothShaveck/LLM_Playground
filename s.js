@@ -1751,7 +1751,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {HTMLTextAreaElement} textarea - The textarea element to adjust.
      */
     function adjustTextareaHeight(textarea) {
-        textarea.style.height = 'auto';
+        textarea.style.height = '51px';
+        textarea.style.paddingTop = '17.6px'
         textarea.style.height = textarea.scrollHeight + 'px';
         const maxTextBoxHeight = attachedFiles.length > 0 ? 'calc(30vh - 60px)' : '30vh';
         textarea.style.maxHeight = maxTextBoxHeight;
