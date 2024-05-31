@@ -748,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endpointTitleInput = document.getElementById('endpointTitle');
     const endpointUrlInput = document.getElementById('endpointUrl');
     const endpointHeadersInput = document.getElementById('endpointHeaders');
-    const endpointModelInput = document.getElementById('endpointModel');
+    const toggleApiKeyButton = document.getElementById('toggleApiKeyVisibility');
     const endpointOutputInput = document.getElementById('endpointOutput');
     const endpointStreamInput = document.getElementById('endpointStream');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
@@ -772,6 +772,15 @@ document.addEventListener('DOMContentLoaded', function() {
             output: 'delta.text'
         }
     ];
+    toggleApiKeyButton.addEventListener('click', () => {
+        if (endpointHeadersInput.type === 'password') {
+            endpointHeadersInput.type = 'text';
+            toggleApiKeyButton.textContent = 'Hide';
+        } else {
+            endpointHeadersInput.type = 'password';
+            toggleApiKeyButton.textContent = 'Show';
+        }
+    });
     systemPromptInput.addEventListener('input', function() {
         adjustTextareaHeight(this);
     });
@@ -1300,7 +1309,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ messageContent })
+                body: JSON.stringify({ messageContent }),
+                signal: controller.signal
             }).then(response => {
                 clearTimeout(timeoutId);
                 if (response.ok) {
@@ -1354,7 +1364,8 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch('https://qualified-tea-403716.oa.r.appspot.com/api/search', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messageContent, auto })
+                body: JSON.stringify({ messageContent, auto }),
+                signal: abortController.signal
             })
             .then(response => {
                 if (!response.ok) {
@@ -1369,9 +1380,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     reject(new Error('No search string found'));
                 }
             })
-            .catch(error => {
-                console.error('Error fetching web search query:', error);
-                reject(error);
+            .catch(e => {
+                if (e.name === 'AbortError') {
+                    reject(new Error('Request aborted'));
+                } else {
+                    console.error('Error fetching web search query:', e);
+                    reject(e);
+                }
             });
         });
     }
@@ -1385,7 +1400,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function fetchSearchResults(query) {        
         return new Promise((resolve, reject) => {
-            fetch(`https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://duckduckgo.com/html/?q=${encodeURIComponent(query)}`)
+            fetch(`https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {signal: abortController.signal})
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -1409,9 +1424,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         resolve('No search results found');
                     }
                 })
-                .catch(error => {
-                    console.error('Error fetching search results:', error);
-                    reject(error);
+                .catch(e => {
+                    if (e.name === 'AbortError') {
+                        reject(new Error('Search aborted.'));
+                    } else {
+                        console.error('Error fetching search results:', e);
+                        reject(e);
+                    }
                 });
         });
     }
@@ -1453,19 +1472,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
         if (webSearchToggle === 'on') {
             const loadingMessage = displayMessage('Thinking...', 'loading');
+            abortController = new AbortController();
             fetchAutoWebSearchQuery(conversationHistory)
                 .then(searchQuery => {
                     handleSendMessageWithSearch(loadingMessage, searchQuery)
                 })
-                .catch(error => {
-                    console.error('Error in web search:', error);
+                .catch(e => {
                     document.getElementById('messageContainer').removeChild(loadingMessage)
-                    handleSendMessage();
+                    if (e.message !== 'Request aborted') handleSendMessage();
                 });
         } else if (webSearchToggle === 'off') {
             handleSendMessage();
         } else {
             const loadingMessage = displayMessage('Thinking...', 'loading');
+            abortController = new AbortController();
             fetchAutoWebSearchQuery(conversationHistory, true)
                 .then(searchQuery => {
                     if (!searchQuery) {
@@ -1475,10 +1495,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         handleSendMessageWithSearch(loadingMessage, searchQuery)
                     }
                 })
-                .catch(error => {
-                    console.error('Error in auto web search:', error);
+                .catch(e => {
                     document.getElementById('messageContainer').removeChild(loadingMessage)
-                    handleSendMessage()
+                    if (e.message !== 'Request aborted') handleSendMessage();
                 });
         }
     }
@@ -1500,10 +1519,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('messageContainer').removeChild(loadingMessage)
                 handleSendMessage(body, searchResults.map((result, i) => `[${i + 1}]: ${result[1]}`).join('\n') + '\n')
             })
-            .catch(error => {
-                console.error('Error in search:', error);
+            .catch(e => {
+                console.error('Error in search:', e);
                 document.getElementById('messageContainer').removeChild(loadingMessage)
-                handleSendMessage()
+                if (e.message !== 'Search aborted.') handleSendMessage()
             });
     }
     /**

@@ -280,7 +280,7 @@ textarea {
     grid-column: auto
 }
 
-#attachButton:hover,#addModelButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSettingsButton2:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
+#attachButton:hover,#addModelButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSettingsButton2:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#toggleApiKeyVisibility:hover {
     background-color: #8f564cd5
 }
 
@@ -677,6 +677,14 @@ button.export-button {
     width: 90%
 }
 
+#toggleApiKeyVisibility {
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    background-color: #8f564c
+}
 #addModelButton {
     width: 25px;
     height: 25px;
