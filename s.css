@@ -201,7 +201,8 @@ header h1 {
 }
 
 .model-selector-right {
-    margin-left: auto
+    margin-left: auto;
+    margin-right: auto
 }
 
 .model-selector label {
@@ -346,6 +347,19 @@ textarea {
     background: #8f564c
 }
 
+.image-message {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0;
+}
+
+.image-message img {
+    cursor: pointer;
+    max-width: 40%;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
 .chat-controls {
     margin-top: 10px
 }
@@ -380,7 +394,7 @@ textarea {
     padding: 8px 16px
 }
 
-.assistant-message {
+.assistant-message,.user-message {
     width: auto
 }
 
@@ -396,10 +410,6 @@ textarea {
     margin: 10px 0;
     padding: 18px;
     border-radius: 2vw
-}
-
-.user-message {
-    width: auto
 }
 
 .system-message {

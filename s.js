@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const savedFavoriteModel = localStorage.getItem('favoriteModel');
                 if (savedFavoriteModel) {
                     favoriteModelDropdown.value = savedFavoriteModel;
-                    dropdown.value = savedFavoriteModel; 
+                    modelDropdown.value = savedFavoriteModel; 
                 }
             }})
         .catch(e => {
@@ -89,9 +89,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    let dropdown = document.getElementById('modelDropdown');
     function populateDropdown(modelIds) {
-        dropdown.innerHTML = `<option disabled>Popular models</option>
+        modelDropdown.innerHTML = `<option disabled>Popular models</option>
         <option value='auto'>auto</option>
         <option value='gpt-4o'>gpt-4o</option>
         <option value='claude-3-opus'>claude-3-opus</option>
@@ -112,30 +111,37 @@ document.addEventListener('DOMContentLoaded', function() {
             const savedmodelsOption = document.createElement('option');
             savedmodelsOption.textContent = 'Saved endpoints';
             savedmodelsOption.disabled = true;
-            dropdown.appendChild(savedmodelsOption);
+            modelDropdown.appendChild(savedmodelsOption);
             endpoints.forEach(endpoint => {
                 if (endpoint.tested) {
                     const option = document.createElement('option');
                     const title = `${endpoint.title} - ${endpoint.model}`
                     option.value = title;
                     option.textContent = title;
-                    dropdown.appendChild(option);
+                    modelDropdown.appendChild(option);
                 }
             });
         }
+        const imageGeneration = document.createElement('option');
+        imageGeneration.textContent = 'Image Generation';
+        imageGeneration.disabled = true;
+        modelDropdown.appendChild(imageGeneration);
+        const dallE3 = document.createElement('option');
+        dallE3.value = 'dall-e-3';
+        dallE3.textContent = 'dall-e-3';
+        modelDropdown.appendChild(dallE3);
         const defaultOption = document.createElement('option');
         defaultOption.textContent = 'Other models';
         defaultOption.disabled = true;
-        defaultOption.selected = true;
-        dropdown.appendChild(defaultOption);
+        modelDropdown.appendChild(defaultOption);
         modelIds.forEach(id => {
             const option = document.createElement('option');
             option.value = id;
             option.textContent = id;
-            dropdown.appendChild(option);
+            modelDropdown.appendChild(option);
         });
-        dropdown.selectedIndex = 1
-        document.getElementById('favoriteModelDropdown').innerHTML = dropdown.innerHTML;
+        modelDropdown.selectedIndex = 1
+        document.getElementById('favoriteModelDropdown').innerHTML = modelDropdown.innerHTML;
     }
     checkApiStatus();
     let abortController = new AbortController();
@@ -667,6 +673,8 @@ document.addEventListener('DOMContentLoaded', function() {
         adjustTextareaHeight(messageBox);
         fileInput.value = '';
     });
+    let imageQuality = 'standard'; 
+    let imageSize = '1024x1024';
     const sendButton = document.getElementById('sendButton');
     const backButton = document.getElementById('backButton');
     const addButton = document.getElementById('addButton');
@@ -674,6 +682,61 @@ document.addEventListener('DOMContentLoaded', function() {
     const infoLink = document.getElementById('info-link');
     const modelDropdown = document.getElementById('modelDropdown');
     const previousChats = document.querySelector('.previous-chats ul');
+    modelDropdown.addEventListener('change', () => {
+        const selectedModel = modelDropdown.value;
+        const imageQualitySelector = document.getElementById('imageQualitySelector');
+        const imageSizeSelector = document.getElementById('imageSizeSelector');
+        if (selectedModel === 'dall-e-3') {
+            if (!imageQualitySelector) {
+                createImageQualitySelector();
+            }
+            if (!imageSizeSelector) {
+                createImageSizeSelector();
+            }
+        } else {
+            if (imageQualitySelector) {
+                imageQualitySelector.remove();
+            }
+            if (imageSizeSelector) {
+                imageSizeSelector.remove();
+            }
+        }
+    });
+    /**
+     * Creates an image quality selector element and appends it to the model selector.
+     */
+    function createImageQualitySelector() {
+        const imageQualitySelector = document.createElement('select');
+        imageQualitySelector.id = 'imageQualitySelector';
+        imageQualitySelector.innerHTML = `
+            <option value="standard">Standard</option>
+            <option value="hd">HD</option>
+        `;
+        imageQualitySelector.value = imageQuality;
+        imageQualitySelector.addEventListener('change', () => {
+            imageQuality = imageQualitySelector.value;
+        });
+        imageQualitySelector.selectedIndex = 0
+        document.querySelector('.model-selector-right').appendChild(imageQualitySelector);
+    }
+    /**
+     * Creates the image size selector element and appends it to the model selector.
+     */
+    function createImageSizeSelector() {
+        const imageSizeSelector = document.createElement('select');
+        imageSizeSelector.id = 'imageSizeSelector';
+        imageSizeSelector.innerHTML = `
+            <option value="1024x1024">1024x1024</option>
+            <option value="1024x1792">1024x1792</option>
+            <option value="1792x1024">1792x1024</option>
+        `;
+        imageSizeSelector.value = imageSize;
+        imageSizeSelector.addEventListener('change', () => {
+            imageSize = imageSizeSelector.value;
+        });
+        imageSizeSelector.selectedIndex = 0
+        document.querySelector('.model-selector-right').appendChild(imageSizeSelector);
+    }
     let conversationHistory = [];
     let currentChatIndex = -1;
     let isNewChat = true;
@@ -701,7 +764,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Handles the click event of the send button by sending and receiving a message.
+     * Handles the click event of the send button by sending and receiving a message or generating an image.
      */
     function handleSendClick() {
         sendAndReceiveMessage();
@@ -1443,8 +1506,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function sendAndReceiveMessage() {
         let messageContent = messageBox.value.trim();
         if (messageContent || attachedFiles.length > 0) {
-            const role = 'user';
-            addMessageToHistory(messageContent, role)
+            addMessageToHistory(messageContent, 'user')
                 .then(() => {
                     if (isNewChat) {
                         let chats = JSON.parse(localStorage.getItem('chats')) || [];
@@ -1464,41 +1526,97 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
+     * Sends a message to the server to generate an image.
+     */
+    function handleSendImage() {
+        const messageContent = conversationHistory[conversationHistory.length - 1].content
+        if (messageContent) {
+            const selectedModel = modelDropdown.value;
+            const requestBody = `{"prompt":"${messageContent}","model":"${selectedModel}","n":1,"quality":"${imageQuality}","response format":"url","size":"${imageSize}"}`
+            console.log(requestBody)
+            if (!apiKey) {
+                alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. Do not lose the API key!');
+                return;
+            }
+            const loadingMessage = displayMessage('Generating image...', 'loading');
+            abortController = new AbortController();
+            fetch('https://api.discord.rocks/images/generations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: requestBody,
+                signal: abortController.signal
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Image generation request failed: ${response.error}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data)
+                if (data.data && data.data.length > 0 && data.data[0].url) {
+                    const imageUrl = data.data[0].url;
+                    document.getElementById('messageContainer').removeChild(loadingMessage)
+                    addMessageToHistory(imageUrl, 'assistant');
+                    messageBox.value = '';
+                } else {
+                    throw new Error('Invalid image generation response.');
+                }
+            })
+            .catch(e => {
+                console.error('Error generating image:', e);
+                if (e.name === 'AbortError') {
+                    document.getElementById('messageContainer').removeChild(loadingMessage)
+                } else {
+                    loadingMessage.textContent = ('Failed to generate image.');
+                    loadingMessage.className = 'error-message';
+                }
+            });
+        }
+    }
+    /**
      * Handles sending a message by fetching a web search query if necessary and updating the UI.
      *
      * @return {Promise<void>} A promise that resolves when the message is sent and the UI is updated.
      */
     function handleSend() {
-        const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
-        if (webSearchToggle === 'on') {
-            const loadingMessage = displayMessage('Thinking...', 'loading');
-            abortController = new AbortController();
-            fetchAutoWebSearchQuery(conversationHistory)
-                .then(searchQuery => {
-                    handleSendMessageWithSearch(loadingMessage, searchQuery)
-                })
-                .catch(e => {
-                    document.getElementById('messageContainer').removeChild(loadingMessage)
-                    if (e.message !== 'Request aborted') handleSendMessage();
-                });
-        } else if (webSearchToggle === 'off') {
-            handleSendMessage();
+        if (modelDropdown.value === 'dall-e-3') {
+            handleSendImage();
         } else {
-            const loadingMessage = displayMessage('Thinking...', 'loading');
-            abortController = new AbortController();
-            fetchAutoWebSearchQuery(conversationHistory, true)
-                .then(searchQuery => {
-                    if (!searchQuery) {
-                        document.getElementById('messageContainer').removeChild(loadingMessage)
-                        handleSendMessage();
-                    } else {
+            const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
+            if (webSearchToggle === 'on') {
+                const loadingMessage = displayMessage('Thinking...', 'loading');
+                abortController = new AbortController();
+                fetchAutoWebSearchQuery(conversationHistory)
+                    .then(searchQuery => {
                         handleSendMessageWithSearch(loadingMessage, searchQuery)
-                    }
-                })
-                .catch(e => {
-                    document.getElementById('messageContainer').removeChild(loadingMessage)
-                    if (e.message !== 'Request aborted') handleSendMessage();
-                });
+                    })
+                    .catch(e => {
+                        document.getElementById('messageContainer').removeChild(loadingMessage)
+                        if (e.message !== 'Request aborted') handleSendMessage();
+                    });
+            } else if (webSearchToggle === 'off') {
+                handleSendMessage();
+            } else {
+                const loadingMessage = displayMessage('Thinking...', 'loading');
+                abortController = new AbortController();
+                fetchAutoWebSearchQuery(conversationHistory, true)
+                    .then(searchQuery => {
+                        if (!searchQuery) {
+                            document.getElementById('messageContainer').removeChild(loadingMessage)
+                            handleSendMessage();
+                        } else {
+                            handleSendMessageWithSearch(loadingMessage, searchQuery)
+                        }
+                    })
+                    .catch(e => {
+                        document.getElementById('messageContainer').removeChild(loadingMessage)
+                        if (e.message !== 'Request aborted') handleSendMessage();
+                    });
+            }
         }
     }
     /**
@@ -1891,14 +2009,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     /**
      * Parses the given message and displays it as files as bubbles if it contains files,
-     * otherwise it parses the message as Markdown and displays it as HTML.
+     * otherwise it parses the message as Markdown and displays it as HTML, or displays the image if it's an image URL.
      *
      * @param {HTMLElement} textSpan - The element to display the parsed message in.
      * @param {string} message - The message to parse and display.
+     * @param {boolean} [user=true] - Whether the message is from the user.
+     * @param {HTMLElement} messageDiv - The message div element.
      */
-    function parseMessage(textSpan, message, user = true) {
+    function parseMessage(textSpan, message, user = true, messageDiv) {
         if (containsFiles(message) && user) {
             displayFilesAsBubbles(textSpan, message);
+        } else if (message.startsWith("http") && (message.endsWith(".png") || message.endsWith(".jpg") || message.endsWith(".jpeg") || message.endsWith(".gif"))) {
+            displayImage(message, messageDiv);
         } else {
             parseMarkdownToHTML(textSpan, message);
         }
@@ -1935,7 +2057,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const user = messageDiv.className === 'user-message';
         if (message.length > MAX_LENGTH) {
             const partialMessage = message.substring(0, MAX_LENGTH) + '...';
-            parseMessage(textSpan, partialMessage, user);
+            parseMessage(textSpan, partialMessage, user, messageDiv);
             const showMoreButton = document.createElement('button');
             showMoreButton.textContent = 'Show More';
             showMoreButton.className = 'show-more-button';
@@ -1947,19 +2069,19 @@ document.addEventListener('DOMContentLoaded', function() {
              */
             showMoreButton.onclick = function() {
                 if (showMoreButton.textContent === 'Show More') {
-                    parseMessage(textSpan, message, user);
+                    parseMessage(textSpan, message, user, messageDiv);
                     showMoreButton.textContent = 'Show Less';
                     showMoreButton.title = 'Collapse the content of this message.';
                     showMoreButton.setAttribute('aria-describedby', 'showLessButtonDesc');
                 } else {
-                    parseMessage(textSpan, partialMessage, user);
+                    parseMessage(textSpan, partialMessage, user, messageDiv);
                     showMoreButton.textContent = 'Show More';
                     showMoreButton.title = 'Show the full content of this message.';
                     showMoreButton.setAttribute('aria-describedby', 'showMoreButtonDesc');
                 }
             };
         } else {
-            parseMessage(textSpan, message, user);
+            parseMessage(textSpan, message, user, messageDiv);
         }
         /**
          * Handles the change event of the roleSelect element. Updates the role of the corresponding message in the
@@ -2028,7 +2150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     conversationHistory.push({ role: 'user', content: input.value });
                 }
-                parseMessage(textSpan, input.value, user);
+                parseMessage(textSpan, input.value, user, messageDiv);
                 messageDiv.replaceChild(textSpan, input);
                 buttonsDiv.innerHTML = '';
                 buttonsDiv.appendChild(editButton);
@@ -2146,17 +2268,34 @@ document.addEventListener('DOMContentLoaded', function() {
         buttonsDiv.appendChild(deleteButton);
         buttonsDiv.appendChild(copyButton);
         buttonsDiv.appendChild(roleSelect);
-        messageDiv.className = role === 'user' ? 'user-message' : (role === 'assistant' ? 'assistant-message' : (role === 'system' ? 'system-message' : 'loading-message'));
+        messageDiv.className = role === 'user' ? 'user-message' : (role === 'assistant' ? 'assistant-message' : (role === 'system' ? 'system-message' : (role === 'loading' ? 'loading-message' : 'error-message')));
         document.getElementById('messageContainer').appendChild(messageDiv);
         setTimeout(() => {messageDiv.getBoundingClientRect();messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })}, 0);
         if (role !== 'loading') {
-            parseMessage(textSpan, message, role === 'user');
+            parseMessage(textSpan, message, role === 'user', messageDiv);
             messageDiv.appendChild(buttonsDiv);
             attachListeners(editButton, deleteButton, copyButton, roleSelect, textSpan, messageDiv, message, buttonsDiv);
         } else {
             textSpan.textContent = message;
         }
         return messageDiv;
+    }
+    /**
+     * Displays the image in the chat, replacing the content of the given message div.
+     *
+     * @param {string} imageUrl - The URL of the image to display.
+     * @param {HTMLElement} messageDiv - The message div element to display the image in.
+     */
+    function displayImage(imageUrl, messageDiv) {
+        messageDiv.className = 'image-message';
+        const imageElement = document.createElement("img");
+        imageElement.src = imageUrl;
+        imageElement.onload = () => {
+            messageDiv.innerHTML = '';
+            messageDiv.appendChild(imageElement);
+            messageDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+        };
+        imageElement.onclick = () => window.open(imageUrl, "_blank");
     }
     /**
      * Checks if the given message contains any files.
