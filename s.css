@@ -248,7 +248,7 @@ textarea {
     grid-template-columns: repeat(3,auto)
 }
 
-#endpointsButton,#saveSettingsButton,#saveSettingsButton2,#sendButton,#settingsContent>input,textarea {
+#endpointsButton,#saveSettingsButton,#saveSettingsButton2,#sendButton,#settingsContent>input,#parameters>input,textarea {
     color: #f1f1f1;
     border-radius: 2vw
 }
@@ -579,7 +579,7 @@ button.show-more-button {
     margin-bottom: 10px
 }
 
-#settingsContent>input {
+#settingsContent>input,#parameters>input {
     width: 100px;
     padding: 5px 10px;
     border: 1px solid #ccc;
@@ -763,12 +763,16 @@ button.export-button {
     background-color: #dc3545
 }
 
-#settingsContent {
+#settingsContent,#parameters {
     display: flex;
     flex-direction: column
 }
 
-#settingsContent>*,.modal-header,.web-search-toggle {
+#parameters {
+    align-items: center;
+}
+
+#settingsContent>*,#parameters>*,.modal-header,.web-search-toggle {
     margin-bottom: 10px
 }
 

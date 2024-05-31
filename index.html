@@ -111,12 +111,14 @@
                         <span class='slider'></span>
                     </label>
                 </div>
-                <label for='maxTokensInput'>Max Tokens:</label>
-                <input type='number' id='maxTokensInput' value='4096' min='1'>
-                <label for='temperatureInput'>Temperature:</label>
-                <input type='number' id='temperatureInput' value='1' min='0' max='2'>
-                <label for='top_pInput'>top_p:</label>
-                <input type='number' id='top_pInput' value='1' min='0' max='2'>
+                <div id="parameters">
+                    <label for='maxTokensInput'>Max Tokens:</label>
+                    <input type='number' id='maxTokensInput' value='4096' min='1'>
+                    <label for='temperatureInput'>Temperature:</label>
+                    <input type='number' id='temperatureInput' value='1' min='0' max='2'>
+                    <label for='top_pInput'>top_p:</label>
+                    <input type='number' id='top_pInput' value='1' min='0' max='2'>
+                </div>
                 <button id='endpointsButton' title='Manage API endpoints.' aria-describedby='manageEndpoints'>Endpoints</button>
                 <button id='saveSettingsButton2' title='Save the current settings.' aria-describedby='savesettings'>Save</button>
             </div>
