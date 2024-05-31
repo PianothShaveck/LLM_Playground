@@ -1548,7 +1548,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let allContent = quotes || '';
         let buffer = '';
         function tryFetch() {
-            backButton.disabled = true;
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
@@ -1584,7 +1583,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         saveChatToHistory();
                         updateMessageCounters();
                         revertSendButton();
-                        backButton.disabled = false;
                         return;
                     }
                     const text = decoder.decode(value, { stream: true });
@@ -1615,7 +1613,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (e.name === 'AbortError') {
                             document.getElementById('messageContainer').removeChild(loadingMessage);
                             conversationHistory.pop();
-                            backButton.disabled = false;
                             if (allContent.trim()) {
                                 addMessageToHistory(allContent.trim(), 'assistant');
                                 saveChatToHistory();
@@ -1639,7 +1636,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
                     setTimeout(tryFetch, 1000);
                 } else {
-                    backButton.disabled = false;
                     conversationHistory.pop();
                     revertSendButton();
                     if (allowRetry) {
@@ -1672,7 +1668,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const maxRetries = 2;
         let allContent = quotes || '';
         function tryFetch() {
-            backButton.disabled = true;
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
@@ -1701,7 +1696,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveChatToHistory();
                 updateMessageCounters();
                 revertSendButton();
-                backButton.disabled = false;
             })
             .catch(e => {
                 if (e.name === 'AbortError') {
@@ -1714,7 +1708,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
                     setTimeout(tryFetch, 1000);
                 } else {
-                    backButton.disabled = false;
                     conversationHistory.pop();
                     revertSendButton();
                     if (allowRetry) {
