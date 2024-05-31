@@ -2273,7 +2273,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {messageDiv.getBoundingClientRect();messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })}, 0);
         if (role !== 'loading') {
             parseMessage(textSpan, message, role === 'user', messageDiv);
-            messageDiv.appendChild(buttonsDiv);
+            const img = messageDiv.querySelector('img');
+            if (img) {
+                messageDiv.insertBefore(buttonsDiv, img);
+            } else {
+                messageDiv.appendChild(buttonsDiv);
+            }
             attachListeners(editButton, deleteButton, copyButton, roleSelect, textSpan, messageDiv, message, buttonsDiv);
         } else {
             textSpan.textContent = message;
@@ -2288,11 +2293,15 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function displayImage(imageUrl, messageDiv) {
         messageDiv.className = 'image-message';
-        const imageElement = document.createElement("img");
-        imageElement.src = imageUrl;
-        imageElement.onload = () => {
-            messageDiv.innerHTML = '';
+        let imageElement = messageDiv.querySelector('img');
+        if (imageElement) {
+            imageElement.src = imageUrl; 
+        } else {
+            imageElement = document.createElement("img");
+            imageElement.src = imageUrl;
             messageDiv.appendChild(imageElement);
+        }
+        imageElement.onload = () => {
             messageDiv.scrollIntoView({ behavior: "smooth", block: "end" });
         };
         imageElement.onclick = () => window.open(imageUrl, "_blank");
