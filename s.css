@@ -201,8 +201,8 @@ header h1 {
 }
 
 .model-selector-right {
-    margin-left: auto;
-    margin-right: auto
+    margin-right: auto;
+    margin-left: auto
 }
 
 .model-selector label {
@@ -225,7 +225,7 @@ select.role-selector:focus,select:focus {
 }
 
 textarea {
-    font-family: Arial, sans-serif;
+    font-family: Arial,sans-serif;
     overflow-y: auto;
     flex-grow: 1;
     box-sizing: border-box;
@@ -250,7 +250,7 @@ textarea {
     grid-template-columns: repeat(3,auto)
 }
 
-#endpointsButton,#saveSettingsButton,#saveSettingsButton2,#sendButton,#settingsContent>input,#parameters>input,textarea {
+#endpointSettingsModal input,#endpointsButton,#parameters>input,#saveSettingsButton,#saveSettingsButton2,#sendButton,#settingsContent>input,textarea {
     color: #f1f1f1;
     border-radius: 2vw
 }
@@ -281,7 +281,7 @@ textarea {
     grid-column: auto
 }
 
-#attachButton:hover,#addModelButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSettingsButton2:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover,#toggleApiKeyVisibility:hover {
+#addModelButton:hover,#attachButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton2:hover,#saveSettingsButton:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,#toggleApiKeyVisibility:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
     background-color: #8f564cd5
 }
 
@@ -350,14 +350,14 @@ textarea {
 .image-message {
     display: flex;
     justify-content: flex-end;
-    margin: 10px 0;
+    margin: 10px 0
 }
 
 .image-message img {
-    cursor: pointer;
     max-width: 40%;
+    cursor: pointer;
     border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px rgba(0,0,0,.2)
 }
 
 .chat-controls {
@@ -454,7 +454,8 @@ button.copy-button,button.delete-button,button.edit-button {
     margin: 0 5px;
     padding: 5px 10px;
     cursor: pointer;
-    color: #333
+    color: #333;
+    border-radius: 20px
 }
 
 button.copy-button:hover,button.delete-button:hover,button.edit-button:hover {
@@ -531,7 +532,7 @@ button.show-more-button {
     background-color: #8f564c
 }
 
-#endpointsList li button,#systemPromptsList li button,#endpointSettingsModal .model-list li button {
+#endpointSettingsModal .model-list li button,#endpointsList li button,#systemPromptsList li button {
     padding: 5px 10px;
     cursor: pointer;
     color: #fff;
@@ -545,31 +546,29 @@ button.show-more-button {
 }
 
 #endpointSettingsModal .model-list {
-    list-style: none;
+    margin: auto;
     padding: 0;
-    margin: auto
+    list-style: none
 }
 
 #endpointSettingsModal .model-list li {
     display: flex;
-    align-items: center;
+    align-items: center
 }
 
 #endpointSettingsModal .model-list li input {
     flex-grow: 1;
-    margin-right: 5px;
     max-width: 200px;
+    margin-right: 5px
 }
 
 #endpointSettingsModal input {
     width: 100%;
+    min-width: 200px;
     margin-top: 10px;
     margin-bottom: 10px;
-    min-width: 200px;
     padding: 10px;
-    color: #f1f1f1;
     border: 1px solid #ccc;
-    border-radius: 2vw;
     background-color: #333
 }
 
@@ -586,11 +585,10 @@ button.show-more-button {
 
 #settingsContent #apiKey {
     width: 90%;
-    margin: 0 auto;
-    margin-bottom: 10px
+    margin: 0 auto 10px
 }
 
-#settingsContent>input,#parameters>input {
+#parameters>input,#settingsContent>input {
     width: 100px;
     padding: 5px 10px;
     border: 1px solid #ccc;
@@ -678,7 +676,7 @@ button.export-button {
     border-radius: 50%
 }
 
-#systemPromptsList li button:hover,.file-bubble .close-btn:hover,.modal-header .close:hover,#endpointsList li button:hover,#endpointSettingsModal .model-list li button:hover {
+#endpointSettingsModal .model-list li button:hover,#endpointsList li button:hover,#systemPromptsList li button:hover,.file-bubble .close-btn:hover,.modal-header .close:hover {
     background-color: #dc3545d5
 }
 
@@ -695,13 +693,14 @@ button.export-button {
     border-radius: 5px;
     background-color: #8f564c
 }
+
 #addModelButton {
     width: 25px;
     height: 25px;
-    border-radius: 100%;
-    background-color: transparent;
     cursor: pointer;
-    color: #f1f1f1
+    color: #f1f1f1;
+    border-radius: 100%;
+    background-color: transparent
 }
 
 #attachButton,.file-bubble .close-btn {
@@ -774,7 +773,6 @@ button.export-button {
 
 .modal-header {
     display: flex;
-    align-items: center;
     justify-content: space-between
 }
 
@@ -782,16 +780,16 @@ button.export-button {
     background-color: #dc3545
 }
 
-#settingsContent,#parameters {
+#parameters,#settingsContent {
     display: flex;
     flex-direction: column
 }
 
-#parameters {
-    align-items: center;
+#parameters,.modal-header {
+    align-items: center
 }
 
-#settingsContent>*,#parameters>*,.modal-header,.web-search-toggle {
+#parameters>*,#settingsContent>*,.modal-header,.web-search-toggle {
     margin-bottom: 10px
 }
 
@@ -915,7 +913,7 @@ body.light-mode .file-bubble {
     background: #ddd
 }
 
-body.light-mode #attachButton,body.light-mode #addModelButton,body.light-mode .model-selector label {
+body.light-mode #addModelButton,body.light-mode #attachButton,body.light-mode .model-selector label {
     color: #333
 }
 
@@ -1028,14 +1026,14 @@ input:checked+.slider:before {
 }
 
 .info-bubble {
+    font-size: 12px;
     position: absolute;
     top: 10px;
     left: 10px;
     padding: 5px 10px;
-    font-size: 12px;
-    color: white;
-    background-color: #8f564c;
+    color: #fff;
     border-radius: 20px;
+    background-color: #8f564c
 }
 
 @media (max-width: 1200px) {
@@ -1054,63 +1052,63 @@ input:checked+.slider:before {
         align-items: stretch;
         flex-direction: column
     }
-
+    
     .previous-chats-controls button {
         width: 90%;
         margin-right: auto;
         margin-bottom: 10px;
         margin-left: auto
     }
-
+    
     .previous-chats {
         max-height: 45vh
     }
-
+    
     #searchTextarea {
         width: calc(100% - 20px);
         margin: 10px auto
     }
-
+    
     .modal-content {
         width: 90%;
         height: 90%
     }
-
+    
     .container {
         width: 90%;
         margin-top: 40px;
         padding: 10px;
         padding-bottom: 50vh
     }
-
+    
     .chat-interface {
         flex-direction: column
     }
-
+    
     .message-form,.previous-chats {
         width: 90%;
         margin-bottom: 1px
     }
-
+    
     .assistant-message,.user-message {
         max-width: 95%
     }
-
+    
     .previous-chats h2,header h1 {
         font-size: 18px
     }
-
+    
     button {
         font-size: 14px;
         padding: 8px 16px
     }
-
+    
     .message-buttons {
         display: flex;
         flex-wrap: wrap;
         justify-content: center
     }
-
+    
     .message-buttons .role-selector {
         width: 50%;
         margin-top: 5px;
@@ -1118,11 +1116,11 @@ input:checked+.slider:before {
     }
     
     #addButton {
-        width: 35px;            
-        height: 35px;
+        width: 35px;
+        height: 35px
     }
-
+    
     #addModelButton,#attachButton {
-        padding: 0px
+        padding: 0
     }
 }

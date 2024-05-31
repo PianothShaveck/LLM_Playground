@@ -1533,7 +1533,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (messageContent) {
             const selectedModel = modelDropdown.value;
             const requestBody = `{"prompt":"${messageContent}","model":"${selectedModel}","n":1,"quality":"${imageQuality}","response format":"url","size":"${imageSize}"}`
-            console.log(requestBody)
             if (!apiKey) {
                 alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. Do not lose the API key!');
                 return;
@@ -1556,12 +1555,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                console.log(data)
                 if (data.data && data.data.length > 0 && data.data[0].url) {
                     const imageUrl = data.data[0].url;
                     document.getElementById('messageContainer').removeChild(loadingMessage)
                     addMessageToHistory(imageUrl, 'assistant');
-                    messageBox.value = '';
                 } else {
                     throw new Error('Invalid image generation response.');
                 }
