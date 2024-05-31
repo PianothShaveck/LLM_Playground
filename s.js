@@ -2058,6 +2058,12 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function displayMessage(message, role) {
         const messageDiv = document.createElement('div');
+        if (message.trim().startsWith("[")) {
+            const infoBubble = document.createElement('div');
+            infoBubble.classList.add('info-bubble');
+            infoBubble.textContent = 'Quotes hidden.';
+            messageDiv.appendChild(infoBubble);
+        }
         messageDiv.classList.add('messageDiv')
         messageDiv.setAttribute('id', 'message-' + document.getElementById('messageContainer').children.length);
         messageDiv.style.flexDirection = 'column';

@@ -1009,6 +1009,17 @@ input:checked+.slider:before {
     background-color: #222
 }
 
+.info-bubble {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: white;
+    background-color: #8f564c;
+    border-radius: 20px;
+}
+
 @media (max-width: 1200px) {
     .container {
         width: 80%;
