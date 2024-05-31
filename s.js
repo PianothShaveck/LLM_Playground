@@ -683,10 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
     backButton.addEventListener('click', () => {
-        if (abortController && !abortController.signal.aborted) { 
-            abortMessageSending(); 
-        }
-        endChatSession();
+        abortMessageSending().then(setTimeout(endChatSession, 1000));
     });
     infoLink.addEventListener('click', showInfo);
     /**
@@ -921,7 +918,7 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointHeadersInput.value = endpoint.headers;
         const modelList = endpointSettingsModal.querySelector('.model-list');
         modelList.innerHTML = ''
-        const matchingEndpoints = endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title);
+        const matchingEndpoints = endpoints.filter(e => e.url === endpoint.url);
         matchingEndpoints.forEach(endpoint => {
             addModelToList(modelList, endpoint.model);
         });
@@ -939,7 +936,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Model names must be unique.');
                 return;
             }
-            const existingMatchingEndpoints = endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title);
+            const existingMatchingEndpoints = endpoints.filter(e => e.url === endpoint.url);
             const removedModels = existingMatchingEndpoints.filter(e => !newModels.includes(e.model));
             removedModels.forEach(modelToRemove => {
                 const indexToRemove = endpoints.indexOf(modelToRemove);
@@ -955,6 +952,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     output: endpointOutputInput.value,
                     stream: endpointStreamInput.checked
                 });
+            });
+            endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
+                e.title = endpointTitleInput.value;
             });
             const endpointsToBeTested = endpoints.find(e => e.url === endpoint.url && e.title === endpoint.title && newModels.includes(e.model) && !e.tested)
             if (endpointsToBeTested) testEndpoint(endpointsToBeTested)
@@ -1737,17 +1737,21 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.removeEventListener('click', handleAbortClick);
         sendButton.addEventListener('click', handleSendClick);
         sendButton.className = '';
-    }    
+    }
     /**
      * Aborts the current message sending process, saves the chat to history, adds the last message to the conversation history,
      * aborts the current request, creates a new AbortController, and reverts the send button.
+     *
+     * @return {Promise<void>} A promise that resolves when the message sending process is aborted.
      */
     function abortMessageSending() {
-        saveChatToHistory();
-        conversationHistory.push(conversationHistory.slice(-1)[0]);
-        abortController.abort();
-        abortController = new AbortController();
-        revertSendButton();
+        return new Promise(resolve => {
+            saveChatToHistory();
+            abortController.abort();
+            abortController = new AbortController();
+            revertSendButton();
+            resolve();
+        });
     }
     /**
      * Adjusts the height of a textarea element based on its content.
@@ -2026,8 +2030,10 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteButton.onclick = function() {
             if (confirm('Are you sure you want to delete this message?')) {
                 abortController.abort();
+                const currentIndex = parseInt(messageDiv.id.split('-')[1]);
+                if (currentIndex === -1) return;
                 document.getElementById('messageContainer').removeChild(messageDiv);
-                conversationHistory = conversationHistory.filter(m => m.content !== message);
+                conversationHistory.splice(currentIndex, 1);
                 saveChatToHistory();
                 reassignMessageIds();
                 updateMessageCounters();
