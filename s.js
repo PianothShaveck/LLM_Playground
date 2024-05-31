@@ -73,6 +73,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (jsonData) {
                 modelIds = jsonData.data.map(item => item.id);
                 populateDropdown(modelIds);
+                const savedFavoriteModel = localStorage.getItem('favoriteModel');
+                if (savedFavoriteModel) {
+                    favoriteModelDropdown.value = savedFavoriteModel;
+                    dropdown.value = savedFavoriteModel; 
+                }
             }})
         .catch(e => {
             document.getElementById('apiStatusMessage').style.display = 'block';
@@ -84,14 +89,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+    let dropdown = document.getElementById('modelDropdown');
     function populateDropdown(modelIds) {
-        const dropdown = document.getElementById('modelDropdown');
         dropdown.innerHTML = `<option disabled>Popular models</option>
+        <option value='auto'>auto</option>
         <option value='gpt-4o'>gpt-4o</option>
         <option value='claude-3-opus'>claude-3-opus</option>
-        <option value='llama-3-70b-chat'>llama-3-70b-chat</option>
-        <option value='auto'>auto</option>`;
+        <option value='llama-3-70b-chat'>llama-3-70b-chat</option>`;
         const savedModels = localStorage.getItem('savedModels');
         if (savedModels) {
             const savedModelIds = JSON.parse(savedModels);
@@ -131,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdown.appendChild(option);
         });
         dropdown.selectedIndex = 1
+        document.getElementById('favoriteModelDropdown').innerHTML = dropdown.innerHTML;
     }
     checkApiStatus();
     let abortController = new AbortController();
@@ -822,6 +827,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
         localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
         localStorage.setItem('endpoints', JSON.stringify(endpoints));
+        localStorage.setItem('favoriteModel', favoriteModelDropdown.value);
     }
     /**
      * Saves the current settings and updates the UI accordingly.

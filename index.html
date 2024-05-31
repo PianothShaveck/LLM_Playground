@@ -54,10 +54,10 @@
                 <label for='modelDropdown'>Choose a model:</label>
                 <select id='modelDropdown' title='Select a large language model from the dropdown.' aria-describedby='modelDropdownDesc'>
                     <option disabled>Popular models</option>
+                    <option value='auto'>auto</option>
                     <option value='gpt-4o'>gpt-4o</option>
                     <option value='claude-3-opus'>claude-3-opus</option>
                     <option value='llama-3-70b-chat'>llama-3-70b-chat</option>
-                    <option value='auto'>auto</option>
                 </select>
             </div>
         </div>   
@@ -118,6 +118,10 @@
                     <input type='number' id='temperatureInput' value='1' min='0' max='2'>
                     <label for='top_pInput'>top_p:</label>
                     <input type='number' id='top_pInput' value='1' min='0' max='2'>
+                </div>
+                <div class="favorite-model-selector">
+                    <label for="favoriteModelDropdown">Favorite Model:</label>
+                    <select id="favoriteModelDropdown"></select>
                 </div>
                 <button id='endpointsButton' title='Manage API endpoints.' aria-describedby='manageEndpoints'>Endpoints</button>
                 <button id='saveSettingsButton2' title='Save the current settings.' aria-describedby='savesettings'>Save</button>
