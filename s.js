@@ -863,7 +863,7 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointsModal.style.display = 'none';
     });
     addEndpointButton.addEventListener('click', () => {
-        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "{'Authorization': 'Bearer YOUR_API_KEY','Content-Type': 'application/json'}", model: 'Enter the model name here', output: 'choices[0].message.content', stream: true});
+        endpoints.push({ title: 'Enter the endpoint title here', url: 'Enter the endpoint URL here', headers: "", model: 'Enter the model name here', output: 'choices[0].message.content', stream: true});
         saveSettings();
         loadEndpoints();
         openEndpointSettings(endpoints.length - 1);
@@ -877,16 +877,17 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function loadEndpoints() {
         endpointsList.innerHTML = '';
-        endpoints.forEach((endpoint, index) => {
+        const uniqueEndpoints = Array.from(new Set(endpoints.map(endpoint => `${endpoint.title} - ${endpoint.url}`))).map(endpointString => endpointString.split(' - '));
+        uniqueEndpoints.forEach(([title, url]) => {
             const li = document.createElement('li');
-            li.textContent = endpoint.title;
-            li.addEventListener('click', () => openEndpointSettings(index));
+            li.textContent = title;
+            li.addEventListener('click', () => openEndpointSettings(endpoints.findIndex(e => e.title === title && e.url === url)));
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 if (confirm('Are you sure you want to delete this endpoint?')) {
-                    endpoints.splice(index, 1);
+                    endpoints = endpoints.filter(e => e.title !== title || e.url !== url);
                     populateDropdown(modelIds);
                     saveSettings();
                     loadEndpoints();
@@ -907,42 +908,84 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointTitleInput.value = endpoint.title;
         endpointUrlInput.value = endpoint.url;
         endpointHeadersInput.value = endpoint.headers;
-        endpointModelInput.value = endpoint.model;
+        const modelList = endpointSettingsModal.querySelector('.model-list');
+        modelList.innerHTML = ''
+        const matchingEndpoints = endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title);
+        matchingEndpoints.forEach(endpoint => {
+            addModelToList(modelList, endpoint.model);
+        });
+        const oldModels = Array.from(modelList.querySelectorAll('input')).map(input => input.value.trim());
         endpointOutputInput.value = endpoint.output;
         endpointStreamInput.checked = endpoint.stream || true;
         endpointSettingsModal.style.display = 'flex';
         /**
-         * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
+         * Saves the endpoint settings if the test requests are successful and the endpoint titles and models are unique.
          */
         saveEndpointSettingsButton.onclick = () => {
-            if (endpointTitleInput.value !== endpoint.title || endpointModelInput.value !== endpoint.model) {
-                const existingTitle = modelDropdown.querySelector(`option[value="${endpointTitleInput.value} - ${endpointModelInput.value}"]`);
-                if (existingTitle) {
-                    alert('An endpoint with the same title already exists. Please use a different title.');
-                    return;
-                }
+            const modelInputs = modelList.querySelectorAll('input');
+            const newModels = Array.from(modelInputs).map(input => input.value.trim());
+            if (newModels.length !== new Set(newModels).size) {
+                alert('Model names must be unique.');
+                return;
             }
-            endpoints[index].title = endpointTitleInput.value;
-            endpoints[index].url = endpointUrlInput.value;
-            endpoints[index].headers = endpointHeadersInput.value;
-            endpoints[index].model = endpointModelInput.value;
-            endpoints[index].output = endpointOutputInput.value;
-            endpoints[index].stream = endpointStreamInput.checked;
-            testEndpoint(endpoint)
+            const existingMatchingEndpoints = endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title);
+            const removedModels = existingMatchingEndpoints.filter(e => !newModels.includes(e.model));
+            removedModels.forEach(modelToRemove => {
+                const indexToRemove = endpoints.indexOf(modelToRemove);
+                endpoints.splice(indexToRemove, 1);
+            });
+            const addedModels = newModels.filter(newModel => !existingMatchingEndpoints.some(e => e.model === newModel));
+            addedModels.forEach(modelToAdd => {
+                endpoints.push({
+                    title: endpointTitleInput.value,
+                    url: endpointUrlInput.value,
+                    headers: endpointHeadersInput.value,
+                    model: modelToAdd,
+                    output: endpointOutputInput.value,
+                    stream: endpointStreamInput.checked
+                });
+            });
+            const endpointsToBeTested = endpoints.find(e => e.url === endpoint.url && e.title === endpoint.title && newModels.includes(e.model) && !e.tested)
+            if (endpointsToBeTested) testEndpoint(endpointsToBeTested)
                 .then(([url, output]) => {
-                    endpoints[index].url = url
-                    endpoints[index].output = output
-                    endpoints[index].tested = true
-                    saveSettings();
+                    endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title).forEach(e => {
+                        e.url = url
+                        e.output = output
+                        e.tested = true
+                    });
                     populateDropdown(modelIds);
-                    alert(`Test request to the endpoint was successful! Model was ${endpoint.model} was added to the list of models.`)
+                    alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
                 }, (e) => {
                     alert(`Test request to the endpoint failed! ${e.message}`)
                 })
             endpointSettingsModal.style.display = 'none';
+            saveSettings();
             loadEndpoints();
         }
     }
+    /**
+     * Adds a model input field to the given list element.
+     *
+     * @param {HTMLElement} list - The list element to add the model input to.
+     * @param {string} model - The model name to be displayed in the input field.
+     */
+    function addModelToList(list, model) {
+        const li = document.createElement('li');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = model;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => {
+            list.removeChild(li);
+        });
+        li.appendChild(input);
+        li.appendChild(deleteButton);
+        list.appendChild(li);
+    }
+    document.getElementById('addModelButton').addEventListener('click', () => {
+        addModelToList(document.querySelector('#endpointSettingsModal .model-list'), '')
+    });
     closeEndpointSettingsModalButton.addEventListener('click', () => {
         endpointSettingsModal.style.display = 'none';
     });
@@ -967,7 +1010,12 @@ document.addEventListener('DOMContentLoaded', function() {
      * @throws {Error} If the response is not OK or if the output path cannot be determined.
      */
     function testEndpoint(endpoint) {
-        const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
+        let headers = {}
+        if (!endpoint.headers) {
+            headers = {'Content-Type': 'application/json'}
+        } else {
+            headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
+        }
         const body = JSON.stringify({
             model: endpoint.model,
             messages: [{ role: 'user', content: 'Hello, world' }],
@@ -1452,7 +1500,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
         const endpoint = endpoints.find(endpoint => `${endpoint.title} - ${endpoint.model}` === selectedModel);
         if (endpoint) {
-            const headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
+            let headers = {}
+            if (!endpoint.headers) {
+                headers = {'Content-Type': 'application/json'}
+            } else {
+                headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
+            }
             requestBody.model = endpoint.model
             if (endpoint.stream) {
                 fetchEndpointStream(requestBody, quotes, endpoint.url, headers, endpoint.output)

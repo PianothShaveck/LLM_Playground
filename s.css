@@ -279,7 +279,7 @@ textarea {
     grid-column: auto
 }
 
-#attachButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSettingsButton2:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
+#attachButton:hover,#addModelButton:hover,#backButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton:hover,#saveSettingsButton2:hover,#saveSystemPromptButton:hover,#sendButton:hover,#settingsButton:hover,.previous-chats button:hover,.previous-chats-controls button:hover,button.export-button:hover {
     background-color: #8f564cd5
 }
 
@@ -520,7 +520,7 @@ button.show-more-button {
     background-color: #8f564c
 }
 
-#endpointsList li button,#systemPromptsList li button {
+#endpointsList li button,#systemPromptsList li button,#endpointSettingsModal .model-list li button {
     padding: 5px 10px;
     cursor: pointer;
     color: #fff;
@@ -531,6 +531,23 @@ button.show-more-button {
 
 #addEndpointButton:hover,#saveEndpointSettingsButton:hover {
     background-color: #8f564cd5
+}
+
+#endpointSettingsModal .model-list {
+    list-style: none;
+    padding: 0;
+    margin: auto
+}
+
+#endpointSettingsModal .model-list li {
+    display: flex;
+    align-items: center;
+}
+
+#endpointSettingsModal .model-list li input {
+    flex-grow: 1;
+    margin-right: 5px;
+    max-width: 200px;
 }
 
 #endpointSettingsModal input {
@@ -650,13 +667,22 @@ button.export-button {
     border-radius: 50%
 }
 
-#systemPromptsList li button:hover,.file-bubble .close-btn:hover,.modal-header .close:hover {
+#systemPromptsList li button:hover,.file-bubble .close-btn:hover,.modal-header .close:hover,#endpointsList li button:hover,#endpointSettingsModal .model-list li button:hover {
     background-color: #dc3545d5
 }
 
 #messageBoxContainer {
     position: relative;
     width: 90%
+}
+
+#addModelButton {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    background-color: #8f564c;
+    cursor: pointer;
+    color: #f1f1f1
 }
 
 #attachButton,.file-bubble .close-btn {
@@ -669,7 +695,8 @@ button.export-button {
     z-index: 1;
     top: 50%;
     left: 10px;
-    padding: 1px 5px;
+    width: 25px;
+    height: 25px;
     transform: translateY(-50%);
     border-radius: 100%;
     background-color: transparent
@@ -865,7 +892,7 @@ body.light-mode .file-bubble {
     background: #ddd
 }
 
-body.light-mode #attachButton,body.light-mode .model-selector label {
+body.light-mode #attachButton,body.light-mode #addModelButton,body.light-mode .model-selector label {
     color: #333
 }
 
