@@ -682,7 +682,12 @@ document.addEventListener('DOMContentLoaded', function() {
     addButton.addEventListener('click', () => addMessageToHistory(messageBox.value.trim()));
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
-    backButton.addEventListener('click', endChatSession);
+    backButton.addEventListener('click', () => {
+        if (abortController && !abortController.signal.aborted) { 
+            abortMessageSending(); 
+        }
+        endChatSession();
+    });
     infoLink.addEventListener('click', showInfo);
     /**
      * Displays information about the application and prompts the user to visit the Discord Rocks API website if confirmed.
