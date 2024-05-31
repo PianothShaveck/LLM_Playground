@@ -682,7 +682,13 @@ document.addEventListener('DOMContentLoaded', function() {
     addButton.addEventListener('click', () => addMessageToHistory(messageBox.value.trim()));
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
-    backButton.addEventListener('click', endChatSession);
+    backButton.addEventListener('click', () => {
+        if (sendButton.innerHTML === 'Abort') {
+            abortMessageSending().then(setTimeout(endChatSession, 0));
+        } else {
+            endChatSession();
+        }
+    });
     infoLink.addEventListener('click', showInfo);
     /**
      * Displays information about the application and prompts the user to visit the Discord Rocks API website if confirmed.
@@ -1546,7 +1552,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let allContent = quotes || '';
         let buffer = '';
         function tryFetch() {
-            backButton.disabled = true;
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
@@ -1573,6 +1578,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 */
                 function processText({ done, value }) {
                     if (done) {
+                        backButton.disabled = true
                         document.getElementById('messageContainer').removeChild(loadingMessage);
                         if (allContent.trim() === '') {
                             allContent = 'No response from the API.';
@@ -1613,7 +1619,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (e.name === 'AbortError') {
                             document.getElementById('messageContainer').removeChild(loadingMessage);
                             conversationHistory.pop();
-                            backButton.disabled = false;
                             if (allContent.trim()) {
                                 addMessageToHistory(allContent.trim(), 'assistant');
                                 saveChatToHistory();
@@ -1670,7 +1675,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const maxRetries = 2;
         let allContent = quotes || '';
         function tryFetch() {
-            backButton.disabled = true;
             abortController = new AbortController();
             fetch(url, {
                 method: 'POST',
@@ -1685,6 +1689,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
+                backButton.disabled = true
                 let output = extractData(data, path);
                 if (typeof output !== 'string') {
                     throw new Error(`Output is not a string: ${typeof output}`);
