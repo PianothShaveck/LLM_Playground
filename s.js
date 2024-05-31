@@ -2283,7 +2283,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return messageDiv;
     }
     /**
-     * Displays the image in the chat, replacing the content of the given message div.
+     * Displays an image in the given message div.
      *
      * @param {string} imageUrl - The URL of the image to display.
      * @param {HTMLElement} messageDiv - The message div element to display the image in.
