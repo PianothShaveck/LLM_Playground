@@ -1460,6 +1460,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
             }
         } else {
+            if (!apiKey) {
+                alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. Do not lose the API key!');
+            }
             fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, 'choices[0].delta.content');
         }
     }

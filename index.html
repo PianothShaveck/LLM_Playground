@@ -152,15 +152,29 @@
                 <span class='close'></span>
             </div>
             <div class='modal-body'>
-                <label for='endpointTitle'>Title:</label>
-                <input type='text' id='endpointTitle'>
-                <label for='endpointUrl'>URL:</label>
-                <input type='text' id='endpointUrl'>
+                <table>
+                    <tr>
+                        <td>
+                            <label for='endpointTitle'>Title:</label>
+                        </td>
+                        <td>
+                            <input type='text' id='endpointTitle'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='endpointUrl'>URL:</label>
+                        </td>
+                        <td>
+                            <input type='text' id='endpointUrl'>
+                        </td>
+                    </tr>
+                </table>
                 <label for='endpointHeaders'>Authorization (API key):</label>
                 <input type='password' id='endpointHeaders'>
                 <label for='endpointModel'>Models:</label>
                 <input type='text' id='endpointModel'>
-                <label for='endpointOutput'>Output Path:</label>
+                <label for='endpointOutput'>Output Path (automatically found, only change this if the test request fails):</label>
                 <input type='text' id='endpointOutput' placeholder='e.g., choices[0].message.content'>
                 <div class='toggle-container'>
                     <label for='endpointStream'>Streaming:</label>

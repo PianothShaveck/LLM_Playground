@@ -537,6 +537,7 @@ button.show-more-button {
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
+    min-width: 200px;
     padding: 10px;
     color: #f1f1f1;
     border: 1px solid #ccc;
