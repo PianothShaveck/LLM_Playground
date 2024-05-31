@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
     backButton.addEventListener('click', () => {
-        abortMessageSending().then(setTimeout(endChatSession, 1000));
+        abortMessageSending().then(setTimeout(endChatSession, 0));
     });
     infoLink.addEventListener('click', showInfo);
     /**
