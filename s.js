@@ -1021,7 +1021,6 @@ document.addEventListener('DOMContentLoaded', function() {
         matchingEndpoints.forEach(endpoint => {
             addModelToList(modelList, endpoint.model);
         });
-        const oldModels = Array.from(modelList.querySelectorAll('input')).map(input => input.value.trim());
         endpointOutputInput.value = endpoint.output;
         endpointStreamInput.checked = endpoint.stream || true;
         endpointSettingsModal.style.display = 'flex';
@@ -1055,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', function() {
             endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
                 e.title = endpointTitleInput.value;
             });
-            const endpointsToBeTested = endpoints.find(e => e.url === endpoint.url && e.title === endpoint.title && newModels.includes(e.model) && !e.tested)
+            const endpointsToBeTested = endpoints.find(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
             if (endpointsToBeTested) testEndpoint(endpointsToBeTested)
                 .then(([url, output]) => {
                     endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title).forEach(e => {
