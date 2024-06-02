@@ -31,14 +31,15 @@
         </header>
         <div class='chat-interface'>
             <div class='chat-controls'>
-                <button id='backButton' style='display:none;' title='Go back to the previous interface.' aria-describedby='backButtonDesc'>Back</button>
+                <button id='backButton' style='display:none;' title='Go back to the previous interface.' aria-describedby='backButtonDesc'></button>
             </div>
             <div class='previous-chats'>
                 <div class='previous-chats-controls'>
-                    <button id='exportDataButton' title='Export the chat data to the clipboard.' aria-describedby='exportDataButtonDesc'>Export data</button>
-                    <button id='importDataButton' title='Import chat data from the clipboard.' aria-describedby='importDataButtonDesc'>Import data</button>
-                    <button id='deleteDataButton' title='Delete all chat data.' aria-describedby='deleteDataButtonDesc'>Delete data</button>
-                    <button id='searchButton' title='Search through chat data.' aria-describedby='searchButtonDesc'>Search</button>
+                    <button id='exportDataButton' title='Export the chat data to the clipboard.' aria-describedby='exportDataButtonDesc'></button>
+                    <button id='importDataButton' title='Import chat data from the clipboard.' aria-describedby='importDataButtonDesc'></button>
+                    <button id='deleteDataButton' title='Delete all chat data.' aria-describedby='deleteDataButtonDesc'></button>
+                    <button id='searchButton' title='Search through chat data.' aria-describedby='searchButtonDesc'></button>
+                    <button id='closeSearchButton' title='Close search.' aria-describedby='closeSearchButtonDesc' style='display:none'></button>
                 </div>
                 <h2>Previous Chats</h2>
                 <ul>
@@ -61,18 +62,18 @@
                 </select>
             </div>
         </div>   
-        <button id='settingsButton' title='Open settings to personalize system prompt and max tokens' aria-describedby='settingsButtonDesc'>Settings</button>
+        <button id='settingsButton' title='Open settings to personalize system prompt and max tokens.' aria-describedby='settingsButtonDesc'></button>
         <div id='fileContainer' class='file-bubble-container'>
         </div>
         <div id='messageBoxContainer'>
-            <button id='attachButton' title='Attach a file' aria-describedby='attachButtonDesc'>+</button>
+            <button id='attachButton' title='Attach a file.' aria-describedby='attachButtonDesc'>+</button>
             <input type='file' id='fileInput' multiple style='display:none;'>
             <textarea placeholder='What can I help you with?' id='messageBox'></textarea>
         </div>
         <div class='message-form-buttons'>
-            <button id='sendButton' title='Send your message' aria-describedby='sendButtonDesc'>Start Chat</button>
-            <button id='addButton' title='Add a new message without receiving a response' aria-describedby='addButtonDesc'>+</button>
-            <button id='runButton' title='Ask the model to generate a response' aria-describedby='runButtonDesc'>Run</button>
+            <button id='sendButton' title='Send your message.' aria-describedby='sendButtonDesc'></button>
+            <button id='addButton' title='Add a new message without receiving a response.' aria-describedby='addButtonDesc'></button>
+            <button id='runButton' title='Ask the model to generate a response.' aria-describedby='runButtonDesc'></button>
         </div>
     </div>
     <div id='settingsModal' class='modal' style='display:none;'>
@@ -204,6 +205,7 @@
         <p id="importDataButtonDesc">Import chat data from the clipboard.</p>
         <p id="deleteDataButtonDesc">Delete all chat data.</p>
         <p id="searchButtonDesc">Search through chat data.</p>
+        <p id="closeSearchButtonDesc">Close search.</p>
         <p id="modelDropdownDesc">Select a model from the dropdown.</p>
         <p id='settingsButtonDesc'>Open settings to personalize system prompt and max tokens.</p>
         <p id="attachButtonDesc">Attach a file.</p>
@@ -224,9 +226,9 @@
         <p id="deleteChatButtonDesc">Delete the chat.</p>
         <p id="themeToggleDesc">Toggle light/dark mode.</p>
         <p id='roleSelectDesc'>Change the role of this message.</p>
-        <p id='internetOff'>Web search is disabled</p>
-        <p id='internetAuto'>The AI can choose to perform a web search</p>
-        <p id='internetOn'>Web search is enabled</p>
+        <p id='internetOn'>Web search is enabled.</p>
+        <p id='internetOff'>Web search is disabled.</p>
+        <p id='internetAuto'>The AI can choose to perform a web search.</p>
         <p id='copyToFileToggleDesc'>Enable or disable copying long text to a file.</p>
         <p id="saveSettingsButtonDesc">Save the current settings.</p>
         <p id="saveCurrentSystemPrompt">Save the current system prompt.</p>

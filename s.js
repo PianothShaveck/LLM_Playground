@@ -5,6 +5,22 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} src - The URL of the script to load.
      * @param {function} callback - The function to execute when the script is loaded.
      */
+    const cancelSVG = `<svg id="closeSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M228 1.1c-50.8 5-99.1 24.6-137.9 55.9C22.8 111.4-11.5 206.2 4 295.5c12.6 72.1 54 135.3 114.5 174.8 86.3 56.2 198.8 55.3 285-2.4 23.9-16 39.8-30.8 56-52.4 42.9-57 60.4-129 48.5-199.2-17.4-102.1-93.8-184-194.7-208.8-24.9-6.1-60.9-8.8-85.3-6.4zm63 50.8c85.2 15.2 151.5 79.4 168.4 163.3C480 316.8 420.6 419 322 452c-75.4 25.2-159.6 4.6-215.1-52.7-47.4-48.9-67.2-117.7-53.4-185.8 6.2-30.8 20.8-62 40.8-87.3 18.4-23.3 46.7-45.5 74.5-58.4 17.5-8.1 43.1-15.3 63.2-17.8 12.7-1.5 45.9-.5 59 1.9zm-137.6 88c-10.5 4.8-16 13.9-15.2 25.1.3 3.8 1.4 8.1 2.6 10.5 1.2 2.3 17.9 19.8 40.1 42l38.1 38-38.5 38.5c-42.2 42.3-42.4 42.6-42.5 53.9 0 10.8 5.5 19.1 15.9 23.9 4.4 2 6.4 2.4 11.5 2 3.4-.3 7.7-1.3 9.6-2.3 1.9-.9 20.9-19.1 42.3-40.3l38.7-38.7 38.8 38.7c21.3 21.2 40.3 39.4 42.2 40.4 4.8 2.5 17.1 2.6 22.1.1 4.8-2.4 10.3-7.9 12.5-12.6 1-2 2-6.4 2.2-9.9.8-11.9 1.3-11.3-41.9-54.7l-38.9-39 38-38c25.9-25.9 38.7-39.4 40.1-42.3 3.1-6.4 3.6-15.7 1.2-21.3-4.8-10.7-12.6-15.9-23.9-15.9-11.8.1-11.8.1-54.1 42.3L256 218.4l-38.2-38.1c-28.5-28.4-39.5-38.7-42.8-40.2-5.9-2.7-15.9-2.8-21.6-.2z"/></svg>`
+    const editSVG = `<svg id="editSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M414.1 7.5c-3 .9-7.5 2.7-10.1 4.1-3.2 1.7-57.3 55.2-176.8 174.7L52.4 362c-4.9 6.6-8.5 15.2-18 42.3L21.5 441C11.7 468.3 3 494.4 3 496.7c0 7.2 7.2 14.3 14.7 14.3 2.6 0 12-2.8 25.5-7.4L96.5 485l38.5-13.5c16.2-6.1 7.3 2.3 193.1-183.5C518 98.3 505.8 111.3 508.3 96.6c.8-4.9.8-8.3 0-13.2-2.2-12.9-4.3-15.7-30.1-41.2L449.8 15c-9.2-7.5-24.4-10.6-35.7-7.5zM436 24.3c6.3 2.9 52.1 48.2 55.2 54.6 3 6.3 3 15.9 0 22.1-1.4 2.9-8.1 10.4-18.7 21L456 138.5 416.5 99 377 58.4c0-1.6 31.1-31.9 34.8-33.8 7.5-3.9 16.3-4 24.2-.3zM237.8 227.8L89.7 375.1c-3.8 3-5.7 3.9-8.7 3.9-7.3 0-12.4-7-10-13.6.7-1.7 60.5-62.3 147.8-149.6L365.5 69l7.7 7.7 7.8 7.8-143.2 143.3zM406 110.1l13.3 14.1-143.4 143.4-147.1 145.5c-12 6.2-28.8-4.3-28.8-18.1 0-8.5-2.7-5.7 147.8-155.7L392.1 96.1c.4-.1 6.6 6.2 13.9 14zM297.1 297.4L149.2 445.3l-4.2-.6c-2.3-.3-5.3-1.5-6.6-2.8-2.7-2.5-4.1-8.1-2.8-11 .5-1.1 67-68.1 147.9-148.9l147-147 7.3 7.3 7.2 7.2-147.9 147.9zM69 391.4c3.7 2 6.8 2.9 10.5 3l5.3.1.5 5.1c1.5 14.3 15.3 28.4 29.5 30.1l4.9.5.5 6.2c.6 7.3 2.5 11.4 7.7 16.4l3.9 3.7-32.6 11.3-32.5 11.3-15.4-15.3c-8.4-8.4-15.3-15.9-15.3-16.6s5-15.7 11.2-33.3L58.4 382l2.7 3.3c1.5 1.8 5 4.5 7.9 6.1zM40.5 474c5.4 5.4 9.6 10.2 9.2 10.6-.8.9-30.1 11.2-30.6 10.8S29.4 464 30 464c.3 0 5 4.5 10.5 10z"/></svg>`
+    const deleteSVG = `<svg id="deleteSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M202.1 1.1c-12.8 2.5-25.7 12.5-31.1 24.1-3.7 7.9-5 14.6-5 25.9V60h-46.4c-27.3 0-48.5.4-51.7 1-18 3.4-32.5 17.9-35.9 35.9-.5 3-1 13.4-1 23.3 0 15.9.2 18.3 2 21.8 3.1 6.1 7.8 8 19.4 8h9.5l.5 4.2c.4 2.4 6.4 75.4 13.5 162.3 13.8 168.3 13.4 164.8 19.5 174.4 6.4 10 18 17.9 29.5 20.1 7.3 1.4 254.9 1.4 262.2 0 11.5-2.2 23.1-10.1 29.5-20.1 6.1-9.6 5.7-6.1 19.5-174.4l13.5-162.3.5-4.2h9.5c11.6 0 16.3-1.9 19.4-8 1.8-3.5 2-5.9 2-21.8 0-9.9-.5-20.3-1-23.3-3.4-18-17.9-32.5-35.9-35.9-3.2-.6-24.4-1-51.7-1H346v-8.9c0-4.8-.5-11.2-1-14.2-3.4-18-17.9-32.5-35.9-35.9-6.5-1.2-100.6-1.2-107 .1zM308 32c6 3.1 8 7.8 8 19v9h-60-60v-9c0-11 2-15.9 7.8-18.9 3.5-1.9 5.9-2 52-2.1 46.5 0 48.4.1 52.2 2zm135 60c6 3.1 8 7.8 8 19v9H256 61v-9c0-11 2-15.9 7.8-18.9 3.6-2 6.5-2 187-2.1L443 92zm-23.6 62.7c-.3 2.7-6.3 75.1-13.4 161.1L393.2 472l-2.7 3.6c-5.2 6.8 3.4 6.4-134.5 6.4s-129.3.4-134.5-6.4l-2.7-3.6L106 315.8 92.6 154.7l-.5-4.7H256h163.9l-.5 4.7z"/><use xlink:href="#B"/><use xlink:href="#B" x="90"/><use xlink:href="#B" x="180"/><defs ><path id="B" d="M158.8 182.1c-2.3 1.2-4.6 3.5-5.8 5.9-2 3.9-2 5.7-2 113s0 109.1 2 113c2.3 4.5 8 8 13 8s10.7-3.5 13-8c2-3.9 2-5.7 2-113s0-109.1-2-113c-3.7-7.3-12.7-9.9-20.2-5.9z"/></defs></svg>`
+    const copySVG = `<svg id="copySVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M248 .6c-10.6 1.9-18.3 5.1-26.6 11-10.1 7.1-16.5 16-22 30.4-4 10.4-9.3 15.7-20.3 19.9-9.5 3.7-14.5 6.6-21.8 12.7l-5.1 4.4h-29.9c-31.2 0-34.2.4-42.9 4.8-9.1 4.7-17.3 16.3-19.4 27.1-1.4 7.3-1.4 361.8 0 369.1 2.9 15.3 15.7 28.1 31 31 7.2 1.4 322.8 1.4 330 0 15.3-2.9 28.1-15.7 31-31 1.4-7.3 1.4-361.8 0-369.1-2.1-10.8-10.3-22.4-19.4-27.1-8.7-4.4-11.7-4.8-43-4.8h-29.9l-5.1-4.3c-7.3-6.2-12.2-9.1-21.7-12.8-11-4.2-16.3-9.5-20.3-19.9-8.1-21.3-20.3-33.2-40.6-39.6-4.7-1.5-19.7-2.6-24-1.8zM268.6 22c11.5 4 20.2 12.6 24.5 24.5 7 19.1 15.5 27.5 34.4 34.4 11.5 4.2 20.6 13.2 24.6 24.5 1.5 4.4 1.9 8.2 1.9 19.1V138h-98-98v-13.5c0-10.9.4-14.7 1.9-19.1 4-11.3 13-20.3 24.5-24.4 18.8-6.8 27.5-15.4 34.5-34.5 7.6-20.7 29.3-31.4 49.7-24.5zM141 98.3c0 .1-.7 3.4-1.5 7.2-1 5-1.5 13.5-1.5 29.7V158h118 118v-22.8c0-16.2-.5-24.7-1.5-29.7l-1.5-7.3c0-.2 10.7-.2 23.8 0l23.9.3 4.8 3c3.2 2 5.6 4.5 7.2 7.4l2.3 4.4-.2 183.2-.3 183.2-2.7 3.6c-1.6 1.9-4.3 4.6-6 5.9l-3.3 2.3H256 91.5l-3.3-2.3c-1.7-1.3-4.4-4-6-5.9l-2.7-3.6-.3-183-.2-183 2.1-4.4c2.4-5 8.1-9.3 13.7-10.4 3.3-.6 46.2-1.2 46.2-.6zm109.3-52.4c-12.7 5.9-10.3 25.1 3.3 27.7 4.7.9 11.8-1.9 14.5-5.8 8.7-12.1-4.3-28.1-17.8-21.9zM138 226.5v9.5h118 118v-9.5-9.5H256 138v9.5zm0 59v9.5h118 118v-9.5-9.5H256 138v9.5zm0 59v9.5h118 118v-9.5-9.5H256 138v9.5zm0 59.5v10h59 59v-10-10h-59-59v10z"/></svg>`
+    const generateSVG = `<svg id="generateSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M356.5 8.4c-1.3 1.3-2.7 4-3 6-.4 2-1.1 3.9-1.7 4.2-.5.3-3.1.1-5.7-.6-4.2-1-5.4-.9-8 .5-3.1 1.6-5.1 4.9-5.1 8.5 0 3.3 4.7 7.7 9.6 8.9 3.7 1 4.5 1.5 3.9 2.9-.3.9-.9 3.8-1.2 6.4-.5 4.3-.3 5 2.5 7.7 5.8 5.9 13 3.1 15.3-6 1.1-4.3 1.6-4.9 3.4-4.4 9.1 2.5 14.5 1.2 16.6-4.2 2.2-5.8-1.8-11-10-12.8-3.2-.7-3.3-.8-2.6-4.4 1.4-6.5 1-10-1.5-12.6-3.2-3.4-9.1-3.5-12.5-.1zM276.6 47c-1.6.5-4 1.9-5.3 3.2-5.3 4.9-5.3 4.8-5.3 46.5v38.9l-30.8 21.7c-17.1 12.1-31.5 23-32.4 24.5-4.2 7-2.4 16.5 3.8 20.9 1.6 1.1 10 4.2 18.7 6.9l15.8 4.8-117.9 118.1C-6.9 462.7 1.5 453.5.3 467.9c-1.9 22.7 17.4 41.9 40 39.8 14.6-1.4 5.9 6.5 135.7-123.3l117.6-117.5 4.8 15.8c2.6 8.7 5.7 17.1 6.8 18.7 4.5 6.3 14.5 8 21.1 3.7 1.5-1 12.6-15.6 24.5-32.5l21.7-30.7 38.8.1c42.4.1 41.9.1 47-5.9 2.9-3.5 4.1-9.3 2.8-13.7-.5-1.7-10.7-16.3-22.8-32.5l-22.5-30.5c-.4-.6 4.7-17 11.3-36.5 10.2-29.9 12-36.1 11.6-40-.7-8.1-7-13.9-15-13.9-1.9 0-18.9 5.2-37.8 11.7L350 92.4c-.8 0-14.9-10-31.3-22.3-16.4-12.2-31.2-22.7-33-23.2-3.7-1.1-5.2-1-9.1.1zm32 38.3c32.4 24.2 34.7 25.7 39.9 25.7 2.9 0 15.1-3.7 37-11.1 17.9-6.1 32.9-10.9 33.2-10.5.3.3-4.4 15.3-10.6 33.3-7.3 21.4-11.1 34.3-11.1 37 0 3.3 1 5.6 4.6 10.9 3.6 5.2 33.2 45.2 38.7 52.2.9 1.2-5 1.3-35.8 1.1-35.7-.4-37.1-.3-40.5 1.7-2.5 1.4-9.2 10.1-24 31.1l-21.1 29.2c-.3.1-5.2-14.9-10.9-33.2-5.6-18.2-11-34.5-11.9-36-.9-1.6-2.9-3.7-4.6-4.7-2.5-1.5-25.7-9-62.7-20.3-3.8-1.1-6.8-2.3-6.7-2.6 0-.3 13.1-9.8 29.2-21.1 21-14.8 29.7-21.5 31.1-24 2-3.4 2.1-4.8 1.7-40.5-.2-30.8-.1-36.7 1.1-35.8.7.5 11.2 8.5 23.4 17.6zm-37.3 138.6c4.9 1.5 9.2 3.2 9.6 3.7s2 5.1 3.6 10.2l2.9 9.3-74.2 74.2-74.2 74.2-13.2-13.3-13.3-13.2 74-74 75-74c.5 0 5 1.3 9.8 2.9zm-184 223.4c-25.7 25.7-40.2 39.5-42.8 40.8-9.4 4.4-20.1.2-24.6-9.6-2.3-4.9-2.4-9.4-.4-14.3 1.1-2.5 14.1-16.2 40.8-42.9L99.5 382l13.2 13.2 13.3 13.3-38.7 38.8zM162.8 73c-1.7 1.3-3.1 4.1-4.3 8.5-2 7.3-2.2 7.3-10 5-6-1.9-9.8-1.2-12.5 2.2-2.3 2.9-2.6 6.4-.8 9.6 1.7 3.2 3.6 4.3 9.6 5.8 3 .7 5.6 1.8 5.9 2.5s-.3 3.8-1.2 6.9c-1.7 6.1-1.4 8.8 1.8 12.2 1.4 1.6 3.2 2.3 5.7 2.3 5.5 0 7.7-2.2 10-10.1 1.9-6.4 2.3-7 4.3-6.5 8.8 2.6 12.9 3 15.4 1.6 5.7-3.2 6-12.6.5-15.4-1.5-.7-5.1-1.9-7.9-2.7-2.9-.7-5.3-1.6-5.3-1.9 0-.4.7-2.9 1.5-5.6 2.3-7.7 2-10.8-1.6-13.8-3.7-3.1-7.7-3.3-11.1-.6zm320.3 48.7c-1.7 1.8-3.2 4.9-4.1 8.6-1.2 5.2-1.6 5.8-3.4 5.2-12.4-3.6-16.7-3-19.1 2.9-2.8 6.8.6 11.1 10.8 13.7 5.3 1.3 5.5 1.8 3.2 9.3-1.7 5.5-1.3 8 1.8 11.3 1.4 1.6 3.2 2.3 5.7 2.3 6.1 0 8.4-2.6 11-12.6l1-4.2 4.7 1.4c2.5.8 6.3 1.4 8.5 1.4 6.7 0 10.5-6.2 7.5-12.6-1.4-2.9-2.6-3.6-8.7-5.5-3.8-1.1-7-2.2-7-2.2 0-.1.7-2.7 1.5-5.7 2.1-7.8 1.9-9.8-1.4-13.1-3.9-3.8-8.3-3.9-12-.2zm-74.3 255.2c-1.3 1.1-3 3.8-3.7 6.1-1.1 3.6-1.5 4-3.4 3.3-4.7-1.7-9.8-.8-12.3 2.1-4.6 5.3-1.9 12.5 5.7 14.7 4.4 1.4 4.3 1.1 2.8 6.3-1.4 5.1.2 9 4.7 11.1 5.8 2.7 10.1.4 12.8-7.1.8-2.4 1.9-3.8 2.7-3.5 5 1.3 9.1 1.2 11.2-.2 6.7-4.4 5-13.9-3-16.5l-4.3-1.4.7-5.8c.5-5.3.4-6-2-8.4-3.2-3.2-8.3-3.5-11.9-.7z"/></svg>`
+    const sendSVG = `<svg id="sendSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M499.5 7.4c-1.6.8-113.7 48.7-249 106.5L2.3 221.6c-2.9 3.2-2.9 6.6 0 9.8 1.2 1.3 33 22.1 70.7 46.1l70.1 45.4c.9.9 10.6 36.7 23.8 87.6l23.3 89.3c1.1 3.8 5.8 6.7 9.4 5.8 1.3-.4 3.6-1.8 5.1-3.2l88.8-81.2c.7-.2 22.9 10.7 49.3 24.2 30.7 15.8 49 24.6 50.9 24.6 1.8 0 3.8-.9 5.1-2.3 1.7-1.8 13.5-48.6 57.8-227.8l55-228.2c-.6-2.6-5-5.7-7.8-5.7-.7.1-2.6.7-4.3 1.4zm-43.5 37c0 .5-304.1 262.2-305.3 262.8-.8.3-124.5-78.3-124.6-79.2-.1-.5 427.5-183.7 429.2-183.9.4-.1.7.1.7.3zm29.4 11.3c-.3 1-22.2 89.9-48.8 197.6l-48.8 196.2c-.5.5-37.3-18.2-111.3-56.3-15.9-8.2-26.9-14.4-26.7-15.2.2-1.1 235.2-324 235.8-324 .1 0 0 .8-.2 1.7zm-36.3 20L336.6 230 229 377.5 213.9 423l-15.2 45.4-18.3-70.4-19.2-73.7-1-3.2 62.7-53.9L453.6 69c.2 0-1.8 3-4.5 6.7zM260 403.3l18 9.4-29.7 27.4-30.9 28.2c-.9.5-.7-1 .6-5l23.6-69.3c.2 0 8.5 4.2 18.4 9.3z"/></svg>`
+    const addSVG = `<svg id="addSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M237 .6l-13 1.5c-79.1 9-152.2 58.6-192.4 130.5C17 158.8 6.4 191.4 1.9 224c-1.8 12.5-1.8 51.5 0 64C12.4 364.2 53 428.9 116.5 470.6c84 55.2 195.6 55 279.7-.4 126.6-83.5 153.9-257.1 59.1-374.7-40.9-50.7-97.4-82.9-163.3-93C282 1 244.8-.3 237 .6zM276.1 41c16 1.6 31 4.8 47.3 10.1 48.8 16 89.3 48.1 117.1 92.9 23.7 38.3 34.9 87.2 30.4 132.6-6.7 67.8-44.2 127.4-102.9 163.9-38.3 23.7-87.1 34.9-132.6 30.4-85.4-8.4-157.8-66.4-184.3-147.5-14.8-45.2-14.8-89.6 0-134.8 12.3-37.7 35.3-72 64.9-96.9C160.9 53.9 219.3 35.5 276.1 41zM236 191v45h-45-45v20 20h45 45v45 45h20 20v-45-45h45 45v-20-20h-45-45v-45-45h-20-20v45z"/></svg>`
+    const runSVG = `<svg id="runSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M468.5 1.1c-70.2 4.7-140.4 26-196.5 59.7-16.3 9.7-28.7 18.4-43.7 30.4l-12.1 9.8h-45.9-45.8l-61.8 61.8L1 225.3c0 .4 29 .7 64.5.7l64.5.5c0 .3-1.5 5.6-3.4 11.8-3.4 11.3-7.9 32.2-9.1 42.7l-.6 5.5 54.4 54.4 54.5 54.4 8.3-1.3c12.7-1.8 26.2-4.7 37.9-8.1l12.3-3.6c1.6-.5 1.7 3 1.7 64.1l.8 64.6c.4 0 28.5-27.8 62.5-61.8l61.7-61.7v-46-46.1l6.4-7.6c31.4-37.8 54.5-80.2 71.3-130.6 14.5-43.9 21.5-84.8 23-134.5l.6-22.7-15.9.1c-8.7.1-21.3.5-27.9 1zm20.2 36.1C486 96 469 159.3 442.3 210c-41.6 79-104.2 133.5-177.7 154.6-6.6 1.9-16.2 4.2-21.3 5.1l-9.4 1.7-46.5-46.5-46.5-46.4.6-5.5c.9-7.4 6.6-29.4 10.5-40.5C189.7 126.1 301.4 45.8 437.5 27.1c17.9-2.5 31.9-3.8 43.4-4l8.4-.1-.6 14.2zM192 124.6c0 .3-2.8 3.7-6.2 7.5-14.6 16.3-32.5 42.9-42.4 63.1l-3.8 7.8H97 54.5L94 163.5l39.5-39.5h29.2c16.1 0 29.3.3 29.3.6zM348.5 418L309 457.5V415v-42.5l10.9-5.7c20.8-10.8 46.7-28.5 61.6-42.1l6-5.4.3 29.6.2 29.6-39.5 39.5zm.6-326.9c-17.3 2.9-34.7 15.3-43.5 31.2-13.2 23.6-8.8 54.1 10.6 73.5 11.2 11.3 24.3 17.1 40.3 17.9 18.6 1 33.9-4.9 47-18.1 22.2-22.3 24.3-55.5 5.1-81.4-12.9-17.4-37.1-26.8-59.5-23.1zm26.9 25.5c27 12.6 30.9 49 7.3 67-15.2 11.6-37.8 9.8-51.4-4-20.2-20.5-12.1-54.6 15.4-64.7 8.1-2.9 20.3-2.2 28.7 1.7zM69.7 347.8L35 382.5l8 8 8 8L85.5 364c19-19 34.5-34.9 34.5-35.5 0-1-14-15.5-15-15.5-.3 0-16.1 15.6-35.3 34.8zM87 409.5L35.5 461l7.8 7.7 7.7 7.8 51.7-51.7 51.8-51.8-7.5-7.5c-4.1-4.1-7.7-7.5-8-7.5s-23.7 23.2-52 51.5zm61 17L113.5 461l8 8 8 8 35-35 35-35-7.5-7.5c-4.1-4.1-7.9-7.5-8.5-7.5-.5 0-16.5 15.5-35.5 34.5z"/></svg>`
+    const exportSVG = `<svg id="exportSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M209.8 39c-2 1.1-4.7 3.6-6 5.7l-2.3 3.8-.3 85.2-.2 85.2-29.8.3c-35 .4-35.7.5-40.4 9.8-3.2 6.1-3.5 10.4-1.3 15.8 1.1 2.5 18.3 20.4 54.8 57.1l58.9 58.1c6.5 5.5 11.2 6.8 17.9 5 3.9-1.1 10.3-7.1 60.7-57.3l58.9-60c3.9-5.7 4.1-11.9.6-18.6-4.8-9.4-5.4-9.5-40.5-9.9l-29.8-.3-.2-85.2-.3-85.2-2.4-3.8c-1.2-2.1-4-4.6-6.2-5.7-3.6-1.9-6-2-46.1-2-39.8.1-42.5.2-46 2zM48.9 330c-4.4 1.3-7.9 4.2-10 8.1-1.8 3.6-1.9 6.2-1.9 47.5 0 36.5.3 44.6 1.6 49.8 4.7 18.4 19.6 33.1 38.4 38.1 8.2 2.2 349.8 2.2 358 0 19.1-5.1 33.4-19.4 38.5-38.5 1.2-4.4 1.5-14.2 1.5-49.3 0-41.6-.1-44-2-47.6-4.9-9.7-19.9-11.9-28.4-4.2-5.5 5.1-5.6 5.5-5.6 49.8 0 37.4-.2 41.1-1.9 44.8-2.2 4.8-4.4 6.9-9.4 9-3.2 1.3-22.7 1.5-171.7 1.5s-168.5-.2-171.7-1.5c-5-2.1-7.2-4.2-9.4-9-1.7-3.7-1.9-7.4-1.9-44.8 0-44.3-.1-44.7-5.6-49.8-4.8-4.4-12-5.9-18.5-3.9z"/></svg>`
+    const importDataSVG = `<svg id="importDataSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M247.5 38.9c-1.6 1-29 27.9-60.7 59.7-63.6 63.9-60.6 60.2-57.9 70.4 1.5 5.6 3.8 8.9 8.2 11.5 3.2 1.9 5.5 2 33.7 2.3l30.2.3v83.2l1.1 87.2c1.4 5 6.4 10 11.4 11.4 5.5 1.5 79.5 1.5 85 0 5-1.4 10-6.4 11.4-11.4.7-2.8 1.1-29.9 1.1-87.2v-83.2l30.3-.3c28.1-.3 30.4-.4 33.6-2.3 4.4-2.6 6.7-5.9 8.2-11.5 2.7-10.2 5.8-6.5-58.4-70.8l-60.9-59.8c-3.9-2-12.7-1.8-16.3.5zM48.9 330c-4.4 1.3-7.9 4.2-10 8.1-1.8 3.6-1.9 6.2-1.9 47.5 0 36.5.3 44.6 1.6 49.8 4.7 18.4 19.6 33.1 38.4 38.1 8.2 2.2 349.8 2.2 358 0 19.1-5.1 33.4-19.4 38.5-38.5 1.2-4.4 1.5-14.2 1.5-49.3 0-41.6-.1-44-2-47.6-4.9-9.7-19.9-11.9-28.4-4.2-5.5 5.1-5.6 5.5-5.6 49.8 0 37.4-.2 41.1-1.9 44.8-2.2 4.8-4.4 6.9-9.4 9-3.2 1.3-22.7 1.5-171.7 1.5s-168.5-.2-171.7-1.5c-5-2.1-7.2-4.2-9.4-9-1.7-3.7-1.9-7.4-1.9-44.8 0-44.3-.1-44.7-5.6-49.8-4.8-4.4-12-5.9-18.5-3.9z"/></svg>`
+    const deleteDataSVG = `<svg id="deleteDataSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M68.3 33.5c-8.5 2.3-15.3 6.3-21.9 12.9-6.7 6.7-10.6 13.4-12.9 22.3-2.2 8.6-2.2 238 0 246.6 2.3 8.9 6.2 15.6 12.9 22.3C56.8 348 67.6 352 85.8 352H96v10.8c0 17.8 3.9 28.3 14.4 38.8 10.4 10.4 21.2 14.4 39.4 14.4H160v10.8c0 17.8 3.9 28.3 14.4 38.8 3.4 3.4 8.5 7.3 11.4 8.8 11.3 5.7 7.5 5.6 133.8 5.6l121.5-1c18.3-3.5 34.4-19.6 37.9-37.9 1.4-7.4 1.4-234.8 0-242.2-2.5-12.9-12.5-26.7-23.8-32.7-8.6-4.6-16-6.2-28.4-6.2H416v-9.9c0-17.9-3.5-28.2-13.3-38.7-10.1-10.9-21.8-15.4-39.9-15.4H352v-9.9c0-5.4-.5-12.2-1-15.2-2.5-12.9-12.5-26.7-23.8-32.7-12.2-6.5-5.7-6.2-135.7-6.1L68.3 33.5zm244.3 33.1c6 4.4 6.9 6.7 7.2 18.5l.4 10.9h-90.9c-98.8 0-96.2-.1-107.5 5.6-6.7 3.4-16.8 13.5-20.2 20.2-5.7 11.3-5.6 8.7-5.6 107.5v90.9l-10.9-.4c-11.8-.3-14.1-1.2-18.5-7.2-2.1-2.7-2.1-3.4-2.4-117.9l.3-118.4c.7-4 4.9-9.1 9-10.9 2.4-1.1 24.2-1.3 119.7-1.1 116.1.2 116.7.2 119.4 2.3zm64 64c6 4.4 6.9 6.7 7.2 18.5l.4 10.9h-90.9c-98.8 0-96.2-.1-107.5 5.6-6.7 3.4-16.8 13.5-20.2 20.2-5.7 11.3-5.6 8.7-5.6 107.5v90.9l-10.9-.4c-11.8-.3-14.1-1.2-18.5-7.2-2.1-2.7-2.1-3.4-2.4-117.9l.3-118.4c.7-4 4.9-9.1 9-10.9 2.4-1.1 24.2-1.3 119.7-1.1 116.1.2 116.7.2 119.4 2.3zm64 64c1.5 1.1 3.7 3.3 4.8 4.8 2.1 2.7 2.1 3.1 2.1 120.6s0 117.9-2.1 120.6c-1.1 1.5-3.3 3.7-4.8 4.8-2.7 2.1-3.1 2.1-120.6 2.1s-117.9 0-120.6-2.1c-1.5-1.1-3.7-3.3-4.8-4.8-2.1-2.7-2.1-3.4-2.4-117.9l.3-118.4c.7-4 4.9-9.1 9-10.9 2.4-1.1 24.2-1.3 119.7-1.1 116.1.2 116.7.2 119.4 2.3zm-181.9 53.8c-4.5 1.7-7.4 4-9.4 8-1.8 3.4-1.9 10.5-.3 13.8.7 1.2 11.8 13 24.8 26l23.7 23.8-23.7 23.7c-13 13.1-24.1 24.9-24.8 26.1-2.6 5.3-.8 14.4 3.6 18.3 4.7 4.1 12.6 5.4 17.6 2.9 1.2-.7 13-11.8 26.1-24.8l23.7-23.7 23.8 23.7c13 13 24.8 24.1 26 24.8 5 2.5 12.9 1.2 17.6-2.9 4.4-3.9 6.2-13 3.6-18.3-.7-1.2-11.8-13-24.8-26.1L342.5 320l23.7-23.8c13-13 24.1-24.8 24.8-26 1.6-3.3 1.5-10.4-.4-14-3.4-6.5-11.1-9.9-18.1-8.1-3.3.9-8 5.1-28.2 25.2L320 297.4l-24.2-24.1c-20.1-19.9-25-24.3-28.3-25.2-4.8-1.3-4.1-1.3-8.8.3z"/></svg>`
+    const searchSVG = `<svg id="searchSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M181.7 1.6C108.2 10.5 43.3 60.3 15.3 129.4-12 197-2 273.3 41.9 332c7 9.4 24.4 27.4 33.7 35.1 37.4 30.6 83 46.9 131.1 46.9 41.9 0 79.3-11 114.2-33.7l8.4-5.5 64.6 64.5c44.1 44.1 66 65.2 69.1 66.8 3.8 2 6 2.4 14 2.4 11.2 0 16.6-2.1 23.2-9.3 6.1-6.7 8.3-12.2 8.3-21.7 0-14.1 2.7-10.9-69.8-83.4l-64.5-64.4 4-5.6c13.4-19.1 25-45.5 30.8-70.5 7.2-30.4 6.6-68.2-1.5-99-13.3-50.7-46.8-95.9-91.7-123.8C276.7 6.6 228.3-4 181.7 1.6zM236 66.5c18.2 4 35.8 11.5 51.1 21.6 10.8 7.3 26.7 22.3 34.3 32.3 28.4 37.8 36.7 86.6 22.1 131.2-11.9 36.5-37.7 66.4-72 83.6-39.3 19.8-84 20.5-124.3 2.2-16.3-7.4-30.4-17.6-43.8-31.7C84.5 286 72.2 262.4 66.3 235c-2.6-12.2-2.6-44 .1-55.9 6.2-28.7 19.4-52.9 39.6-73.1 22.1-22.1 49.7-36.1 80.5-40.9 9.1-1.5 40.6-.5 49.5 1.4z"/></svg>`
+    const settingsSVG = `<svg id="settingsSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M224.5.9c-5 1.3-11.2 4.9-15.1 8.8-6.5 6.4-8.1 11.7-11.1 35.4-1.4 11.8-3.1 21.9-3.6 22.6s-2.5 1.7-4.5 2.3c-2 .7-8.3 3.2-14 5.7l-10.3 4.6-3.7-3C144.9 63.6 131.8 53.9 128 52c-6.1-3.1-15.9-3.8-23.6-1.5-5.7 1.6-6.7 2.5-29.1 24.8C53 97.7 52.1 98.7 50.5 104.4c-2.3 7.8-1.6 17.5 1.5 23.6 1.3 2.5 7.6 11.2 14 19.5 15.9 20.3 14.8 18 11.3 25-1.7 3.3-4.3 9.4-5.8 13.5s-3.3 8-3.9 8.6-10.8 2.3-22.6 3.8c-23.8 3-28.9 4.6-35.3 11-2.1 2-4.9 6-6.5 8.9l-2.7 5.2v32 32l2.6 5.6c1.5 3.1 4.3 7.3 6.4 9.4 6.6 6.6 12 8.3 34.7 11.1 11.1 1.3 21.2 2.8 22.3 3.3 1.2.5 2.8 3 3.9 6.2 1 3 3.7 9.3 5.9 14.1 2.7 6.1 3.7 9.2 3 10-.5.7-6.4 8.3-13 16.8s-13 17.5-14.3 20c-3.1 6.1-3.8 15.8-1.5 23.6 1.6 5.7 2.5 6.7 24.8 29.1 22.4 22.3 23.4 23.2 29.1 24.8 7.7 2.3 17.5 1.6 23.6-1.5 3.8-1.9 16.9-11.6 34.2-25.3l3.7-3 10.3 4.6c5.7 2.5 12 5 14 5.7 2 .6 4 1.6 4.5 2.3s2.2 10.8 3.6 22.6c3 23.8 4.6 29 11.2 35.6 2.1 2.1 6.3 4.9 9.4 6.4l5.6 2.6H256h31.5l5.6-2.6c3.1-1.5 7.3-4.3 9.4-6.4 6.7-6.7 8.3-12 11.2-35.7 1.4-11.7 3.1-21.8 3.7-22.4s4.5-2.4 8.6-3.9 10.2-4.1 13.5-5.8c7-3.5 4.7-4.6 25 11.3 8.3 6.4 17 12.7 19.5 14 6.1 3.1 15.8 3.8 23.6 1.5 5.7-1.6 6.7-2.5 29.1-24.8 22.3-22.4 23.2-23.4 24.8-29.1 2.3-7.8 1.6-17.5-1.5-23.6-1.8-3.5-11.2-16.2-27.3-36.7-.6-.9.5-4.5 3.6-11.5 2.5-5.7 5-12 5.7-14 .6-2 1.6-4 2.3-4.5s10.8-2.2 22.6-3.6c23.8-3 29-4.6 35.6-11.2 2.1-2.1 4.9-6.3 6.4-9.4l2.6-5.6V256v-31.5l-2.6-5.6c-1.5-3.1-4.3-7.3-6.4-9.4-6.6-6.6-11.9-8.2-35.9-11.4-11.9-1.5-22-3.2-22.5-3.7s-2.1-4.3-3.6-8.4-4.1-10.2-5.8-13.5c-3.5-7-4.6-4.7 11.3-25 6.4-8.3 12.7-17 14-19.5 3.1-6.1 3.8-15.8 1.5-23.6-1.6-5.7-2.5-6.7-24.8-29.1-22.4-22.3-23.4-23.2-29.1-24.8-7.8-2.3-17.5-1.6-23.6 1.5-2.5 1.3-11.2 7.6-19.5 14-20.3 15.9-18 14.8-25 11.3-3.3-1.7-9.4-4.3-13.5-5.8s-8-3.3-8.6-3.9-2.3-10.7-3.7-22.5c-3-23.8-4.6-28.9-11.2-35.6-2.1-2.1-6.3-4.9-9.4-6.4L287.5.5l-30-.2c-16.5-.1-31.3.2-33 .6zm59.4 21.4c5.4 2.7 6.1 4.9 9.6 32.2 2.5 19.8 3.7 26.3 5.1 28.2 1.4 1.8 5.4 3.7 14 6.8 6.6 2.3 16.9 6.6 22.9 9.5 9.5 4.6 11.2 5.1 13.9 4.3 1.7-.5 12.3-8.1 23.6-16.9 27.5-21.4 23.1-21.8 48.7 3.9 25.7 25.6 25.4 21 3.6 49.1-8.9 11.5-16.5 22.3-16.9 23.8-.4 2.3.6 5.3 4.6 13.6 2.9 5.8 7 15.5 9.2 21.5 4.7 13.2 5.2 14.3 8 15.8 1.2.7 13.7 2.7 27.7 4.5 26.9 3.4 29.1 4.1 31.8 9.5 1.8 3.4 1.8 52.4 0 55.8-2.7 5.4-4.9 6.1-31.9 9.5-14 1.9-26.4 3.9-27.6 4.5-2.8 1.5-3.4 2.6-8.1 15.9-2.1 6.1-6.3 15.8-9.1 21.7-4.7 9.5-5.2 11-4.3 13.9.5 1.7 8.1 12.3 16.9 23.6 21.4 27.5 21.8 23.1-3.9 48.7-25.6 25.7-21 25.4-49.1 3.6-11.5-8.9-22.3-16.5-23.8-16.9-2.3-.4-5.3.6-13.6 4.6-5.8 2.9-15.6 7-21.7 9.2-6 2.2-12 4.6-13.2 5.4-3.1 2-3.9 5.7-7.2 32.3-3.1 24.7-3.8 27.1-9.2 29.8-3.4 1.8-52.4 1.8-55.8 0-5.4-2.8-6.1-4.9-9.5-32.1-2.6-20.1-3.7-26.3-5.2-28.3-1.4-1.8-5.3-3.7-13.9-6.8-6.7-2.3-16.9-6.6-22.8-9.4-8.4-4.1-11.3-5.1-13.6-4.6-1.6.3-11.6 7.4-22.2 15.6-10.7 8.3-20.7 15.8-22.2 16.6-5.9 3-7.8 1.7-28.7-19.2-25.3-25.4-25-20.9-3.3-48.9 8.9-11.5 16.5-22.2 16.8-23.7.5-2.1-.6-5.4-4.5-13.4-2.8-5.9-7-15.7-9.1-21.8-2.2-6.2-4.7-12.2-5.5-13.4-2-3.1-5.7-3.9-32.3-7.2-24.7-3.1-27.1-3.8-29.8-9.2-1.8-3.4-1.8-52.4 0-55.8 2.7-5.4 5.1-6.1 29.8-9.2 26.6-3.3 30.3-4.1 32.3-7.2.8-1.2 3.2-7.2 5.4-13.2 2.2-6.1 6.3-15.9 9.2-21.8 4.7-9.6 5.2-11.2 4.3-14-.5-1.8-8.1-12.4-16.9-23.7-21.4-27.5-21.8-23.1 3.9-48.7 25.6-25.7 21.2-25.3 48.7-3.9 11.3 8.8 21.9 16.4 23.6 16.9 2.8.9 4.5.4 14.6-4.6 6.2-3 16-7.1 21.8-9.2 5.8-2 11.5-4.3 12.7-5 3.1-2.1 3.9-5.8 7.2-32.4 3.1-24.7 3.8-27.1 9.2-29.8 1.7-.9 9.6-1.3 27.9-1.3s26.2.4 27.9 1.3zM243.8 150c-36.9 4.6-68.3 27.5-84.3 61.3-19.2 40.7-10.2 89.4 22.3 120.9 32.1 31 79.2 39.2 118.7 20.4 23.8-11.2 40.9-28.3 52-51.9 25.9-54.8.2-119.9-56.8-143.6-14.7-6.1-36.4-9.1-51.9-7.1zm29.2 22.4c22.1 4.7 41.2 17.7 53.9 36.6 9.7 14.5 14.1 29.4 14.1 47.4-.1 28.9-13.7 54.1-38.1 70.5-9.3 6.3-21.7 11.3-32.5 13.2-3.9.7-11.7 1-18.8.7-14.6-.6-26.4-4.1-39.1-11.6-9.5-5.6-22.4-18-28.3-27.2-4.9-7.5-9.8-19.6-11.8-29-1.8-8.4-1.8-25.6 0-34 7.1-33.3 32.8-59.2 66.1-66.5 8-1.8 26.4-1.8 34.5-.1z"/></svg>`
+    const backSVG = `<svg id="backSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M232.1 1C145.3 9.4 67.7 62 28.4 139.2c-13.9 27.3-22.1 53.6-26.6 85.3-2 14-1.7 50.4.6 66 3.9 27.8 12.1 54.1 24.7 79.4 24.9 50.2 64.7 90 115 115 81.5 40.6 177.9 35 253.9-14.7 29.7-19.4 57.9-48.2 77.1-78.8 7.4-11.6 18.4-34.2 23.4-47.8 5.1-13.8 11-37.6 13.1-53.1 2.3-15.7 2.6-52.1.6-66-4.3-29.9-12-55.4-24.6-81C447.8 66.7 376.6 15 291.5 2.4 279.3.6 244.9-.2 232.1 1zm-10.2 133.3c5.5 3.7 8.9 9.2 10.3 16.6 1 5.2.9 6.9-.6 11.6-1.5 4.9-4.5 8.4-32.3 38.2l-30.7 32.8 116 .5c129.9.6 118.7-.2 125.7 8 9.2 10.8 6.6 26.9-5.7 34.5l-4.9 3-115.4.5-115.3.5 29.1 31c15.9 17 30.1 32.8 31.4 35.1 13.4 22.2-16 45.8-35.1 28.2-2.4-2.2-24.1-25.1-48.1-50.9-50-53.5-49.7-53.2-49.8-66.9 0-14.2-1-13 50.8-68.5l49.1-51.8c7.5-6.3 18.1-7.3 25.5-2.4z"/></svg>`
+    const shareSVG = `<svg id="shareSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M411.8 5.1c-20.2 3-37.2 11.4-51.1 25.3-7.6 7.6-12.5 14.8-17.7 25.9-6.1 13.1-7.4 19.2-7.5 35.3v14.2l-88.3 48.1-88.4 48.1-7.1-7.4c-11.7-11.8-24-19.1-40.4-23.8-11.3-3.3-34.3-3.3-45.8 0-31.3 8.9-54.6 32.8-63.1 64.7-2.7 10.3-2.5 32.1.5 43 11.9 44 55.5 72.7 99 65.1 19.9-3.5 33.4-10.3 47.8-24l9.3-8.8 49.8 27 88 47.9 38.2 20.8.4 14.5c.3 16.5 1.8 23 7.7 35.8 5.1 11.1 11.2 19.4 20.2 27.8 12 11.1 26.9 18.8 42.6 22 11.3 2.2 31.5 1.5 41.6-1.5 33.4-9.9 57.9-37.7 63.4-72.1 4.2-25.4-4.5-53.8-22.2-72.6-11.2-12-22.4-19.3-37.2-24.3-32.6-10.9-67.1-2.7-91.2 21.8-6.2 6.3-9.2 10.4-15.6 21.3l-2.2 3.7-85.5-46.5-85.8-46.9c-.1-.1.9-4.2 2.4-9.1 2.4-8 2.7-10.5 2.7-23.9.1-12.6-.3-16.2-2.2-22.5-1.2-4.1-2.3-8.3-2.4-9.3-.2-1.5 17.1-11.3 84.3-47.9l85.6-46.5c.7-.2 2.7 2.2 4.5 5.4 16 28.3 44.7 45.2 77.1 45.3 21.4 0 39-6.3 56.7-20.3 12.9-10.3 24.9-29.2 29.1-46.1 10.7-42.4-12-87.4-52.2-103.5-13.2-5.3-32.4-7.9-45-6zM443 31.9c18.8 6 35 22.2 41.2 41.1 2.9 9 3.5 25.1 1.4 34.5-4.2 18-17.2 34.4-33.6 42.4-11.1 5.4-20.8 7.4-32.6 6.8-26.2-1.5-48.8-18.9-57-44-3.8-11.3-4-27.7-.5-38.2 7.6-23.2 26.8-40.4 50.1-44.9 6.1-1.1 24.6.2 31 2.3zM106 194.6c10.4 3 19 8.3 27.5 16.9 13.3 13.2 18.8 26.4 18.9 45 .1 21.5-10 40.5-28.2 52.9-9.7 6.7-19.3 9.8-31.9 10.4-12.8.6-20.4-.8-30.8-5.7-23.3-10.9-36.8-32.4-36.6-58.1.1-18.1 5.7-31.6 18.6-44.6 10.5-10.5 21.1-16 36.5-18.8 4.7-.9 20.5.3 26 2zm338.2 164.6c18.9 7.1 32.5 20.7 39.6 39.6 3.3 9 4.2 25.5 1.8 35.7-5.2 22-22.7 40.4-45.1 47.1-4.3 1.3-9.3 1.8-17.5 1.8-10 0-12.6-.4-19.5-2.8-20.2-7-34.1-20.9-41.1-41.1-2.4-6.9-2.8-9.5-2.8-19.5 0-19.1 5.2-31.9 18.9-45.5 8.7-8.8 17.9-14.2 29-16.9 9.5-2.4 28.2-1.6 36.7 1.6z"/></svg>`
+    const stopSVG = `<svg id="stopSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M232 1.1c-13.5 1.2-22.5 2.8-38 6.6-51.6 12.5-99.4 42.1-133.7 82.8-17.7 20.9-35.4 51.4-44.8 77C-2 215-4.6 268 8.1 318.2c10.7 42.6 32.7 81.8 64.1 114.4 40.5 41.9 89 67.2 146.9 76.6 11 1.8 17.6 2.2 36.9 2.2 26.8 0 38.6-1.3 62-7 43.3-10.6 83.7-33 116.4-64.4 32.5-31.2 58-75 69.1-118.5 20.3-79.5 3.5-158.9-47.3-224-8.3-10.6-35.4-37.1-46.5-45.4C358.1 13.5 294.6-4.8 232 1.1zm50.5 22c31.2 3.2 69.2 16.2 96 32.9 48 29.9 83.6 75.3 100.9 128.7 7.8 24.3 10.9 44.9 10.8 72.3-.1 51.9-15.8 98.7-47.5 140.8-8.3 11.2-29.8 33.3-40.5 41.6-42.9 33.7-92.1 50.8-146.2 50.8-37.6 0-69.1-7.2-102.5-23.6-48-23.6-84.8-60.4-108-108.1-16.4-33.5-23.6-64.7-23.6-101.8 0-28 3.4-49.6 11.8-74.7C45 147.9 64.2 116.9 90 91c20.1-20.2 38.2-33.2 63.5-45.6 40.1-19.7 82.7-27 129-22.3zM132.2 127.5c-6.6 2.9-6.3-4.4-6 130.5l.3 122 2.8 2.7 2.7 2.8h124 124l2.7-2.8 2.8-2.7.3-122.5c.3-136 .7-127.1-6.3-130.1-5.1-2.1-242.4-2-247.3.1z"/></svg>`
     function loadScript(src, callback) {
         var script = document.createElement('script');
         script.src = src;
@@ -425,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * Parses the given EPUB file and extracts the text content of each chapter.
      *
      * @param {File} file - The EPUB file to be parsed.
-     * @return {Promise<string>} A promise that resolves with the concatenated text content of all chapters.
+     * @return {Promise<string>} A promise that resolves with the concatenated text content      of all chapters.
      * @throws {Error} If there is an error parsing the chapters or loading the EPUB file.
      */
     function parseEpub(file) {
@@ -534,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         messageBox.style.maxHeight = 'calc(30vh - 60px)';
-        container.appendChild(fileBubble);
+        container       .appendChild(fileBubble);
     }
     /**
      * Retrieves the content of a file based on its extension.
@@ -676,9 +692,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let imageQuality = 'standard'; 
     let imageSize = '1024x1024';
     const sendButton = document.getElementById('sendButton');
+    sendButton.innerHTML = sendSVG;
     const backButton = document.getElementById('backButton');
+    backButton.innerHTML = backSVG;
     const addButton = document.getElementById('addButton');
+    addButton.innerHTML = addSVG;
     const runButton = document.getElementById('runButton');
+    runButton.innerHTML = runSVG;
     const infoLink = document.getElementById('info-link');
     const modelDropdown = document.getElementById('modelDropdown');
     const previousChats = document.querySelector('.previous-chats ul');
@@ -746,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
     backButton.addEventListener('click', () => {
-        if (sendButton.innerHTML === 'Abort') {
+        if (sendButton.innerHTML.includes('cancel')) {
             abortMessageSending().then(setTimeout(endChatSession, 0));
         } else {
             endChatSession();
@@ -784,7 +804,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.previous-chats').style.display = 'none';
         addExportButton();
         handleSend();
-        sendButton.textContent = 'Abort';
+        runButton.style.display = 'none'
+        addButton.style.display = 'none'
+        sendButton.innerHTML = stopSVG;
         sendButton.removeEventListener('click', handleSendClick);
         sendButton.addEventListener('click', handleAbortClick);
         backButton.style.display = 'block';
@@ -792,6 +814,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     //Settings
     const settingsButton = document.getElementById('settingsButton');
+    settingsButton.innerHTML = settingsSVG;
     const settingsModal = document.getElementById('settingsModal');
     const closeModalButton = settingsModal.querySelector('.close');
     const saveSettingsButton = document.getElementById('saveSettingsButton');
@@ -1278,7 +1301,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }).catch(e => {
                                 reject(new Error(`Failed to parse file "${file.name}": ${e.message}`));
                             });
-                        } else if (extension === 'rtf') {
+                        } else                        if (extension === 'rtf') {
                             const reader = new FileReader();
                             /**
                              * Handles the load event of the FileReader.
@@ -1361,6 +1384,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function fetchChatTitle(messageContent, chatIndex) {
         const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
         const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
+        if (generateButton.querySelector('.loading-spinner')) {
+            return;
+        }
         const spinner = document.createElement('span');
         spinner.className = 'loading-spinner';
         generateButton.appendChild(spinner);
@@ -1514,7 +1540,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         isNewChat = false;
                     }
                     handleSend();
-                    sendButton.textContent = 'Abort';
+                    runButton.style.display = 'none'
+                    addButton.style.display = 'none'
+                    sendButton.innerHTML = stopSVG;
                     sendButton.removeEventListener('click', handleSendClick);
                     sendButton.addEventListener('click', handleAbortClick);
                     sendButton.className = 'abort-button';
@@ -1877,7 +1905,9 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {void} This function does not return anything.
      */
     function revertSendButton() {
-        sendButton.textContent = 'Send Message';
+        sendButton.innerHTML = sendSVG;
+        addButton.style.display = ''
+        runButton.style.display = ''
         sendButton.removeEventListener('click', handleAbortClick);
         sendButton.addEventListener('click', handleSendClick);
         sendButton.className = '';
@@ -2045,7 +2075,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {HTMLElement} copyButton - The button element for copying a message.
      * @param {HTMLElement} roleSelect - The select element for selecting a role.
      * @param {HTMLElement} textSpan - The element containing the message text.
-     * @param {HTMLElement} messageDiv - The div element containing the message.
+     * @param {HTMLElement} messageDiv     - The div element containing the message.
      * @param {string} message - The message text.
      * @param {HTMLElement} buttonsDiv - The div element containing the buttons.
      */
@@ -2118,12 +2148,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 adjustTextareaHeight(this);
             });
             const confirmButton = document.createElement('button');
-            confirmButton.textContent = 'Confirm';
+            confirmButton.innerHTML = `<svg id="confirmSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M234 13.6c-1.9.2-8.2 1.1-14 2-97.3 14.5-177.1 87.6-200.3 183.5-5.2 21.1-6.2 30.7-6.2 56.9 0 31.2 2.4 47.3 11.1 74.2 24.1 74.7 82.5 133 157.2 157.2 27.3 8.8 43 11.1 75.2 11 22.9-.1 27-.3 40-2.7 51.7-9.3 97.5-33.5 133-70.3 36.2-37.4 57.9-81.1 66.7-133.9 2.5-15.6 2.5-55.4 0-71-9.3-56-33.5-102.3-73.4-140.5-29-27.8-64.1-47.7-102.8-58.4-21.8-6-35-7.8-60.5-8.1-12.4-.2-24.1-.1-26 .1zM275.1 58c72.8 7.4 135.7 53.6 163.9 120.4 10.9 25.7 15.4 48.4 15.4 77.6 0 29.4-4.6 52.5-15.6 78.1-40.3 93.7-144.1 141.8-241.4 111.9-72.3-22.2-125.5-83.7-138-159.6-2.5-15.1-2.5-45.7 0-60.8 7-42.4 26.3-80.3 56.1-110.1 42-42 101.3-63.4 159.6-57.5zm90.4 98.5L361 158c-.2 0-33.2 32.7-73.2 72.7L215 303.5l-31.8-31.7c-17.4-17.4-33.3-32.4-35.2-33.4-2.1-1-5.7-1.7-9-1.7-15.9 0-26.7 16.6-20.1 30.8 1.3 2.7 15.7 17.7 43.7 45.6 44.5 44.1 44.2 43.9 53.5 43.9 8.6 0 9.3-.6 95-86.6 87.7-88.1 83.9-83.8 83.9-94-.1-7.2-5.2-15.4-12-18.9-4.6-2.4-12.7-2.8-17.5-1z"/></svg>`;
             confirmButton.className = 'confirm-button';
             confirmButton.title = 'Confirm the changes.';
             confirmButton.setAttribute('aria-describedby', 'confirmButtonDesc');
             const cancelButton = document.createElement('button');
-            cancelButton.textContent = 'Cancel';
+            cancelButton.innerHTML = cancelSVG;
             cancelButton.className = 'cancel-button';
             cancelButton.title = 'Cancel the changes.';
             cancelButton.setAttribute('aria-describedby', 'cancelButtonDesc');
@@ -2233,17 +2263,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const buttonsDiv = document.createElement('div');
         buttonsDiv.className = 'message-buttons';
         const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
+        editButton.innerHTML = editSVG;
         editButton.className = 'edit-button';
         editButton.title = 'Edit this message.';
         editButton.setAttribute('aria-describedby', 'editButtonDesc');
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.className = 'delete-button';
-        deleteButton.title = 'Delete this message.';
-        deleteButton.setAttribute('aria-describedby', 'deleteButtonDesc');
         const copyButton = document.createElement('button');
-        copyButton.textContent = 'Copy';
+        copyButton.innerHTML = copySVG;
         copyButton.className = 'copy-button';
         copyButton.title = 'Copy this message to the clipboard.';
         copyButton.setAttribute('aria-describedby', 'copyButtonDesc');
@@ -2261,10 +2286,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             roleSelect.appendChild(option);
         });
+        const deleteButton = document.createElement('button');
+        deleteButton.innerHTML = deleteSVG;
+        deleteButton.className = 'delete-button';
+        deleteButton.title = 'Delete this message.';
+        deleteButton.setAttribute('aria-describedby', 'deleteButtonDesc');
         buttonsDiv.appendChild(editButton);
-        buttonsDiv.appendChild(deleteButton);
         buttonsDiv.appendChild(copyButton);
         buttonsDiv.appendChild(roleSelect);
+        buttonsDiv.appendChild(deleteButton);
         messageDiv.className = role === 'user' ? 'user-message' : (role === 'assistant' ? 'assistant-message' : (role === 'system' ? 'system-message' : (role === 'loading' ? 'loading-message' : 'error-message')));
         document.getElementById('messageContainer').appendChild(messageDiv);
         setTimeout(() => {messageDiv.getBoundingClientRect();messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })}, 0);
@@ -2386,7 +2416,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const li = document.createElement('li');
         li.textContent = `${chat.title || 'Untitled'}`;
         const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
+        editButton.style.marginLeft = '5px';
+        editButton.innerHTML = editSVG;
         editButton.title = 'Edit the title of the chat.';
         editButton.setAttribute('aria-describedby', 'editTitleButtonDesc');
         /**
@@ -2397,7 +2428,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editTitle(index);
         };
         const generateTitleButton = document.createElement('button');
-        generateTitleButton.textContent = 'Generate';
+        generateTitleButton.innerHTML = generateSVG;
         generateTitleButton.title = 'Generate a new title for the chat.';
         generateTitleButton.setAttribute('aria-describedby', 'generateTitleButtonDesc');
         /**
@@ -2408,7 +2439,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetchChatTitle(chat.conversation.map(msg => msg.content).join('\n'), index);
         };
         const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
+        deleteButton.innerHTML = deleteSVG;
         deleteButton.title = 'Delete the chat.';
         deleteButton.setAttribute('aria-describedby', 'deleteChatButtonDesc');
         /**
@@ -2469,7 +2500,9 @@ document.addEventListener('DOMContentLoaded', function() {
         backButton.style.display = 'none';
         document.querySelector('.message-form').style.flex = '1'
         document.querySelector('.previous-chats').style.display = 'block';
-        sendButton.textContent = 'Start Chat';
+        sendButton.innerHTML = sendSVG;
+        addButton.style.display = ''
+        runButton.style.display = ''
         adjustTextareaHeight(messageBox);
         isNewChat = true;
         updateMessageCounters();
@@ -2498,7 +2531,9 @@ document.addEventListener('DOMContentLoaded', function() {
             backButton.style.display = 'block';
             document.querySelector('.previous-chats').style.display = 'none';
             addExportButton();
-            sendButton.textContent = 'Send Message';
+            sendButton.innerHTML = sendSVG;
+            addButton.style.display = ''
+            runButton.style.display = ''
             adjustTextareaHeight(messageBox);
         }
     }
@@ -2507,14 +2542,26 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function addExportButton() {
         const exportButtonContainer = document.querySelector('.export-button-container');
-        exportButtonContainer.innerHTML = `
-            <button id="exportChatButton" class="export-button" title="Export the current chat as a text file." aria-describedby='exportChatDesc'>Export chat</button>
-            <button id="shareChatButton" class="export-button" title="Create a shareable link to the current chat." aria-describedby='shareChatDesc'>Share chat</button>
-        `;
+        // Only create exportChatButton and ShareChatButton if they don't already exist
+        if (!(exportButtonContainer.querySelector('#exportChatButton') && exportButtonContainer.querySelector('#shareChatButton'))) {
+            const exportButton = document.createElement('button');
+            exportButton.innerHTML = exportSVG;
+            exportButton.title = 'Export the current chat as a text file.';
+            exportButton.setAttribute('aria-describedby', 'exportChatDesc');
+            exportButton.id = 'exportChatButton';
+            exportButtonContainer.appendChild(exportButton);
+            const shareChatButton = document.createElement('button');
+            shareChatButton.innerHTML = shareSVG;
+            shareChatButton.title = 'Create a shareable link to the current chat.';
+            shareChatButton.setAttribute('aria-describedby', 'shareChatDesc');
+            shareChatButton.id = 'shareChatButton';
+            exportButtonContainer.appendChild(shareChatButton);
+        }
+        const exportButton = document.getElementById('exportChatButton');
+        const shareChatButton = document.getElementById('shareChatButton');
         exportButtonContainer.appendChild(messageCounter);
         messageCounter.style.display = '';
         updateMessageCounters();
-        const exportButton = document.getElementById('exportChatButton');
         /**
          * Handles the click event of the export button. Exports the current chat as a text file.
          */
@@ -2529,7 +2576,6 @@ document.addEventListener('DOMContentLoaded', function() {
             a.click();
             URL.revokeObjectURL(url);
         };
-        const shareChatButton = document.getElementById('shareChatButton');
         /**
          * Handles the click event of the share chat button. Prompts the user with a confirmation message and saves the chat data to a GitHub Gist if confirmed.
          */
@@ -2629,7 +2675,6 @@ document.addEventListener('DOMContentLoaded', function() {
     messageCounter.classList.add('message-counter');
     messageCounter.textContent = 'Messages: 0';
     messageCounter.style.display = 'none';
-    document.querySelector('.export-button-container').appendChild(messageCounter);
     const globalMessageCounter = document.createElement('div');
     globalMessageCounter.classList.add('global-message-counter');
     globalMessageCounter.textContent = 'Total Messages: 0';
@@ -2659,33 +2704,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         backButton.style.display = 'block';
         document.querySelector('.previous-chats').style.display = 'none';
-        sendButton.textContent = 'Send Message';
+        sendButton.innerHTML = sendSVG;
+        addButton.style.display = ''
+        runButton.style.display = ''
     }
     const searchTextarea = document.createElement('textarea');
     searchTextarea.id = 'searchTextarea';
     searchTextarea.placeholder = 'Search chats...';
     document.querySelector('.previous-chats-controls').appendChild(searchTextarea);
     const searchButton = document.getElementById('searchButton');
+    searchButton.innerHTML = searchSVG
     const exportButton = document.getElementById('exportDataButton');
+    exportButton.innerHTML = exportSVG
     const importButton = document.getElementById('importDataButton');
+    importButton.innerHTML = importDataSVG
     const deleteButton = document.getElementById('deleteDataButton');
+    deleteButton.innerHTML = deleteDataSVG
+    const closeSearchButton = document.getElementById('closeSearchButton');
     searchButton.addEventListener('click', function() {
-        const isSearching = searchTextarea.style.display === 'block';
-        if (isSearching) {
-            searchTextarea.style.display = 'none';
-            searchTextarea.value = '';
-            searchButton.textContent = 'Search';
-            exportButton.style.display = 'inline';
-            importButton.style.display = 'inline';
-            deleteButton.style.display = 'inline';
-            document.querySelectorAll('.previous-chats li').forEach(li => li.style.display = 'list-item');
-        } else {
-            searchTextarea.style.display = 'block';
-            searchButton.textContent = 'Close Search';
-            exportButton.style.display = 'none';
-            importButton.style.display = 'none';
-            deleteButton.style.display = 'none';
-        }
+        searchTextarea.style.display = 'block';
+        searchButton.style.display = 'none';
+        exportButton.style.display = 'none';
+        importButton.style.display = 'none';
+        deleteButton.style.display = 'none';
+        closeSearchButton.innerHTML = cancelSVG
+        closeSearchButton.style.display = 'inline';
+    });
+    closeSearchButton.addEventListener('click', function() {
+        searchTextarea.style.display = 'none';
+        searchTextarea.value = '';
+        searchButton.style.display = 'inline';
+        exportButton.style.display = 'inline';
+        importButton.style.display = 'inline';
+        deleteButton.style.display = 'inline';
+        closeSearchButton.style.display = 'none';
+        document.querySelectorAll('.previous-chats li').forEach(li => li.style.display = 'list-item');
     });
     searchTextarea.addEventListener('input', function() {
         const filter = searchTextarea.value.toLowerCase();
@@ -2766,7 +2819,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const systemPromptsList = document.getElementById('systemPromptsList');
     const saveSystemPromptButton = document.getElementById('saveSystemPromptButton');
     const loadPromptsModal = document.getElementById('loadPromptsModal');
-    const closeLoadPromptsModal = loadPromptsModal.querySelector('.close');
+    const    closeLoadPromptsModal = loadPromptsModal.querySelector('.close');
     /**
      * Loads system prompts from local storage and displays them in a modal.
      */
