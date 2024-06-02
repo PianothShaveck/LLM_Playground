@@ -1566,40 +1566,60 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             const loadingMessage = displayMessage('Generating image...', 'loading');
-            abortController = new AbortController();
-            fetch('https://api.discord.rocks/images/generations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: requestBody,
-                signal: abortController.signal
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Image generation request failed: ${response.error}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.data && data.data.length > 0 && data.data[0].url) {
-                    const imageUrl = data.data[0].url;
-                    document.getElementById('messageContainer').removeChild(loadingMessage)
-                    addMessageToHistory(imageUrl, 'assistant');
-                } else {
-                    throw new Error('Invalid image generation response.');
-                }
-            })
-            .catch(e => {
-                console.error('Error generating image:', e);
-                if (e.name === 'AbortError') {
-                    document.getElementById('messageContainer').removeChild(loadingMessage)
-                } else {
-                    loadingMessage.textContent = ('Failed to generate image.');
-                    loadingMessage.className = 'error-message';
-                }
-            });
+            let retries = 0;
+            const maxRetries = 2;
+            function tryFetch() {
+                abortController = new AbortController();
+                fetch('https://api.discord.rocks/images/generations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: requestBody,
+                    signal: abortController.signal
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Image generation request failed: ${response.error}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    backButton.disabled = true;
+                    if (data.data && data.data.length > 0 && data.data[0].url) {
+                        const imageUrl = data.data[0].url;
+                        document.getElementById('messageContainer').removeChild(loadingMessage)
+                        addMessageToHistory(imageUrl, 'assistant');
+                        backButton.disabled = false;
+                    } else {
+                        throw new Error('Invalid image generation response.');
+                    }
+                })
+                .catch(e => {
+                    if (e.name === 'AbortError') {
+                        allowRetry = false;
+                    } else {
+                        console.error('Error:', e);
+                    }
+                    if (retries < maxRetries && allowRetry) {
+                        retries++;
+                        loadingMessage.textContent = `Retrying (${retries}/${maxRetries})...`;
+                        setTimeout(tryFetch, 1000);
+                    } else {
+                        backButton.disabled = false;
+                        conversationHistory.pop();
+                        revertSendButton();
+                        if (allowRetry) {
+                            loadingMessage.textContent = 'Failed to generate image after multiple retries.';
+                            loadingMessage.className = 'error-message';
+                        } else {
+                            loadingMessage.parentNode.removeChild(loadingMessage);
+                            saveChatToHistory();
+                        }
+                    }
+                });
+            }
         }
     }
     /**
