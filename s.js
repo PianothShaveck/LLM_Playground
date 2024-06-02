@@ -766,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
     runButton.addEventListener('click', run);
     sendButton.addEventListener('click', handleSendClick);
     backButton.addEventListener('click', () => {
-        if (sendButton.innerHTML.includes('cancel')) {
+        if (sendButton.innerHTML.includes('stop')) {
             abortMessageSending().then(setTimeout(endChatSession, 0));
         } else {
             endChatSession();
@@ -1692,7 +1692,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             if (!apiKey) {
-                alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. Do not lose the API key!');
+                alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
             }
             fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, 'choices[0].delta.content');
         }
@@ -1925,6 +1925,7 @@ document.addEventListener('DOMContentLoaded', function() {
             abortController.abort();
             abortController = new AbortController();
             revertSendButton();
+            backButton.disabled = false;
             resolve();
         });
     }
