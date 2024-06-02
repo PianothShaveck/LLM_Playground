@@ -1064,12 +1064,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         e.tested = true
                     });
                     alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
+                    saveSettings();
+                    populateDropdown(modelIds);
                 }, (e) => {
                     alert(`Test request to the endpoint failed! ${e.message}`)
                 })
             endpointSettingsModal.style.display = 'none';
-            populateDropdown(modelIds);
             saveSettings();
+            populateDropdown(modelIds);
             loadEndpoints();
         }
     }
@@ -1568,6 +1570,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const loadingMessage = displayMessage('Generating image...', 'loading');
             let retries = 0;
             const maxRetries = 2;
+            allowRetry = true
             function tryFetch() {
                 abortController = new AbortController();
                 fetch('https://api.discord.rocks/images/generations', {
@@ -1591,6 +1594,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const imageUrl = data.data[0].url;
                         document.getElementById('messageContainer').removeChild(loadingMessage)
                         addMessageToHistory(imageUrl, 'assistant');
+                        updateMessageCounters();
+                        revertSendButton();
                         backButton.disabled = false;
                     } else {
                         throw new Error('Invalid image generation response.');
@@ -1615,11 +1620,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             loadingMessage.className = 'error-message';
                         } else {
                             loadingMessage.parentNode.removeChild(loadingMessage);
-                            saveChatToHistory();
                         }
+                        saveChatToHistory();
                     }
                 });
             }
+            tryFetch();
         }
     }
     /**
@@ -1811,7 +1817,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                 }
-                reader.read().then(processText);
+                reader.read().then(processText).catch(e => {
+                    if (e.name === 'AbortError') {
+                        document.getElementById('messageContainer').removeChild(loadingMessage);
+                        conversationHistory.pop();
+                        if (allContent.trim()) {
+                            addMessageToHistory(allContent.trim(), 'assistant');
+                            saveChatToHistory();
+                            updateMessageCounters();
+                        }
+                    } else {
+                        console.error('Error:', e);
+                    }
+                });
             })
             .catch(e => {
                 if (e.name === 'AbortError') {
@@ -1834,9 +1852,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         loadingMessage.parentNode.removeChild(loadingMessage);
                         if (allContent.trim()) {
                             addMessageToHistory(allContent.trim(), 'assistant');
-                            saveChatToHistory();
                         }
                     }
+                    saveChatToHistory();
                 }
             });
         }
@@ -1909,9 +1927,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         loadingMessage.parentNode.removeChild(loadingMessage);
                         if (allContent.trim()) {
                             addMessageToHistory(allContent.trim(), 'assistant');
-                            saveChatToHistory();
                         }
                     }
+                    saveChatToHistory();
                 }
             });
         }

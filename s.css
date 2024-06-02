@@ -376,10 +376,12 @@ body.light-mode #settingsSVG,body.light-mode #backSVG,body.light-mode .message-f
     filter: invert(1)
 }
 
-.assistant-message .message-buttons,.export-button-container button>svg {
+.assistant-message .message-buttons,.image-message .message-buttons,.export-button-container button>svg {
     fill: #e1e1e1
 }
-
+.image-message .message-buttons {
+    margin-bottom: 10px
+}
 .assistant-message,.user-message {
     width: auto
 }
@@ -856,7 +858,7 @@ body.light-mode .export-button-container button:hover {
     background: #d48576d5
 }
 
-body.light-mode .assistant-message .message-buttons,body.light-mode .export-button-container button>svg {
+body.light-mode .assistant-message .message-buttons,body.light-mode .image-message .message-buttons,body.light-mode .export-button-container button>svg {
     fill: #000
 }
 
