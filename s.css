@@ -372,6 +372,17 @@ textarea {
     bottom: 10px;
 }
 
+li>* {
+    vertical-align: middle;
+}
+
+.disclaimer {
+    font-size: 0.5rem;
+    color: #999;
+    margin: 0.2rem;
+    padding: 0
+}
+
 body.light-mode #settingsSVG,body.light-mode #backSVG,body.light-mode .message-form-buttons button>SVG{
     filter: invert(1)
 }

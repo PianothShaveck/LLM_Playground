@@ -2444,6 +2444,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const li = document.createElement('li');
         li.textContent = `${chat.title || 'Untitled'}`;
         const editButton = document.createElement('button');
+        editButton.style.marginTop = '5px'
         editButton.style.marginLeft = '5px';
         editButton.innerHTML = editSVG;
         editButton.title = 'Edit the title of the chat.';
@@ -2484,6 +2485,7 @@ document.addEventListener('DOMContentLoaded', function() {
         buttonContainer.appendChild(deleteButton);
         li.style.display = 'flex'
         li.style.flexWrap = 'wrap'
+        li.style.alignItems = 'center'
         li.onclick = () => loadChat(index);
         previousChats.appendChild(li);
     }
