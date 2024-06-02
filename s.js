@@ -1803,21 +1803,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.error('Failed to parse event:', e, 'Event:', event);
                         }
                     });
-                    reader.read().then(processText).catch(e => {
-                        if (e.name === 'AbortError') {
-                            document.getElementById('messageContainer').removeChild(loadingMessage);
-                            conversationHistory.pop();
-                            if (allContent.trim()) {
-                                addMessageToHistory(allContent.trim(), 'assistant');
-                                saveChatToHistory();
-                                updateMessageCounters();
-                            }
-                        } else {
-                            console.error('Error:', e);
-                        }
-                    });
+                    reader.read().then(processText).catch(catchError);
                 }
-                reader.read().then(processText).catch(e => {
+                function catchError(e) {
                     if (e.name === 'AbortError') {
                         document.getElementById('messageContainer').removeChild(loadingMessage);
                         conversationHistory.pop();
@@ -1828,8 +1816,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         console.error('Error:', e);
+                        saveChatToHistory();
                     }
-                });
+                }
+                reader.read().then(processText).catch(catchError);
             })
             .catch(e => {
                 if (e.name === 'AbortError') {
@@ -2488,9 +2478,13 @@ document.addEventListener('DOMContentLoaded', function() {
             event.stopPropagation();
             confirmDelete(index);
         };
-        li.appendChild(editButton);
-        li.appendChild(generateTitleButton);
-        li.appendChild(deleteButton);
+        const buttonContainer = document.createElement('div');
+        li.appendChild(buttonContainer);
+        buttonContainer.appendChild(editButton);
+        buttonContainer.appendChild(generateTitleButton);
+        buttonContainer.appendChild(deleteButton);
+        li.style.display = 'flex'
+        li.style.flexWrap = 'wrap'
         li.onclick = () => loadChat(index);
         previousChats.appendChild(li);
     }
