@@ -3,6 +3,7 @@
 - Using the run button on a Gemini 1.5 pro model by Shadow for whatever reason appears to not work
 - Images appear to load slowly. Could it be because they load twice? Attempt to find a solution to this issue
 - Dall-e-3 probably needs longer timeout(?)
+- Fix style of all the close buttons
 
 # Features to be implemented (more or less, in order of priority)
 
