@@ -390,11 +390,9 @@ body.light-mode #settingsSVG,body.light-mode #backSVG,body.light-mode .message-f
 .assistant-message .message-buttons,.image-message .message-buttons,.export-button-container button>svg {
     fill: #e1e1e1
 }
+
 .image-message .message-buttons {
     margin-bottom: 10px
-}
-.assistant-message,.user-message,.system-message {
-    width: auto
 }
 
 .assistant-message,.system-message,.user-message {
@@ -404,6 +402,7 @@ body.light-mode #settingsSVG,body.light-mode #backSVG,body.light-mode .message-f
     align-items: center;
     flex-direction: column;
     justify-content: space-between;
+    width: auto;
     min-width: 50%;
     max-width: 70%;
     margin: 10px 0;
