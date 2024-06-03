@@ -4,6 +4,7 @@
 - Images appear to load slowly. Could it be because they load twice? Attempt to find a solution to this issue
 - Dall-e-3 probably needs longer timeout(?)
 - Fix style of all the close buttons
+- Fix file attachments (I don't know how but apparently they kind of broke after some update)
 
 # Features to be implemented (more or less, in order of priority)
 
