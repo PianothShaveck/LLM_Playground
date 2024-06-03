@@ -11,54 +11,28 @@ This repository contains the source code for [LLM Playground](https://llmplaygro
 
 ## Description
 
-LLM Playground offers users an intuitive interface to:
+LLM Playground offers users an intuitive interface to interact with a variety of LLMs. Supports streaming.
+It's designed with a focus on a pure JavaScript and CSS implementation, minimizing reliance on external libraries for a lightweight and efficient experience. 
 
-- Select and test different streaming LLMs.
-- Attach and process various file types (e.g., spreadsheets, documents, PDFs, PowerPoints, EPUBs, RTFs).
-- Maintain, export, and import chat histories.
-- Edit, delete, and copy individual messages.
-- Toggle between light and dark themes.
-- Create shareable links for chats using GitHub Gists.
-- Change the role of messages between user, assistant, and system.
-- Enable, disable, or automate web searches to enrich responses.
-- Save and load system prompts.
+**Key features include:**
+
+- **Model Selection:** Choose from popular LLMs and custom endpoints.
+- **Streaming Support:** Interact with models that stream responses in real-time.
+- **File Processing:** Attach and process various file types, including spreadsheets, documents, PDFs, PowerPoints, EPUBs, RTFs, and plain text files.
+- **Chat Management:** Maintain, export, and import chat histories. Search through past conversations.
+- **Message Control:** Edit, delete, copy, and change the role of individual messages.
+- **Theming:** Toggle between light and dark themes.
+- **System Prompts:** Save, load, and customize system prompts.
+- **Web Search:** Enable, disable, or automate web searches to enhance LLM responses.
+- **Parameter Control:** Adjust max tokens, temperature, and top_p.
 
 ## Pure JavaScript Implementation
 
-This project is implemented using pure JavaScript, with minimal reliance on external libraries. The only external libraries used are for parsing various file types. The intention is to keep the project lightweight and free from unnecessary dependencies.
+This project is built with pure JavaScript, with minimal external libraries used only for parsing specific file types. This approach ensures a lightweight, fast-loading application with no unnecessary dependencies.
 
-## Key Features
+## Project Roadmap and Known Issues
 
-### File Attachments
-
-Supports attachment and processing of:
-- Spreadsheets (`.xls`, `.xlsx`, `.csv`)
-- Word documents (`.docx`)
-- PDF files (`.pdf`)
-- PowerPoint presentations (`.pptx`)
-- EPUB files (`.epub`)
-- Rich Text Format files (`.rtf`)
-- Plain text files (`.txt` and all other plain text extensions)
-
-### Theme Toggle
-
-Toggle between light and dark themes, with preferences saved in local storage.
-
-### Chat Management
-
-- **Chat History**: View and manage previous chats.
-- **Export/Import**: Export chat histories to clipboard and import from clipboard.
-- **Search**: Search through chat data.
-
-### Message Management
-
-- **Edit/Delete/Copy**: Edit, delete, or copy individual messages.
-- **Show More/Less**: Toggle between showing full and truncated content for long messages.
-- **Role Change**: Change the role of messages between user, assistant, and system.
-
-### Settings
-
-Configure system prompts and set the maximum number of tokens for model responses.
+For a detailed project roadmap and a list of known issues, please refer to the [TODO.md](TODO.md) file.
 
 ## Usage
 
