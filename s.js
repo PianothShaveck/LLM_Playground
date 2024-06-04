@@ -1070,23 +1070,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.title = endpointTitleInput.value;
             });
             const endpointsToBeTested = endpoints.find(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
-            if (endpointsToBeTested) testEndpoint(endpointsToBeTested)
-                .then(([url, output]) => {
-                    endpoints.filter(e => e.url === endpoint.url && e.title === endpoint.title).forEach(e => {
-                        e.url = url
-                        e.output = output
-                        e.tested = true
-                    });
-                    alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
-                    populateDropdown(modelIds);
-                    saveSettings();
-                }, (e) => {
-                    alert(`Test request to the endpoint failed! ${e.message}`)
-                })
-            endpointSettingsModal.style.display = 'none';
-            populateDropdown(modelIds);
-            saveSettings();
-            loadEndpoints();
+            if (endpointsToBeTested) {
+                testEndpoint(endpointsToBeTested)
+                    .then(([url, output]) => {
+                        endpoints.filter(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value).forEach(e => {
+                            e.url = url
+                            e.output = output
+                            e.tested = true
+                        });
+                        alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
+                        endpointSettingsModal.style.display = 'none';
+                        populateDropdown(modelIds);
+                        saveSettings();
+                        loadEndpoints();
+                    }, (e) => {
+                        alert(`Test request to the endpoint failed! ${e.message}`)
+                    })
+            } else {
+                endpointSettingsModal.style.display = 'none';
+                populateDropdown(modelIds);
+                saveSettings();
+                loadEndpoints();
+            }
         }
     }
     /**
