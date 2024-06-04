@@ -8,6 +8,7 @@
 
 # Features to be implemented (more or less, in order of priority)
 
+- Toggle to disable the auto compressing of messages ("Show More")
 - More icons, mainly for the settings menu which currently still has basically none (mostly because of lack of time).
 - Implement some kind of solution to solve the issue with local storage limit without saving all conversation. Maybe let users put their GitHub Gists key in the settings, in order to save the chats with no limits? Find some solution that gives the user the possibility of deleting the data easily, while remaining free to host and with absolute zero invasion of privacy: the main idea to realize is that the user hosts the conversations, either with local storage only (which has 5 MB limitation so the space is quite limited), or with some other way.
 - Add the possibility of moving messages up and down the history. Maybe one or two buttons on the upper part of the message? Or maybe make messages draggable?
