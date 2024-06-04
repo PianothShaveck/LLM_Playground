@@ -86,7 +86,7 @@
             <div class='modal-body' id='settingsContent'>
                 <button id='saveSettingsButton' title='Save the current settings.' aria-describedby='savesettings'>Save</button>
                 <label for='apiKey'>Your API key for api.discord.rocks:</label>
-                <input id='apiKey'>
+                <input id='apiKey' enterkeyhint='done'>
                 <label for='systemPromptInput'>System Prompt:</label>
                 <textarea id='systemPromptInput' placeholder='Enter system prompt here...'></textarea>
                 <div class='system-prompts-section'>
@@ -119,11 +119,11 @@
                 </div>
                 <div id="parameters">
                     <label for='maxTokensInput'>Max Tokens:</label>
-                    <input type='number' id='maxTokensInput' value='4096' min='1'>
+                    <input type='number' id='maxTokensInput' value='4096' min='1' enterkeyhint='done'>
                     <label for='temperatureInput'>Temperature:</label>
-                    <input type='number' id='temperatureInput' value='1' min='0' max='2'>
+                    <input type='number' id='temperatureInput' value='1' min='0' max='2' enterkeyhint='done'>
                     <label for='top_pInput'>top_p:</label>
-                    <input type='number' id='top_pInput' value='1' min='0' max='2'>
+                    <input type='number' id='top_pInput' value='1' min='0' max='2' enterkeyhint='done'>
                 </div>
                 <button id='endpointsButton' title='Manage API endpoints.' aria-describedby='manageEndpoints'>Endpoints</button>
                 <p style="margin-top: 10px">Check out the <a href="https://github.com/PianothShaveck/LLM_Playground" target="_blank">github</a> to contribute.</p>
@@ -167,7 +167,7 @@
                             <label for='endpointTitle'>Title:</label>
                         </td>
                         <td>
-                            <input id='endpointTitle'>
+                            <input id='endpointTitle' enterkeyhint='done'>
                         </td>
                     </tr>
                     <tr>
@@ -175,7 +175,7 @@
                             <label for='endpointUrl'>URL:</label>
                         </td>
                         <td>
-                            <input id='endpointUrl'>
+                            <input id='endpointUrl' enterkeyhint='done'>
                         </td>
                     </tr>
                 </table>
@@ -188,13 +188,13 @@
                 </div>
                 <label for='endpointHeaders'>Authorization (API key):</label>
                 <button id="toggleApiKeyVisibility">Show</button>
-                <input type='password' id='endpointHeaders'>
+                <input type='password' id='endpointHeaders' enterkeyhint='done'>
                 <label for='endpointModel'>Models:</label>
                 <button id="addModelButton">+</button>
                 <ul class='model-list'>
                 </ul>
                 <label for='endpointOutput'>Output Path (automatically found, only change this if the test request fails):</label>
-                <input id='endpointOutput' placeholder='e.g., choices[0].message.content'>
+                <input id='endpointOutput' placeholder='e.g., choices[0].message.content' enterkeyhint='done'>
                 <button id='saveEndpointSettingsButton'>Save</button>
             </div>
         </div>
