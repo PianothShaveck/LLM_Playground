@@ -668,6 +668,7 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
     padding: 0;
     border: 0;
     border-radius: 50%;
+    flex-shrink: 0;
     width: 1.5em;
     height: 1.5em
 }
@@ -719,6 +720,7 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
 .modal-header .close, .close-btn {
     position: relative;
     display: inline-block;
+    flex-shrink: 0;
     width: 20px;
     height: 20px;
     cursor: pointer;
