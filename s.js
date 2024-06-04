@@ -1078,14 +1078,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         e.tested = true
                     });
                     alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
-                    saveSettings();
                     populateDropdown(modelIds);
+                    saveSettings();
                 }, (e) => {
                     alert(`Test request to the endpoint failed! ${e.message}`)
                 })
             endpointSettingsModal.style.display = 'none';
-            saveSettings();
             populateDropdown(modelIds);
+            saveSettings();
             loadEndpoints();
         }
     }
