@@ -5,6 +5,7 @@
 - Dall-e-3 probably needs longer timeout(?)
 - Fix style of all the close buttons
 - Fix file attachments (I don't know how but apparently they kind of broke after some update)
+- Selecting or copying text while a response is being generated doesn't work well
 
 # Features to be implemented (more or less, in order of priority)
 
