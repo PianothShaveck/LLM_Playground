@@ -1153,6 +1153,8 @@ document.addEventListener('DOMContentLoaded', function() {
             max_tokens: 10,
             stream: endpoint.stream 
         });
+        console.log(body)
+        console.log(JSON.stringify(headers))
         return new Promise((resolve, reject) => {
             /**
              * Tests the output of a given data object based on whether the endpoint is streaming or not.
