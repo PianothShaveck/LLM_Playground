@@ -544,7 +544,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const fileNameSpan = document.createElement('span');
         fileNameSpan.textContent = truncateFileName(filename);
         const closeButton = document.createElement('button');
-        closeButton.textContent = '×';
         closeButton.classList.add('close-btn');
         closeButton.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -644,7 +643,6 @@ document.addEventListener('DOMContentLoaded', function() {
         modalTitle.textContent = title;
         const closeButton = document.createElement('span');
         closeButton.classList.add('close');
-        closeButton.textContent = '×';
         closeButton.addEventListener('click', () => {
             document.body.removeChild(modal);
         });
