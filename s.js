@@ -243,6 +243,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (['xls', 'xlsx', 'csv', 'docx', 'pdf', 'pptx', 'epub', 'rtf'].includes(extension)) {
                     attachedFiles.push(file);
                     createFileBubble(file.name, fileContainer);
+                    if (fileContainer.children.length > 0) {
+                        fileContainer.style.display = 'flex';
+                        fileContainer.style.marginBottom = '10px';
+                    }
                 } else {
                     const reader = new FileReader();
                     /**
