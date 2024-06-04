@@ -665,9 +665,11 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
     font-size: .8em;
     top: 2px;
     right: 2px;
-    padding: 2px 5px;
+    padding: 0;
     border: 0;
-    border-radius: 50%
+    border-radius: 50%;
+    width: 1.5em;
+    height: 1.5em
 }
 
 #endpointSettingsModal .model-list li button:hover,#endpointsList li button:hover,#systemPromptsList li button:hover,.file-bubble .close-btn:hover,.modal-header .close:hover {
