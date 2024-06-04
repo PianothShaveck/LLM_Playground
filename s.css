@@ -714,7 +714,7 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
     background: transparent
 }
 
-.modal-header .close {
+.modal-header .close, .close-btn {
     position: relative;
     display: inline-block;
     width: 20px;
@@ -723,7 +723,7 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
     border-radius: 50%
 }
 
-.modal-header .close::after,.modal-header .close::before {
+.modal-header .close::after,.modal-header .close::before, .close-btn::before, .close-btn::after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -733,11 +733,11 @@ body.light-mode button.copy-code-button:hover,button.show-more-button:hover {
     background: #e1e1e1
 }
 
-.modal-header .close::before {
+.modal-header .close::before, .close-btn::before {
     transform: translate(-50%,-50%) rotate(45deg)
 }
 
-.modal-header .close::after {
+.modal-header .close::after, .close-btn::after {
     transform: translate(-50%,-50%) rotate(-45deg)
 }
 
