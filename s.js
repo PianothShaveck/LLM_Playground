@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function populateDropdown(modelIds) {
         modelDropdown.innerHTML = `<option disabled>Popular models</option>
-        <option value='llama-3-70b-chat'>llama-3-70b-chat</option>
+        <option value='llama-3-70b-chat'>llama-3-70b-chat (Free)</option>
         <option value='auto'>auto</option>
         <option value='gpt-4o'>gpt-4o</option>
         <option value='claude-3-opus'>claude-3-opus</option>`;
