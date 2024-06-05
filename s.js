@@ -548,9 +548,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const fileNameSpan = document.createElement('span');
         fileNameSpan.textContent = truncateFileName(filename);
         const isMessageBubble = container.classList.value.includes('message-content');
-        console.log(container)
-        console.log(container.classList)
-        console.log(isMessageBubble)
         if (!isMessageBubble) {
             const closeButton = document.createElement('button');
             closeButton.classList.add('close-btn');
