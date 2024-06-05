@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(jsonData => {
             if (jsonData) {
-                modelIds = jsonData.data.map(item => item.id);
+                modelIds = jsonData.data.map(item => ({id: item.id, created: item.created}));
                 populateDropdown(modelIds);
                 const savedFavoriteModel = localStorage.getItem('favoriteModel');
                 if (savedFavoriteModel) {
@@ -117,10 +117,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function populateDropdown(modelIds) {
         modelDropdown.innerHTML = `<option disabled>Popular models</option>
+        <option value='llama-3-70b-chat'>llama-3-70b-chat</option>
         <option value='auto'>auto</option>
         <option value='gpt-4o'>gpt-4o</option>
-        <option value='claude-3-opus'>claude-3-opus</option>
-        <option value='llama-3-70b-chat'>llama-3-70b-chat</option>`;
+        <option value='claude-3-opus'>claude-3-opus</option>`;
         const savedModels = localStorage.getItem('savedModels');
         if (savedModels) {
             const savedModelIds = JSON.parse(savedModels);
@@ -156,14 +156,26 @@ document.addEventListener('DOMContentLoaded', function() {
         dallE3.value = 'dall-e-3';
         dallE3.textContent = 'dall-e-3';
         modelDropdown.appendChild(dallE3);
-        const defaultOption = document.createElement('option');
-        defaultOption.textContent = 'Other models';
-        defaultOption.disabled = true;
-        modelDropdown.appendChild(defaultOption);
-        modelIds.forEach(id => {
+        const freeModels = modelIds.filter(model => model.created === 0);
+        const otherModels = modelIds.filter(model => model.created !== 0);
+        const freeOption = document.createElement('option');
+        freeOption.textContent = 'Free models';
+        freeOption.disabled = true;
+        modelDropdown.appendChild(freeOption);
+        freeModels.forEach(m => {
             const option = document.createElement('option');
-            option.value = id;
-            option.textContent = id;
+            option.value = m.id;
+            option.textContent = m.id;
+            modelDropdown.appendChild(option);
+        });
+        const otherOption = document.createElement('option');
+        otherOption.textContent = 'Other models';
+        otherOption.disabled = true;
+        modelDropdown.appendChild(otherOption);
+        otherModels.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = m.id + ' (Free)';
             modelDropdown.appendChild(option);
         });
         modelDropdown.selectedIndex = 1
