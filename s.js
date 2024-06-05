@@ -1086,18 +1086,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             e.tested = true
                         });
                         alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
-                        endpointSettingsModal.style.display = 'none';
                         populateDropdown(modelIds);
                         saveSettings();
                         loadEndpoints();
+                        endpointSettingsModal.style.display = 'none';
                     }, (e) => {
                         alert(`Test request to the endpoint failed! ${e.message}`)
+                        endpoints = endpoints.filter(e => !addedModels.includes(e.model) || e.url !== endpointUrlInput.value || e.title !== endpointTitleInput.value);
+                        populateDropdown(modelIds);
+                        saveSettings();
+                        loadEndpoints();
+                        endpointSettingsModal.style.display = 'none';
                     })
             } else {
-                endpointSettingsModal.style.display = 'none';
                 populateDropdown(modelIds);
                 saveSettings();
                 loadEndpoints();
+                endpointSettingsModal.style.display = 'none';
             }
         }
     }
