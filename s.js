@@ -1062,6 +1062,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const indexToRemove = endpoints.indexOf(modelToRemove);
                 endpoints.splice(indexToRemove, 1);
             });
+            // Remove, from the endpoints variable, all the endpoints 
             const addedModels = newModels.filter(newModel => !existingMatchingEndpoints.some(e => e.model === newModel));
             addedModels.forEach(modelToAdd => {
                 endpoints.push({
@@ -1073,9 +1074,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     stream: endpointStreamInput.checked
                 });
             });
-            endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
-                e.title = endpointTitleInput.value;
-            });
+            if (endpoint.title === endpointTitleInput.value) {
+                if (endpoint.headers === endpointHeadersInput.value) {
+                    endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
+                        e.title = endpointTitleInput.value;
+                        e.headers = endpointHeadersInput.value;
+                        e.tested = false;
+                    });
+                } else {
+                    endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
+                        e.title = endpointTitleInput.value;
+                    });
+                }
+            } else if (endpoint.headers === endpointHeadersInput.value) {
+                endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => {
+                    e.headers = endpointHeadersInput.value;
+                    e.tested = false;
+                });
+            }
             const endpointsToBeTested = endpoints.filter(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
             if (endpointsToBeTested) {
                 const spinner = document.createElement('span');
