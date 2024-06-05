@@ -1074,8 +1074,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     stream: endpointStreamInput.checked
                 });
             });
-            if (endpoint.title === endpointTitleInput.value) {
-                if (endpoint.headers === endpointHeadersInput.value) {
+            if (endpoint.title !== endpointTitleInput.value) {
+                if (endpoint.headers !== endpointHeadersInput.value) {
                     endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
                         e.title = endpointTitleInput.value;
                         e.headers = endpointHeadersInput.value;
@@ -1086,7 +1086,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         e.title = endpointTitleInput.value;
                     });
                 }
-            } else if (endpoint.headers === endpointHeadersInput.value) {
+            } else if (endpoint.headers !== endpointHeadersInput.value) {
                 endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => {
                     e.headers = endpointHeadersInput.value;
                     e.tested = false;
@@ -1173,7 +1173,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return promise.then(() => {
                 return testEndpoint(endpoint)
                     .then(([url, output]) => {
-                        console.log(`Tested endpoint: ${JSON.stringify(endpoint)}`);
                         endpoint.url = url;
                         endpoint.output = output;
                         endpoint.tested = true;
