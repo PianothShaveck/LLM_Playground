@@ -863,7 +863,7 @@ body.light-mode .user-message {
     background: #aaa
 }
 
-body.light-mode .assistant-message,body.light-mode .export-button-container button,body.light-mode .message-counter,body.light-mode .global-message-counter{
+body.light-mode .assistant-message,body.light-mode .export-button-container button,body.light-mode .message-counter,body.light-mode .global-message-counter,body.light-mode .error-message{
     color: #333;
     background: #d48576
 }
@@ -874,10 +874,6 @@ body.light-mode .export-button-container button:hover {
 
 body.light-mode .assistant-message .message-buttons,body.light-mode .image-message .message-buttons,body.light-mode .export-button-container button>svg {
     fill: #000
-}
-
-body.light-mode .error-message {
-    background: #764941
 }
 
 body.light-mode .loading-message {
@@ -915,7 +911,7 @@ body.light-mode .modal-content {
 
 body.light-mode .file-bubble {
     color: #333;
-    background: #ddd
+    background: #bbb
 }
 
 body.light-mode #addModelButton,body.light-mode #attachButton,body.light-mode .model-selector label {

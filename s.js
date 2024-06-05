@@ -547,13 +547,19 @@ document.addEventListener('DOMContentLoaded', function() {
         fileBubble.classList.add('file-bubble');
         const fileNameSpan = document.createElement('span');
         fileNameSpan.textContent = truncateFileName(filename);
-        const closeButton = document.createElement('button');
-        closeButton.classList.add('close-btn');
-        closeButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            removeFile(filename, fileBubble);
-        });
-        fileBubble.appendChild(closeButton);
+        const isMessageBubble = container.classList.value.includes('message-content');
+        console.log(container)
+        console.log(container.classList)
+        console.log(isMessageBubble)
+        if (!isMessageBubble) {
+            const closeButton = document.createElement('button');
+            closeButton.classList.add('close-btn');
+            closeButton.addEventListener('click', (e) => {
+               e.stopPropagation();
+               removeFile(filename, fileBubble);
+            });
+            fileBubble.appendChild(closeButton);
+        }
         fileBubble.appendChild(fileNameSpan);
         fileBubble.addEventListener('click', () => {
             if (content) {
@@ -570,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         messageBox.style.maxHeight = 'calc(30vh - 60px)';
-        container       .appendChild(fileBubble);
+        container.appendChild(fileBubble);
     }
     /**
      * Retrieves the content of a file based on its extension.
@@ -1418,7 +1424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         return new Promise((resolve, reject) => {
-            fetch('https://qualified-tea-403716.oa.r.appspot.com/api/title', {
+            fetch('https://llm-playground-backend.uc.r.appspot.com/api/title', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1475,7 +1481,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function fetchAutoWebSearchQuery(messageContent, auto = false) {
         return new Promise((resolve, reject) => {
-            fetch('https://qualified-tea-403716.oa.r.appspot.com/api/search', {
+            fetch('https://llm-playground-backend.uc.r.appspot.com/api/search', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messageContent, auto }),
@@ -2677,7 +2683,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {Promise} A promise that resolves when the chat data is successfully saved, or rejects with an error if there was a problem.
      */
     function saveChatToGist(chatData) {
-        const apiUrl = 'https://qualified-tea-403716.oa.r.appspot.com/api/gist';
+        const apiUrl = 'https://llm-playground-backend.uc.r.appspot.com/api/gist';
         fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
