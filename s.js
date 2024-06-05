@@ -1076,28 +1076,31 @@ document.addEventListener('DOMContentLoaded', function() {
             endpoints.filter(e => e.url === endpointUrlInput.value).forEach(e => { 
                 e.title = endpointTitleInput.value;
             });
-            const endpointsToBeTested = endpoints.find(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
+            const endpointsToBeTested = endpoints.filter(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
             if (endpointsToBeTested) {
-                testEndpoint(endpointsToBeTested)
-                    .then(([url, output]) => {
-                        endpoints.filter(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value).forEach(e => {
-                            e.url = url
-                            e.output = output
-                            e.tested = true
-                        });
-                        alert(`Test request to the endpoint was successful! Models were added to the list of models.`)
-                        populateDropdown(modelIds);
-                        saveSettings();
-                        loadEndpoints();
-                        endpointSettingsModal.style.display = 'none';
-                    }, (e) => {
-                        alert(`Test request to the endpoint failed! ${e.message}`)
-                        endpoints = endpoints.filter(e => !addedModels.includes(e.model) || e.url !== endpointUrlInput.value || e.title !== endpointTitleInput.value);
+                const spinner = document.createElement('span');
+                spinner.className = 'loading-spinner';
+                saveEndpointSettingsButton.appendChild(spinner);
+                saveEndpointSettingsButton.disabled = true;
+                testEndpointsSequentially(endpointsToBeTested)
+                    .then(() => {
+                        alert(`Test requests to all endpoints were successful! Models were added to the list of models.`);
                         populateDropdown(modelIds);
                         saveSettings();
                         loadEndpoints();
                         endpointSettingsModal.style.display = 'none';
                     })
+                    .catch(e => {
+                        alert(`Test request to the endpoint failed! ${e.message}`);
+                        populateDropdown(modelIds);
+                        saveSettings();
+                        loadEndpoints();
+                        endpointSettingsModal.style.display = 'none';
+                    })
+                    .finally(() => {
+                        saveEndpointSettingsButton.removeChild(spinner);
+                        saveEndpointSettingsButton.disabled = false;
+                    });
             } else {
                 populateDropdown(modelIds);
                 saveSettings();
@@ -1142,6 +1145,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function extractData(data, path) {
         const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
         return keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, data);
+    }
+    /**
+     * Tests multiple endpoints sequentially.
+     *
+     * @param {Array<Object>} endpoints - An array of endpoint objects to test.
+     * @return {Promise<void>} A promise that resolves when all endpoints have been tested successfully, or rejects if any endpoint test fails.
+     */
+    function testEndpointsSequentially(endpoints) {
+        return endpoints.reduce((promise, endpoint) => {
+            return promise.then(() => {
+                return testEndpoint(endpoint)
+                    .then(([url, output]) => {
+                        console.log(`Tested endpoint: ${JSON.stringify(endpoint)}`);
+                        endpoint.url = url;
+                        endpoint.output = output;
+                        endpoint.tested = true;
+                    });
+            });
+        }, Promise.resolve());
     }
     /**
      * Tests an endpoint by sending a POST request to the specified URL with the provided headers and body.
