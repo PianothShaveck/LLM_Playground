@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         freeModels.forEach(m => {
             const option = document.createElement('option');
             option.value = m.id;
-            option.textContent = m.id;
+            option.textContent = m.id + ' (Free)';
             modelDropdown.appendChild(option);
         });
         const otherOption = document.createElement('option');
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         otherModels.forEach(m => {
             const option = document.createElement('option');
             option.value = m.id;
-            option.textContent = m.id + ' (Free)';
+            option.textContent = m.id;
             modelDropdown.appendChild(option);
         });
         modelDropdown.selectedIndex = 1
