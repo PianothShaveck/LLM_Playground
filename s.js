@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         populateDropdown(modelIds);
         loadChatFromUrl();
         updateMessageCounters();
+        saveSettings();
     });
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js', () => {});
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js', () => {});
@@ -1643,6 +1644,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
                 return;
             }
+            if (!apiKey) {apiKey = 'missing api key'}
             const loadingMessage = displayMessage('Generating image...', 'loading');
             let retries = 0;
             const maxRetries = 2;
@@ -1796,6 +1798,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!apiKey && !freeModelsList.includes(selectedModel)) {
                 alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
             }
+            if (!apiKey) {apiKey = 'missing api key'}
             fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey.trim()}` }, 'choices[0].delta.content');
         }
     }
