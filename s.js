@@ -885,14 +885,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let top_p = 1;
     let endpoints = [
         {
-            title: 'OpenAI API GPT-4o',
+            title: 'OpenAI',
             url: 'https://api.openai.com/v1/chat/completions',
             headers: "YOUR_API_KEY",
             model: 'gpt-4o',
             output: 'choices[0].delta.content'
         },
         {
-            title: 'Anthropic API Claude 3 opus',
+            title: 'Anthropic',
             url: 'https://api.anthropic.com/v1/messages',
             headers: "YOUR_API_KEY",
             model: 'claude-3-opus-20240229',
