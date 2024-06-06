@@ -990,15 +990,6 @@ document.addEventListener('DOMContentLoaded', function() {
             settingsModal.style.display = 'none';
         }
     });
-    /*
-    document.getElementById('toggleSystemPromptBtn').addEventListener('click', function() {
-        const systemPrompt = document.getElementById('systemPrompt');
-        systemPrompt.style.display = systemPrompt.style.display === 'none' ? 'block' : 'none';
-        const messageForm = document.querySelector('.message-form');
-        const historyVisible = document.querySelector('.previous-chats').style.display !== 'none';
-        messageForm.style.flex = historyVisible ? '1' : '1 0 100%';
-    });
-    */
     messageBox.addEventListener('input', function() {
         adjustTextareaHeight(this);
     });
@@ -1143,43 +1134,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 endpointSettingsModal.style.display = 'none';
             }
         }
-    }
-    /**
-     * Adds a model input field to the given list element.
-     *
-     * @param {HTMLElement} list - The list element to add the model input to.
-     * @param {string} model - The model name to be displayed in the input field.
-     */
-    function addModelToList(list, model) {
-        const li = document.createElement('li');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = model;
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => {
-            list.removeChild(li);
-        });
-        li.appendChild(input);
-        li.appendChild(deleteButton);
-        list.appendChild(li);
-    }
-    document.getElementById('addModelButton').addEventListener('click', () => {
-        addModelToList(document.querySelector('#endpointSettingsModal .model-list'), '')
-    });
-    closeEndpointSettingsModalButton.addEventListener('click', () => {
-        endpointSettingsModal.style.display = 'none';
-    });
-    /**
-     * Extracts data from a JSON object based on a given path string.
-     *
-     * @param {Object} data - The JSON object to extract data from.
-     * @param {string} path - The path string indicating the location of the desired data.
-     * @return {*} The extracted data, or undefined if the path does not exist.
-     */
-    function extractData(data, path) {
-        const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
-        return keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, data);
     }
     /**
      * Tests multiple endpoints sequentially.
@@ -1335,6 +1289,43 @@ document.addEventListener('DOMContentLoaded', function() {
                         .catch((e) => reject(e));
                 });
         });
+    }
+    /**
+     * Adds a model input field to the given list element.
+     *
+     * @param {HTMLElement} list - The list element to add the model input to.
+     * @param {string} model - The model name to be displayed in the input field.
+     */
+    function addModelToList(list, model) {
+        const li = document.createElement('li');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = model;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => {
+            list.removeChild(li);
+        });
+        li.appendChild(input);
+        li.appendChild(deleteButton);
+        list.appendChild(li);
+    }
+    document.getElementById('addModelButton').addEventListener('click', () => {
+        addModelToList(document.querySelector('#endpointSettingsModal .model-list'), '')
+    });
+    closeEndpointSettingsModalButton.addEventListener('click', () => {
+        endpointSettingsModal.style.display = 'none';
+    });
+    /**
+     * Extracts data from a JSON object based on a given path string.
+     *
+     * @param {Object} data - The JSON object to extract data from.
+     * @param {string} path - The path string indicating the location of the desired data.
+     * @return {*} The extracted data, or undefined if the path does not exist.
+     */
+    function extractData(data, path) {
+        const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+        return keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, data);
     }
     /**
      * Adds a message to the conversation history.
