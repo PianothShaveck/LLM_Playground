@@ -1110,20 +1110,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveEndpointSettingsButton.disabled = true;
                 testEndpointsSequentially(endpointsToBeTested)
                     .then(() => {
-                        alert(`Test requests to all endpoints were successful! Models were added to the list of models.`);
-                        populateDropdown(modelIds);
-                        saveSettings();
-                        loadEndpoints();
-                        endpointSettingsModal.style.display = 'none';
+                        alert(`All test requests to the endpoint were successful! Models were added to the list of models.`);
                     })
                     .catch(e => {
-                        alert(`Test request to the endpoint failed! ${e.message}`);
+                        alert(`A test request to the endpoint failed! ${e.message}`);
+                    })
+                    .finally(() => {
                         populateDropdown(modelIds);
                         saveSettings();
                         loadEndpoints();
                         endpointSettingsModal.style.display = 'none';
-                    })
-                    .finally(() => {
                         saveEndpointSettingsButton.removeChild(spinner);
                         saveEndpointSettingsButton.disabled = false;
                     });
