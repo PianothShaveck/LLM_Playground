@@ -115,6 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    /**
+     * Populates a dropdown menu with various models.
+     *
+     * @param {Array} modelIds - An array of objects containing model IDs and creation status.
+     * @return {void} This function does not return a value.
+     */
     function populateDropdown(modelIds) {
         modelDropdown.innerHTML = `<option disabled>Popular models</option>
         <option value='llama-3-70b-chat'>llama-3-70b-chat (Free)</option>
@@ -138,15 +144,16 @@ document.addEventListener('DOMContentLoaded', function() {
             savedmodelsOption.textContent = 'Saved endpoints';
             savedmodelsOption.disabled = true;
             modelDropdown.appendChild(savedmodelsOption);
-            endpoints.forEach(endpoint => {
-                if (endpoint.tested) {
+            endpoints
+                .filter(endpoint => endpoint.tested)
+                .sort((a, b) => a.title.localeCompare(b.title))
+                .forEach(endpoint => {
                     const option = document.createElement('option');
                     const title = `${endpoint.title} - ${endpoint.model}`
                     option.value = title;
                     option.textContent = title;
                     modelDropdown.appendChild(option);
-                }
-            });
+                });
         }
         const imageGeneration = document.createElement('option');
         imageGeneration.textContent = 'Image Generation';
@@ -645,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    /**
+   /**
      * Creates a modal dialog with the given title and content and appends it to the document body.
      *
      * @param {string} title - The title of the modal dialog.
