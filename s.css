@@ -377,7 +377,7 @@ li>* {
 }
 
 .disclaimer {
-    font-size: 0.5rem;
+    font-size: 0.6rem;
     color: #999;
     margin: 0.2rem;
     padding: 0
@@ -1047,7 +1047,11 @@ input:checked+.slider:before {
     }
 }
 
-@media (width <= 768px) {    
+@media (width <= 768px) {   
+    .disclaimer {
+        font-size: 0.7rem;
+    }
+
     .previous-chats {
         max-height: 45vh
     }

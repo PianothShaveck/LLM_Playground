@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    let freeModelsList = [];
     /**
      * Populates a dropdown menu with various models.
      *
@@ -169,7 +170,9 @@ document.addEventListener('DOMContentLoaded', function() {
         freeOption.textContent = 'Free models';
         freeOption.disabled = true;
         modelDropdown.appendChild(freeOption);
+        freeModelsList = [];
         freeModels.forEach(m => {
+            freeModelsList.push(m.id);
             const option = document.createElement('option');
             option.value = m.id;
             option.textContent = m.id + ' (Free)';
@@ -193,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (favoriteModelDropdownOptions.includes(favoriteModel)) {
             favoriteModelDropdown.value = favoriteModel;
         }
-
     }
     checkApiStatus();
     let abortController = new AbortController();
@@ -1637,7 +1639,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (messageContent) {
             const selectedModel = modelDropdown.value;
             const requestBody = `{"prompt":"${messageContent}","model":"${selectedModel}","n":1,"quality":"${imageQuality}","response format":"url","size":"${imageSize}"}`
-            if (!apiKey) {
+            if (!apiKey && !freeModelsList.includes(selectedModel)) {
                 alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
                 return;
             }
@@ -1791,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
             }
         } else {
-            if (!apiKey) {
+            if (!apiKey && !freeModelsList.includes(selectedModel)) {
                 alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
             }
             fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey.trim()}` }, 'choices[0].delta.content');
