@@ -1903,7 +1903,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} quotes - The quotes.
      * @param {string} url - The URL of the endpoint.
      * @param {Object} headers - The headers.
-     * @param {string} path - The path.
+     * @param {string} path - The path to extract data from the response.
      * @param {boolean} [geminiFormat=false] - Whether to use Gemini format.
      * @return {Promise} A promise that resolves when the data is fetched.
      */
@@ -1914,7 +1914,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ...convertOpenAIToGemini(requestBody.messages),
                 generation_config: {
                     temperature,
-                    topP : requestBody.top_p,
+                    topP: requestBody.top_p,
                     maxOutputTokens: requestBody.max_tokens
                 }
             }
@@ -2052,7 +2052,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ...convertOpenAIToGemini(requestBody.messages),
                 generation_config: {
                     temperature,
-                    topP : requestBody.top_p,
+                    topP: requestBody.top_p,
                     maxOutputTokens: requestBody.max_tokens
                 }
             }
