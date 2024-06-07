@@ -1069,13 +1069,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Model names must be unique.');
                 return;
             }
+            if (endpoints.some(e => e.title === endpointTitleInput.value || e.url === endpointUrlInput.value)) {
+                alert('Endpoint title and URL must be unique.');
+                return;
+            }
             const existingMatchingEndpoints = endpoints.filter(e => e.url === endpoint.url);
+            if (endpoint.url !== endpointUrlInput.value) {
+                existingMatchingEndpoints.forEach(e => {
+                    endpoints.splice(endpoints.indexOf(e), 1);
+                });
+            }
             const removedModels = existingMatchingEndpoints.filter(e => !newModels.includes(e.model));
             removedModels.forEach(modelToRemove => {
-                const indexToRemove = endpoints.indexOf(modelToRemove);
-                endpoints.splice(indexToRemove, 1);
+                endpoints.splice(endpoints.indexOf(modelToRemove), 1);
             });
-            // Remove, from the endpoints variable, all the endpoints 
             const addedModels = newModels.filter(newModel => !existingMatchingEndpoints.some(e => e.model === newModel));
             addedModels.forEach(modelToAdd => {
                 endpoints.push({
@@ -1106,7 +1113,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             const endpointsToBeTested = endpoints.filter(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
-            if (endpointsToBeTested) {
+            console.log(endpointsToBeTested)
+            if (endpointsToBeTested.length > 0) {
                 const spinner = document.createElement('span');
                 spinner.className = 'loading-spinner';
                 saveEndpointSettingsButton.appendChild(spinner);
@@ -1230,7 +1238,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 'content[0].text': data?.content?.[0]?.text,
                                 'response': data?.response,
                                 'text': data?.text,
-                                'choices[0].message': data?.choices?.[0]?.message
+                                'choices[0].message': data?.choices?.[0]?.message,
+                                'candidates[0].content.parts[0].text': data?.candidates?.[0]?.content?.parts?.[0]?.text
                             };
                             for (const [key, value] of Object.entries(commonPaths)) {
                                 if (typeof value === 'string') {
@@ -1442,6 +1451,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             } else {
                 conversationHistory.push({ role: role, content: messageContent });
+                console.log(JSON.stringify(conversationHistory))
                 messageBox.value = '';
                 adjustTextareaHeight(messageBox);
                 document.querySelector('.previous-chats').style.display = 'none';
@@ -1633,6 +1643,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
+     * Converts an OpenAI format conversation history to Gemini format.
+     *
+     * @param {Array} openAIFormat - The OpenAI format message history to convert.
+     * @return {Object} geminiFormat - The converted Gemini format history.
+     */
+    function convertOpenAIToGemini(openAIFormat) {
+        const geminiFormat = { contents: [] };
+        openAIFormat.forEach(entry => {
+            const geminiEntry = {
+                role: entry.role === 'assistant' ? 'model' : entry.role,
+                parts: [{ text: entry.content }]
+            };
+            geminiFormat.contents.push(geminiEntry);
+        });
+        return geminiFormat;
+    }
+    /**
      * Sends a message to the server to generate an image.
      */
     function handleSendImage() {
@@ -1803,16 +1830,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Fetches data from a streaming endpoint and updates the UI with the response.
+     * Fetches data from an endpoint and streams the response.
      *
-     * @param {Object} requestBody - The request body to be sent to the endpoint.
-     * @param {string} quotes - Optional quotes to be included in the response.
+     * @param {Object} requestBody - The request body.
+     * @param {string} quotes - Optional quotes.
      * @param {string} url - The URL of the endpoint.
-     * @param {string} headers - The headers to be included in the request.
-     * @param {string} path - The path to extract the response data from.
-     * @return {void} This function does not return anything.
+     * @param {Object} headers - The headers for the request.
+     * @param {string} path - The path to extract data from the response.
+     * @param {boolean} [geminiFormat=false] - Whether to convert the request body to Gemini format.
+     * @return {Promise} A Promise that resolves when the response is fully streamed.
      */
-    function fetchEndpointStream(requestBody, quotes, url, headers, path) {
+    function fetchEndpointStream(requestBody, quotes, url, headers, path, geminiFormat = false) {
+        if (geminiFormat) requestBody = convertOpenAIToGemini(requestBody);
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
         const maxRetries = 2;
@@ -1938,7 +1967,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} headers - The headers to be included in the request.
      * @param {string} path - The path to extract the response data from.
      */
-    function fetchEndpointNonStream(requestBody, quotes, url, headers, path) {
+    function fetchEndpointNonStream(requestBody, quotes, url, headers, path, geminiFormat = false) {
+        if (geminiFormat) requestBody = convertOpenAIToGemini(requestBody);
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
         const maxRetries = 2;
