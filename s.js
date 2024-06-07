@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 modelDropdown.selectedIndex = 1
             }
         }
-        const favoriteModel = favoriteModelDropdown.value;
+        const favoriteModel = localStorage.getItem('favoriteModel') || favoriteModelDropdown.value;
         favoriteModelDropdown.innerHTML = modelDropdown.innerHTML;
         const favoriteModelDropdownOptions = Array.from(favoriteModelDropdown.options).map(option => option.value);
         if (favoriteModelDropdownOptions.includes(favoriteModel)) {
