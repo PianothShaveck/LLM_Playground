@@ -1190,9 +1190,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return endpoints.reduce((promise, endpoint) => {
             return promise.then(() => {
                 return testEndpoint(endpoint)
-                    .then(([url, output]) => {
+                    .then(([url, output, gemini]) => {
                         endpoint.url = url;
                         endpoint.output = output;
+                        endpoint.gemini = gemini;
                         endpoint.tested = true;
                     });
             });
@@ -1342,10 +1343,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     fetch(bypassCORSUrl, { method: 'POST', headers, body })
                         .then(checkResponse)
                         .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
-                        .catch((e) => reject(e));
+                        .catch((e) => {
+                            if (endpoint.gemini) {return reject(e)}
+                            body = {
+                                model: endpoint.model,
+                                ...convertOpenAIToGemini(body.messages),
+                                generation_config: {
+                                    maxOutputTokens: 10
+                                }
+                            }
+                            fetch(endpoint.url.trim(), { method: 'POST', headers, body })
+                                .then(checkResponse)
+                                .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
+                                .catch((e) => {
+                                    const bypassCORSUrl = `https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?${endpoint.url.trim()}`;
+                                    fetch(bypassCORSUrl, { method: 'POST', headers, body })
+                                        .then(checkResponse)
+                                        .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
+                                        .catch((e) => reject(e));
+                                });
+                        });
                 });
         });
-    }
+    };
     /**
      * Adds a model input field to the given list element.
      *
