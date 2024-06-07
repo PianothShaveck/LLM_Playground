@@ -573,12 +573,6 @@ button.show-more-button {
     background: #666
 }
 
-#saveEndpointSettingsButton {
-    cursor: pointer;
-    border: 0;
-    background: #764941
-}
-
 #settingsContent #apiKey {
     width: 90%;
     margin: 0 auto 10px
@@ -595,11 +589,13 @@ button.show-more-button {
     padding: 8px
 }
 
-#saveEndpointSettingsButton {
+#saveEndpointSettingsButton,#showAdvancedSettingsButton {
     margin-top: 15px;
     padding: 10px 20px;
     color: #fff;
-    border-radius: 5px
+    border-radius: 5px;
+    border: 0;
+    background: #764941
 }
 
 body.light-mode #endpointsList li {

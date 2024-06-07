@@ -179,23 +179,33 @@
                         </td>
                     </tr>
                 </table>
-                <div class='toggle-container' style="margin-bottom: 10px">
-                    <label for='endpointStream'>Streaming:</label>
-                    <label class='switch'>
-                        <input type='checkbox' id='endpointStream'>
-                        <span class='slider'></span>
-                    </label>
-                </div>
                 <label for='endpointHeaders'>Authorization (API key):</label>
                 <button id="toggleApiKeyVisibility">Show</button>
                 <input type='password' id='endpointHeaders' enterkeyhint='done'>
                 <label for='endpointModel'>Models:</label>
-                <button id="addModelButton">+</button>
+                <button id="addModelButton" title='Add a model.' aria-describedby='addModel'>+</button>
                 <ul class='model-list'>
                 </ul>
-                <label for='endpointOutput'>Output Path (automatically found, only change this if the test request fails):</label>
-                <input id='endpointOutput' placeholder='e.g., choices[0].message.content' enterkeyhint='done'>
-                <button id='saveEndpointSettingsButton'>Save</button>
+                <button id="showAdvancedSettingsButton" title='Show advanced settings.' aria-describedby='showAdvancedSettings'>Show Advanced</button>
+                <div id="advancedSettings" style="display:none;">
+                    <div class='toggle-container' style="margin-bottom: 10px">
+                        <label for='endpointStream'>Streaming:</label>
+                        <label class='switch'>
+                            <input type='checkbox' id='endpointStream'>
+                            <span class='slider'></span>
+                        </label>
+                    </div>
+                    <label for='endpointOutput'>Output Path (automatically found, only change this if the test request fails):</label>
+                    <input id='endpointOutput' placeholder='e.g., choices[0].message.content' enterkeyhint='done'>
+                    <div class='toggle-container' style="margin-bottom: 10px">
+                        <label for='endpointGeminiStyle'>Gemini format:</label>
+                        <label class='switch'>
+                            <input type='checkbox' id='endpointGeminiStyle'>
+                            <span class='slider'></span>
+                        </label>
+                    </div>
+                </div>
+                <button id='saveEndpointSettingsButton' title='Save the current settings.' aria-describedby='saveSettingsButtonDesc'>Save</button>
             </div>
         </div>
     </div>
@@ -236,6 +246,8 @@
         <p id="saveCurrentSystemPrompt">Save the current system prompt.</p>
         <p id="loadSystemPrompt">Load a system prompt.</p>
         <p id="manageEndpoints">Manage API endpoints.</p>
+        <p id="addModel">Add a model.</p>
+        <p id="showAdvancedSettings">Show advanced settings.</p>
     </div>
     <script src='s.js'></script>
 </body>

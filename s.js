@@ -123,7 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Array} modelIds - An array of objects containing model IDs and creation status.
      * @return {void} This function does not return a value.
      */
-    function populateDropdown(modelIds) {
+    function populateDropdown(modelIds, savePosition = false) {
+        const lastPosition = modelDropdown.value;
         modelDropdown.innerHTML = `<option disabled>Popular models</option>
         <option value='llama-3-70b-chat'>llama-3-70b-chat (Free)</option>
         <option value='auto'>auto</option>
@@ -189,10 +190,18 @@ document.addEventListener('DOMContentLoaded', function() {
             option.textContent = m.id;
             modelDropdown.appendChild(option);
         });
-        modelDropdown.selectedIndex = 1
-        const favoriteModelList = document.getElementById('favoriteModelDropdown')
-        const favoriteModel = favoriteModelList.value;
-        favoriteModelList.innerHTML = modelDropdown.innerHTML;
+        if (!savePosition) {
+            modelDropdown.selectedIndex = 1
+        } else {
+            const modelDropdownOptions = Array.from(modelDropdown.options).map(option => option.value);
+            if (modelDropdownOptions.includes(lastPosition)) {
+                modelDropdown.value = lastPosition
+            } else {
+                modelDropdown.selectedIndex = 1
+            }
+        }
+        const favoriteModel = favoriteModelDropdown.value;
+        favoriteModelDropdown.innerHTML = modelDropdown.innerHTML;
         const favoriteModelDropdownOptions = Array.from(favoriteModelDropdown.options).map(option => option.value);
         if (favoriteModelDropdownOptions.includes(favoriteModel)) {
             favoriteModelDropdown.value = favoriteModel;
@@ -865,6 +874,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveSettingsButton2 = document.getElementById('saveSettingsButton2');
     const apiKeyInput = document.getElementById('apiKey');
     const systemPromptInput = document.getElementById('systemPromptInput');
+    const favoriteModelDropdown = document.getElementById('favoriteModelDropdown')
     const maxTokensInput = document.getElementById('maxTokensInput');
     const temperatureInput = document.getElementById('temperatureInput');
     const top_pInput = document.getElementById('top_pInput');
@@ -881,6 +891,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleApiKeyButton = document.getElementById('toggleApiKeyVisibility');
     const endpointOutputInput = document.getElementById('endpointOutput');
     const endpointStreamInput = document.getElementById('endpointStream');
+    const endpointGeminiStyle = document.getElementById('endpointGeminiStyle');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
     let apiKey = ''
     let max_tokens = 4096;
@@ -1030,7 +1041,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.stopPropagation();
                 if (confirm('Are you sure you want to delete this endpoint?')) {
                     endpoints = endpoints.filter(e => e.title !== title || e.url !== url);
-                    populateDropdown(modelIds);
+                    populateDropdown(modelIds, true);
                     saveSettings();
                     loadEndpoints();
                 }
@@ -1039,9 +1050,32 @@ document.addEventListener('DOMContentLoaded', function() {
             endpointsList.appendChild(li);
         });
     }
+    const showAdvancedSettingsButton = document.getElementById('showAdvancedSettingsButton')
+    showAdvancedSettingsButton.addEventListener('click', showAdvancedSettings);
     /**
-     * Opens the settings modal for the specified endpoint and initializes the input fields with the endpoint's values.
-     * Saves the endpoint settings if the test request is successful and the endpoint title is unique.
+     * Shows the advanced settings by updating the style and content of the showAdvancedSettingsButton,
+     * displaying the advancedSettings element, and updating the event listeners for the button.
+     */
+    function showAdvancedSettings() {
+        showAdvancedSettingsButton.style.marginBottom = '10px';
+        showAdvancedSettingsButton.textContent = 'Hide Advanced';
+        document.getElementById('advancedSettings').style.display = '';
+        showAdvancedSettingsButton.removeEventListener('click', showAdvancedSettings);
+        showAdvancedSettingsButton.addEventListener('click', hideAdvancedSettings);
+    }
+    /**
+     * Hides the advanced settings by updating the text content and margin bottom of the showAdvancedSettingsButton,
+     * hiding the advancedSettings element, and updating the event listeners for the button.
+     */
+    function hideAdvancedSettings() {
+        showAdvancedSettingsButton.textContent = 'Show Advanced';
+        showAdvancedSettingsButton.style.marginBottom = '0';
+        document.getElementById('advancedSettings').style.display = 'none';
+        showAdvancedSettingsButton.removeEventListener('click', hideAdvancedSettings);
+        showAdvancedSettingsButton.addEventListener('click', showAdvancedSettings);
+    }
+    /**
+     * Opens the endpoint settings modal and populates the inputs with the values of the endpoint at the given index.
      *
      * @param {number} index - The index of the endpoint in the endpoints array.
      */
@@ -1057,10 +1091,13 @@ document.addEventListener('DOMContentLoaded', function() {
             addModelToList(modelList, endpoint.model);
         });
         endpointOutputInput.value = endpoint.output;
-        endpointStreamInput.checked = endpoint.stream || true;
+        endpointStreamInput.checked = endpoint.stream !== undefined ? endpoint.stream : true;
         endpointSettingsModal.style.display = 'flex';
+        endpointGeminiStyle.checked = endpoint.gemini || false;
         /**
-         * Saves the endpoint settings if the test requests are successful and the endpoint titles and models are unique.
+         * Handles the click event for the save endpoint settings button.
+         * Validates the input fields, updates the endpoints array, and tests the endpoints if necessary.
+         * Finally, updates the UI and saves the settings.
          */
         saveEndpointSettingsButton.onclick = () => {
             const modelInputs = modelList.querySelectorAll('input');
@@ -1069,15 +1106,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Model names must be unique.');
                 return;
             }
-            if (endpoints.some(e => e.title === endpointTitleInput.value || e.url === endpointUrlInput.value)) {
-                alert('Endpoint title and URL must be unique.');
-                return;
-            }
-            const existingMatchingEndpoints = endpoints.filter(e => e.url === endpoint.url);
+            let existingMatchingEndpoints = endpoints.filter(e => e.url === endpoint.url);
             if (endpoint.url !== endpointUrlInput.value) {
                 existingMatchingEndpoints.forEach(e => {
                     endpoints.splice(endpoints.indexOf(e), 1);
                 });
+                existingMatchingEndpoints = endpoints.filter(e => e.url === endpointUrlInput.value);
+                if (existingMatchingEndpoints.length > 0) {
+                    alert('Endpoint URL must be unique.');
+                    return;
+                }
             }
             const removedModels = existingMatchingEndpoints.filter(e => !newModels.includes(e.model));
             removedModels.forEach(modelToRemove => {
@@ -1091,7 +1129,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: endpointHeadersInput.value,
                     model: modelToAdd,
                     output: endpointOutputInput.value,
-                    stream: endpointStreamInput.checked
+                    stream: endpointStreamInput.checked,
+                    gemini: endpointGeminiStyle.checked
                 });
             });
             if (endpoint.title !== endpointTitleInput.value) {
@@ -1113,7 +1152,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             const endpointsToBeTested = endpoints.filter(e => e.url === endpointUrlInput.value && e.title === endpointTitleInput.value && newModels.includes(e.model) && !e.tested)
-            console.log(endpointsToBeTested)
             if (endpointsToBeTested.length > 0) {
                 const spinner = document.createElement('span');
                 spinner.className = 'loading-spinner';
@@ -1127,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert(`A test request to the endpoint failed! ${e.message}`);
                     })
                     .finally(() => {
-                        populateDropdown(modelIds);
+                        populateDropdown(modelIds, true);
                         saveSettings();
                         loadEndpoints();
                         endpointSettingsModal.style.display = 'none';
@@ -1135,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         saveEndpointSettingsButton.disabled = false;
                     });
             } else {
-                populateDropdown(modelIds);
+                populateDropdown(modelIds, true);
                 saveSettings();
                 loadEndpoints();
                 endpointSettingsModal.style.display = 'none';
@@ -1176,12 +1214,22 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             headers = {'Authorization': `Bearer ${endpoint.headers}`, 'x-api-key': endpoint.headers,'Content-Type': 'application/json','anthropic-version': '2023-06-01'}
         }
-        const body = JSON.stringify({
+        let body = {
             model: endpoint.model,
             messages: [{ role: 'user', content: 'Hello, world' }],
             max_tokens: 10,
             stream: endpoint.stream 
-        });
+        };
+        if (endpoint.gemini) {
+            body = {
+                model: endpoint.model,
+                ...convertOpenAIToGemini(body.messages),
+                generation_config: {
+                    maxOutputTokens: 10
+                }
+            }
+        }
+        body = JSON.stringify(body)
         return new Promise((resolve, reject) => {
             /**
              * Tests the output of a given data object based on whether the endpoint is streaming or not.
@@ -1451,7 +1499,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             } else {
                 conversationHistory.push({ role: role, content: messageContent });
-                console.log(JSON.stringify(conversationHistory))
                 messageBox.value = '';
                 adjustTextareaHeight(messageBox);
                 document.querySelector('.previous-chats').style.display = 'none';
@@ -1816,10 +1863,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             requestBody.model = endpoint.model
             if (endpoint.stream) {
-                fetchEndpointStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
+                fetchEndpointStream(requestBody, quotes, endpoint.url, headers, endpoint.output, endpoint.gemini)
             } else {
                 delete requestBody.stream
-                fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output)
+                fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output, endpoint.gemini)
             }
         } else {
             if (!apiKey && !freeModelsList.includes(selectedModel)) {
@@ -1830,18 +1877,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Fetches data from an endpoint and streams the response.
+     * Fetches data from an endpoint using a stream.
      *
      * @param {Object} requestBody - The request body.
-     * @param {string} quotes - Optional quotes.
+     * @param {string} quotes - The quotes.
      * @param {string} url - The URL of the endpoint.
-     * @param {Object} headers - The headers for the request.
-     * @param {string} path - The path to extract data from the response.
-     * @param {boolean} [geminiFormat=false] - Whether to convert the request body to Gemini format.
-     * @return {Promise} A Promise that resolves when the response is fully streamed.
+     * @param {Object} headers - The headers.
+     * @param {string} path - The path.
+     * @param {boolean} [geminiFormat=false] - Whether to use Gemini format.
+     * @return {Promise} A promise that resolves when the data is fetched.
      */
     function fetchEndpointStream(requestBody, quotes, url, headers, path, geminiFormat = false) {
-        if (geminiFormat) requestBody = convertOpenAIToGemini(requestBody);
+        if (geminiFormat) {
+            requestBody = {
+                model: requestBody.model,
+                ...convertOpenAIToGemini(requestBody.messages),
+                generation_config: {
+                    temperature,
+                    topP : requestBody.top_p,
+                    maxOutputTokens: requestBody.max_tokens
+                }
+            }
+        }
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
         const maxRetries = 2;
@@ -1959,16 +2016,27 @@ document.addEventListener('DOMContentLoaded', function() {
         tryFetch();
     }
     /**
-     * Fetches data from a non-streaming endpoint and updates the UI with the response.
+     * Fetches data from an endpoint and stores the response in a string.
      *
-     * @param {Object} requestBody - The request body to be sent to the endpoint.
-     * @param {string} quotes - Optional quotes to be included in the response.
+     * @param {Object} requestBody - The request body.
+     * @param {string} quotes - Optional quotes.
      * @param {string} url - The URL of the endpoint.
-     * @param {string} headers - The headers to be included in the request.
-     * @param {string} path - The path to extract the response data from.
+     * @param {Object} headers - The headers for the request.
+     * @param {string} path - The path to extract data from the response.
+     * @param {boolean} [geminiFormat=false] - Whether to convert the request body to Gemini format.
      */
     function fetchEndpointNonStream(requestBody, quotes, url, headers, path, geminiFormat = false) {
-        if (geminiFormat) requestBody = convertOpenAIToGemini(requestBody);
+        if (geminiFormat) {
+            requestBody = {
+                model: requestBody.model,
+                ...convertOpenAIToGemini(requestBody.messages),
+                generation_config: {
+                    temperature,
+                    topP : requestBody.top_p,
+                    maxOutputTokens: requestBody.max_tokens
+                }
+            }
+        }
         const loadingMessage = displayMessage('Loading...', 'loading');
         let retries = 0;
         const maxRetries = 2;
