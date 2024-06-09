@@ -1,6 +1,7 @@
 # LLM Playground
 
 This repository contains the source code for [LLM Playground](https://llmplayground.net), a web-based interface for testing various Large Language Models (LLMs).
+[![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
 
 ## Project Structure
 
