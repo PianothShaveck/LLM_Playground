@@ -1335,12 +1335,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             fetch(endpoint.url.trim(), { method: 'POST', headers, body })
                 .then(checkResponse)
-                .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
+                .then((outputPath) => resolve([endpoint.url.trim(), outputPath, false]))
                 .catch((e) => {
                     const bypassCORSUrl = `https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?${endpoint.url.trim()}`;
                     fetch(bypassCORSUrl, { method: 'POST', headers, body })
                         .then(checkResponse)
-                        .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
+                        .then((outputPath) => resolve([bypassCORSUrl, outputPath, false]))
                         .catch((e) => {
                             if (endpoint.gemini) {return reject(e)}
                             body = JSON.stringify({
@@ -1352,12 +1352,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             })
                             fetch(endpoint.url.trim(), { method: 'POST', headers, body })
                                 .then(checkResponse)
-                                .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
+                                .then((outputPath) => resolve([endpoint.url.trim(), outputPath, true]))
                                 .catch((e) => {
                                     const bypassCORSUrl = `https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?${endpoint.url.trim()}`;
                                     fetch(bypassCORSUrl, { method: 'POST', headers, body })
                                         .then(checkResponse)
-                                        .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
+                                        .then((outputPath) => resolve([bypassCORSUrl, outputPath, true]))
                                         .catch((e) => reject(e));
                                 });
                         });
