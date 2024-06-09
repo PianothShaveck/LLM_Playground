@@ -891,7 +891,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleApiKeyButton = document.getElementById('toggleApiKeyVisibility');
     const endpointOutputInput = document.getElementById('endpointOutput');
     const endpointStreamInput = document.getElementById('endpointStream');
-    const endpointGeminiStyle = document.getElementById('endpointGeminiStyle');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
     let apiKey = ''
     let max_tokens = 4096;
@@ -1093,7 +1092,6 @@ document.addEventListener('DOMContentLoaded', function() {
         endpointOutputInput.value = endpoint.output;
         endpointStreamInput.checked = endpoint.stream !== undefined ? endpoint.stream : true;
         endpointSettingsModal.style.display = 'flex';
-        endpointGeminiStyle.checked = endpoint.gemini || false;
         /**
          * Handles the click event for the save endpoint settings button.
          * Validates the input fields, updates the endpoints array, and tests the endpoints if necessary.
@@ -1130,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     model: modelToAdd,
                     output: endpointOutputInput.value,
                     stream: endpointStreamInput.checked,
-                    gemini: endpointGeminiStyle.checked
+                    gemini: false
                 });
             });
             if (endpoint.title !== endpointTitleInput.value) {
