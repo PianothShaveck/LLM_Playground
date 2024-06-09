@@ -590,7 +590,8 @@ button.show-more-button {
 }
 
 #saveEndpointSettingsButton,#showAdvancedSettingsButton {
-    margin-top: 15px;
+    margin-top: 10px;
+    margin-right: 10px;
     padding: 10px 20px;
     color: #fff;
     border-radius: 5px;
