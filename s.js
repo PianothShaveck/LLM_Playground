@@ -1347,7 +1347,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (endpoint.gemini) {return reject(e)}
                             body = {
                                 model: endpoint.model,
-                                ...convertOpenAIToGemini(body.messages),
+                                ...convertOpenAIToGemini(JSON.parse(body).messages),
                                 generation_config: {
                                     maxOutputTokens: 10
                                 }
