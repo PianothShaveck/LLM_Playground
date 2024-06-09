@@ -1343,13 +1343,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         .then((outputPath) => resolve([bypassCORSUrl, outputPath]))
                         .catch((e) => {
                             if (endpoint.gemini) {return reject(e)}
-                            body = {
+                            body = JSON.stringify({
                                 model: endpoint.model,
                                 ...convertOpenAIToGemini(JSON.parse(body).messages),
                                 generation_config: {
                                     maxOutputTokens: 10
                                 }
-                            }
+                            })
                             fetch(endpoint.url.trim(), { method: 'POST', headers, body })
                                 .then(checkResponse)
                                 .then((outputPath) => resolve([endpoint.url.trim(), outputPath]))
