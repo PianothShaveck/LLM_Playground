@@ -1718,7 +1718,7 @@ document.addEventListener('DOMContentLoaded', function() {
         openAIFormat.forEach(entry => {
             const geminiEntry = {
                 role: (entry.role === 'assistant' || entry.role === 'system') ? 'model' : entry.role,
-                parts: (entry.role === 'system') ? [{ text: 'SYSTEM MESSAGE:\n\n' + entry.content }] : [{ text: entry.content }]
+                parts: (entry.role === 'system') ? [{ text: '<SYSTEM MESSAGE>\n\n' + entry.content + '\n\n<SYSTEM MESSAGE>'}] : [{ text: entry.content }]
             };
             geminiFormat.contents.push(geminiEntry);
         });
