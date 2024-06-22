@@ -8,7 +8,7 @@
 # Features to be implemented (more or less, in order of priority)
 
 - [x] Top_k parameter
-- [ ] Export chat as JSON and import chat as JSON
+- [x] Export chat as JSON and import chat as JSON
 - [ ] Toggle to disable the auto compressing of messages ("Show More")
 - [ ] Support for SDXL on api.discord.rocks
 - [ ] Comparison mode, with a button only visible on wide screens
