@@ -878,6 +878,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxTokensInput = document.getElementById('maxTokensInput');
     const temperatureInput = document.getElementById('temperatureInput');
     const top_pInput = document.getElementById('top_pInput');
+    const top_kInput = document.getElementById('top_kInput');
     const endpointsButton = document.getElementById('endpointsButton');
     const endpointsModal = document.getElementById('endpointsModal');
     const closeEndpointsModalButton = endpointsModal.querySelector('.close');
@@ -896,6 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let max_tokens = 4096;
     let temperature = 1;
     let top_p = 1;
+    let top_k = 40;
     let endpoints = [
         {
             title: 'OpenAI',
@@ -924,7 +926,7 @@ document.addEventListener('DOMContentLoaded', function() {
     systemPromptInput.addEventListener('input', function() {
         adjustTextareaHeight(this);
     });
-    document.getElementById('temperatureInput').addEventListener('input', function() {
+    temperatureInput.addEventListener('input', function() {
         if (this.value > 2) {
             alert('Temperature cannot exceed 2.');
             this.value = 2;
@@ -933,7 +935,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = 0;
         }
     });
-    document.getElementById('top_pInput').addEventListener('input', function() {
+    top_pInput.addEventListener('input', function() {
         if (this.value > 2) {
             alert('Top_p cannot exceed 2.');
             this.value = 2;
@@ -942,10 +944,21 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = 0;
         }
     });
+    top_kInput.addEventListener('input', function() {
+        if (this.value > 1000) {
+            alert('Top_k cannot exceed 1000.');
+            this.value = 1000;
+        } else if (this.value < 1) {
+            alert('Top_k cannot be less than 1.');
+            this.value = 1;
+        }
+        this.value = Math.floor(this.value);
+    })
     settingsButton.addEventListener('click', function() {
         maxTokensInput.value = max_tokens;
         temperatureInput.value = temperature;
         top_pInput.value = top_p;
+        top_kInput.value = top_k;
         settingsModal.style.display = '';
     });
     closeModalButton.addEventListener('click', function() {
@@ -994,6 +1007,7 @@ document.addEventListener('DOMContentLoaded', function() {
         max_tokens = parseInt(maxTokensInput.value) || 4096;
         temperature = parseFloat(temperatureInput.value) || 1;
         top_p = parseFloat(top_pInput.value) || 1;
+        top_k = parseInt(top_kInput.value) || 40;
         settingsModal.style.display = 'none';
     }
     saveSettingsButton.addEventListener('click', saveSettingsButtonEvent);
@@ -1854,7 +1868,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1].\n\nIf you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2].\n\nThe links will be automatically filled, you don't have to include them if you use this format.`;
                 const selectedModel = modelDropdown.value;
                 const systemMessage = document.getElementById('systemPromptInput').value.trim();
-                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens, temperature, top_p, stream: true }
+                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens, temperature, top_p, top_k, stream: true }
                 document.getElementById('messageContainer').removeChild(loadingMessage)
                 handleSendMessage(body, searchResults.map((result, i) => `[${i + 1}]: ${result[1]}`).join('\n') + '\n')
             })
@@ -1870,7 +1884,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSendMessage(body = null, quotes = null) {
         const selectedModel = modelDropdown.value;
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
-        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
+        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, top_k, stream: true } : body
         const endpoint = endpoints.find(endpoint => `${endpoint.title} - ${endpoint.model}` === selectedModel);
         if (endpoint) {
             let headers = {}
@@ -1913,6 +1927,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 generation_config: {
                     temperature,
                     topP: requestBody.top_p,
+                    topK: requestBody.top_k,
                     maxOutputTokens: requestBody.max_tokens
                 }
             }
@@ -2051,6 +2066,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 generation_config: {
                     temperature,
                     topP: requestBody.top_p,
+                    topK: requestBody.top_k,
                     maxOutputTokens: requestBody.max_tokens
                 }
             }

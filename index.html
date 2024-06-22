@@ -121,9 +121,11 @@
                     <label for='maxTokensInput'>Max Tokens:</label>
                     <input type='number' id='maxTokensInput' value='4096' min='1' enterkeyhint='done'>
                     <label for='temperatureInput'>Temperature:</label>
-                    <input type='number' id='temperatureInput' value='1' min='0' max='2' enterkeyhint='done'>
+                    <input type='number' id='temperatureInput' value='1' step='0.1' min='0' max='2' enterkeyhint='done'>
                     <label for='top_pInput'>top_p:</label>
-                    <input type='number' id='top_pInput' value='1' min='0' max='2' enterkeyhint='done'>
+                    <input type='number' id='top_pInput' value='1' step='0.1' min='0' max='2' enterkeyhint='done'>
+                    <label for='top_kInput'>top_k:</label>
+                    <input type='number' id='top_kInput' value='40' min='1' max='1000' enterkeyhint='done'>
                 </div>
                 <button id='endpointsButton' title='Manage API endpoints.' aria-describedby='manageEndpoints'>Endpoints</button>
                 <p style="margin-top: 10px">Check out the <a href="https://github.com/PianothShaveck/LLM_Playground" target="_blank">github</a> to contribute.</p>
