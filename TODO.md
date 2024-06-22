@@ -17,7 +17,7 @@
 - [ ] Add the possibility of moving messages up and down the history. Maybe one or two buttons on the upper part of the message? Or maybe make messages draggable?
 - [ ] "Confirm edit and run" button on messages. Like editing messages on ChatGPT, but it should be a separate button since the user doesn't necessarily always want to overwrite the next messages.
 - [ ] Image upload support (mainly for other endpoints, for now).
-- [ ] Add support for native gemini Api, since it has a significantly different syntax for messages
+- [x] Add support for native gemini Api, since it has a significantly different syntax for messages (Notice: streaming not supported)
 - [ ] Advanced mode for web search: right now, what's happening is just a very fast backend request to fetch the first 7 more relevant result with snippets for each result. This works well, but ideally there should be some toggle to make the backend do a more in-depth search, maybe with multiple different keywords, and maybe entering pages that appear to be relevant and summarizing the results before sending the request to the LLM.
 - [ ] Prompt enhancement toggle: if the user selects this, before sending the message, there should be some kind of backend request that improves the prompt so the LLM potentially gives a better answer.
 - [ ] System prompt enhancement button: automatically improves a given system prompt
