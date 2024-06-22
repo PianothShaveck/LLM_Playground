@@ -3057,7 +3057,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     } catch (e) {
                         const importedChat = formatConversation(text);
                         try {
-                            conversationHistory = JSON.parse(importedChats);
+                            conversationHistory = JSON.parse(importedChat);
                             displayLoadedChat();
                         } catch (e) {
                             alert('Invalid chat data.');
