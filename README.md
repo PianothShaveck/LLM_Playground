@@ -26,7 +26,7 @@ It's designed with a focus on a pure JavaScript and CSS implementation, minimizi
 - **Theming:** Toggle between light and dark themes.
 - **System Prompts:** Save, load, and customize system prompts.
 - **Web Search:** Enable, disable, or automate web searches to enhance LLM responses.
-- **Parameter Control:** Adjust max tokens, temperature, and top_p.
+- **Parameter Control:** Adjust max tokens, temperature, top_p and top_k.
 
 ## Pure JavaScript Implementation
 
