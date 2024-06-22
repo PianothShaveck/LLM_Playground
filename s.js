@@ -2953,6 +2953,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.innerHTML = sendSVG;
         addButton.style.display = ''
         runButton.style.display = ''
+        saveChatToHistory();
         addExportButton();
     }
     const searchTextarea = document.createElement('textarea');
