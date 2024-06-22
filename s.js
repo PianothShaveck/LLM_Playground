@@ -3049,7 +3049,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 alert('Chats imported successfully.');
                             } else {
                                 try {
-                                    conversationHistory = JSON.parse(importedChats);
+                                    if (!importedChats[0].role) throw Error('Invalid chat data.');
+                                    conversationHistory = importedChats;
                                     displayLoadedChat();
                                 } catch (e) {
                                     alert('Invalid chat data.');
@@ -3059,9 +3060,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             alert('Invalid chat data.');
                         }
                     } catch (e) {
-                        const importedChat = formatConversation(text);
+                        const importedChat = JSON.parse(formatConversation(text));
                         try {
-                            conversationHistory = JSON.parse(importedChat);
+                            if (!importedChat[0].role) throw Error('Invalid chat data.');
+                            conversationHistory = importedChat;
                             displayLoadedChat();
                         } catch (e) {
                             alert('Invalid chat data.');
