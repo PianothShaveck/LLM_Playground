@@ -3042,17 +3042,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         const importedChats = JSON.parse(text);
                         if (Array.isArray(importedChats)) {
-                            localStorage.setItem('chats', JSON.stringify(importedChats));
-                            updateChatListUI();
-                            updateMessageCounters();
-                            alert('Chats imported successfully.');
-                        } else {
-                            try {
-                                conversationHistory = JSON.parse(importedChats);
-                                displayLoadedChat();
-                            } catch (e) {
-                                alert('Invalid chat data.');
+                            if (importedChats[0].timestamp) {
+                                localStorage.setItem('chats', JSON.stringify(importedChats));
+                                updateChatListUI();
+                                updateMessageCounters();
+                                alert('Chats imported successfully.');
+                            } else {
+                                try {
+                                    conversationHistory = JSON.parse(importedChats);
+                                    displayLoadedChat();
+                                } catch (e) {
+                                    alert('Invalid chat data.');
+                                }
                             }
+                        } else {
+                            alert('Invalid chat data.');
                         }
                     } catch (e) {
                         const importedChat = formatConversation(text);
