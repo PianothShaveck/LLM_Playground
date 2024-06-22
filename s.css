@@ -281,7 +281,7 @@ textarea {
     grid-column: auto
 }
 
-#addModelButton:hover,#attachButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton2:hover,#saveSettingsButton:hover,#saveSystemPromptButton:hover,#toggleApiKeyVisibility:hover {
+#addModelButton:hover,#attachButton:hover,#endpointsButton:hover,#loadSystemPromptButton:hover,#saveSettingsButton2:hover,#saveSettingsButton:hover,#saveSystemPromptButton:hover,#formatTextBtn:hover,#formatJSONBtn:hover,#toggleApiKeyVisibility:hover {
     background: #764941d5
 }
 
@@ -1001,7 +1001,7 @@ input:checked+.slider:before {
     list-style-type: none
 }
 
-#loadSystemPromptButton,#saveSystemPromptButton {
+#loadSystemPromptButton,#saveSystemPromptButton,#formatTextBtn,#formatJSONBtn {
     margin: 10px;
     padding: 10px 20px;
     cursor: pointer;

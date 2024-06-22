@@ -2813,14 +2813,49 @@ document.addEventListener('DOMContentLoaded', function() {
          */
         exportButton.onclick = function() {
             const chats = JSON.parse(localStorage.getItem('chats'));
-            const exportText = exportChat(currentChatIndex);
-            const blob = new Blob([exportText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${chats[currentChatIndex].title || 'Untitled'}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
+            const chatData = chats[currentChatIndex];
+            const formatModal = document.createElement('div');
+            formatModal.innerHTML = `
+                <div id="formatModal" class="modal">
+                    <div class="modal-content" style="text-align: center;">
+                        <div class='modal-header'>
+                            <span></span>
+                            <span class='close'></span>
+                        </div>
+                        <h3>Choose Export Format:</h3>
+                        <button id="formatTextBtn">Formatted Text</button>
+                        <button id="formatJSONBtn">JSON</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(formatModal);
+            document.getElementById('formatModal').querySelector('.close').addEventListener('click', function() {
+                formatModal.remove();
+            });
+            window.addEventListener('click', function(event) {
+                if (event.target === document.getElementById('formatModal')) {
+                    formatModal.remove();
+                }
+            });
+            formatModal.querySelector('#formatTextBtn').onclick = () => {
+                downloadChat(exportChat(currentChatIndex), 'txt');
+                formatModal.remove();
+            };
+            formatModal.querySelector('#formatJSONBtn').onclick = () => {
+                downloadChat(JSON.stringify(chatData.conversation), 'json');
+                formatModal.remove();
+            };
+            function downloadChat(content, extension) {
+                const chats = JSON.parse(localStorage.getItem('chats'));
+                const chatData = chats[currentChatIndex];
+                const blob = new Blob([content], { type: extension === 'json' ? 'application/json' : 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${chatData.title || 'Untitled'}.${extension}`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         };
         /**
          * Handles the click event of the share chat button. Prompts the user with a confirmation message and saves the chat data to a GitHub Gist if confirmed.
