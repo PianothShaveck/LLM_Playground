@@ -2953,6 +2953,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.innerHTML = sendSVG;
         addButton.style.display = ''
         runButton.style.display = ''
+        addExportButton();
     }
     const searchTextarea = document.createElement('textarea');
     searchTextarea.id = 'searchTextarea';
@@ -3007,14 +3008,34 @@ document.addEventListener('DOMContentLoaded', function() {
             if (chats) {
                 navigator.clipboard.writeText(chats)
                     .then(() => alert('Chats exported to clipboard.'))
-                    .catch(err => console.error('Failed to copy chats: ', err));
+                    .catch(e => console.error('Failed to copy chats: ', e));
             } else {
                 alert('No chats available to export.');
             }
         }
     });
+    /**
+     * Formats a conversation string into an array of objects.
+     *
+     * @param {string} conversation - The conversation string to format.
+     * @return {string} The formatted conversation as a JSON string.
+     */
+    function formatConversation(conversation) {
+        const messages = conversation.split("---\n");
+        const formattedMessages = messages
+        .filter((msg) => msg.trim() !== "")
+        .map((msg) => {
+            const roleMatch = msg.trim().match(/^\*(.*?)\*\s:/);
+            const role = roleMatch ? roleMatch[1].toLowerCase() : "";
+            const content = roleMatch
+            ? msg.replace(roleMatch[0], "").trim()
+            : msg.trim();
+            return {role, content};
+        });
+        return JSON.stringify(formattedMessages);
+    }
     importButton.addEventListener('click', function() {
-        if (confirm('Do you want to import chats from the clipboard? You need to click the paste button after this confirming. This will overwrite existing chats.')) {
+        if (confirm('Do you want to import chats from the clipboard? You need to click the paste button after this confirming. If you import multiple chats, your previous chats history will be overwritten; if you import a single chat, the chat will be loaded.')) {
             navigator.clipboard.readText()
                 .then(text => {
                     try {
@@ -3025,14 +3046,24 @@ document.addEventListener('DOMContentLoaded', function() {
                             updateMessageCounters();
                             alert('Chats imported successfully.');
                         } else {
+                            try {
+                                conversationHistory = JSON.parse(importedChats);
+                                displayLoadedChat();
+                            } catch (e) {
+                                alert('Invalid chat data.');
+                            }
+                        }
+                    } catch (e) {
+                        const importedChat = formatConversation(text);
+                        try {
+                            conversationHistory = JSON.parse(importedChats);
+                            displayLoadedChat();
+                        } catch (e) {
                             alert('Invalid chat data.');
                         }
-                    } catch (err) {
-                        console.error('Failed to parse imported chats: ', err);
-                        alert('Failed to import chats.');
                     }
                 })
-                .catch(err => console.error('Failed to read from clipboard: ', err));
+                .catch(e => console.error('Failed to read from clipboard: ', e));
         }
     });
     deleteButton.addEventListener('click', function() {
