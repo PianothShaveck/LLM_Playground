@@ -878,7 +878,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxTokensInput = document.getElementById('maxTokensInput');
     const temperatureInput = document.getElementById('temperatureInput');
     const top_pInput = document.getElementById('top_pInput');
-    const top_kInput = document.getElementById('top_kInput');
     const endpointsButton = document.getElementById('endpointsButton');
     const endpointsModal = document.getElementById('endpointsModal');
     const closeEndpointsModalButton = endpointsModal.querySelector('.close');
@@ -897,7 +896,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let max_tokens = 4096;
     let temperature = 1;
     let top_p = 1;
-    let top_k = 40;
     let endpoints = [
         {
             title: 'OpenAI',
@@ -944,21 +942,10 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = 0;
         }
     });
-    top_kInput.addEventListener('input', function() {
-        if (this.value > 1000) {
-            alert('Top_k cannot exceed 1000.');
-            this.value = 1000;
-        } else if (this.value < 1) {
-            alert('Top_k cannot be less than 1.');
-            this.value = 1;
-        }
-        this.value = Math.floor(this.value);
-    })
     settingsButton.addEventListener('click', function() {
         maxTokensInput.value = max_tokens;
         temperatureInput.value = temperature;
         top_pInput.value = top_p;
-        top_kInput.value = top_k;
         settingsModal.style.display = '';
     });
     closeModalButton.addEventListener('click', function() {
@@ -1007,7 +994,6 @@ document.addEventListener('DOMContentLoaded', function() {
         max_tokens = parseInt(maxTokensInput.value) || 4096;
         temperature = parseFloat(temperatureInput.value) || 1;
         top_p = parseFloat(top_pInput.value) || 1;
-        top_k = parseInt(top_kInput.value) || 40;
         settingsModal.style.display = 'none';
     }
     saveSettingsButton.addEventListener('click', saveSettingsButtonEvent);
