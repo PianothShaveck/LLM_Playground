@@ -1868,7 +1868,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const searchInfo = 'This message prompted a DuckDuckGo search query: `' + searchQuery + '`. Use these results in your answer. The results are:\n\n' + searchResults.map((result, i) => `${i + 1}. [${result[0]}](${result[1]})\n${result[2]}\n\n`).join('') + `\n\nTo quote the results you can use this format: [1].\n\nIf you need to quote multiple results, do not group multiple quotes together, but rather quote each result separately, like this: [1], [2].\n\nThe links will be automatically filled, you don't have to include them if you use this format.`;
                 const selectedModel = modelDropdown.value;
                 const systemMessage = document.getElementById('systemPromptInput').value.trim();
-                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens, temperature, top_p, top_k, stream: true }
+                const body = { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1), { role: 'system', content: searchInfo }] : [...conversationHistory, { role: 'system', content: searchInfo }], model: selectedModel, max_tokens, temperature, top_p, stream: true }
                 document.getElementById('messageContainer').removeChild(loadingMessage)
                 handleSendMessage(body, searchResults.map((result, i) => `[${i + 1}]: ${result[1]}`).join('\n') + '\n')
             })
@@ -1884,7 +1884,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSendMessage(body = null, quotes = null) {
         const selectedModel = modelDropdown.value;
         const systemMessage = document.getElementById('systemPromptInput').value.trim();
-        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, top_k, stream: true } : body
+        const requestBody = !body ? { messages: systemMessage ? [...conversationHistory.slice(0, -1), { role: 'system', content: systemMessage }, ...conversationHistory.slice(-1)] : conversationHistory, model: selectedModel, max_tokens, temperature, top_p, stream: true } : body
         const endpoint = endpoints.find(endpoint => `${endpoint.title} - ${endpoint.model}` === selectedModel);
         if (endpoint) {
             let headers = {}
@@ -1927,7 +1927,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 generation_config: {
                     temperature,
                     topP: requestBody.top_p,
-                    topK: requestBody.top_k,
                     maxOutputTokens: requestBody.max_tokens
                 }
             }
@@ -2066,7 +2065,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 generation_config: {
                     temperature,
                     topP: requestBody.top_p,
-                    topK: requestBody.top_k,
                     maxOutputTokens: requestBody.max_tokens
                 }
             }

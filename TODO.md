@@ -4,6 +4,7 @@
 - [ ] Images appear to load slowly. Could it be because they load twice? Attempt to find a solution to this issue
 - [ ] Dall-e-3 probably needs longer timeout(?)
 - [ ] Selecting or copying text while a response is being generated doesn't work well
+- [ ] Top_k parameter doesn't work
 
 # Features to be implemented (more or less, in order of priority)
 
