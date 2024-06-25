@@ -127,9 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastPosition = modelDropdown.value;
         modelDropdown.innerHTML = `<option disabled>Popular models</option>
         <option value='llama-3-70b-chat'>llama-3-70b-chat (Free)</option>
-        <option value='auto'>auto</option>
-        <option value='gpt-4o'>gpt-4o</option>
-        <option value='claude-3-opus'>claude-3-opus</option>`;
+        <option value='dall-e-3'>dall-e-3</option>`;
         const savedModels = localStorage.getItem('savedModels');
         if (savedModels) {
             const savedModelIds = JSON.parse(savedModels);
@@ -1743,15 +1741,22 @@ document.addEventListener('DOMContentLoaded', function() {
             allowRetry = true
             function tryFetch() {
                 abortController = new AbortController();
-                fetch('https://api.discord.rocks/images/generations', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey.trim()}`
-                    },
-                    body: requestBody,
-                    signal: abortController.signal
-                })
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => {
+                        reject(new Error('Image generation request timed out.'));
+                    }, 120000);
+                });
+                Promise.race([fetch('https://api.discord.rocks/images/generations', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey.trim()}`
+                        },
+                        body: requestBody,
+                        signal: abortController.signal
+                    }),
+                    timeoutPromise
+                ])
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`Image generation request failed: ${response.error}`);
@@ -2270,7 +2275,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function parseMessage(textSpan, message, user = true, messageDiv) {
         if (containsFiles(message) && user) {
             displayFilesAsBubbles(textSpan, message);
-        } else if (message.startsWith("http") && (message.endsWith(".png") || message.endsWith(".jpg") || message.endsWith(".jpeg") || message.endsWith(".gif"))) {
+        } else if (message.startsWith("https://dalleprodaue.blob.core.windows.net/private/images/")) {
             displayImage(message, messageDiv);
         } else {
             parseMarkdownToHTML(textSpan, message);
@@ -2524,7 +2529,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {messageDiv.getBoundingClientRect();messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })}, 0);
         if (role !== 'loading') {
             parseMessage(textSpan, message, role === 'user', messageDiv);
-            const img = messageDiv.querySelector('img');
+            const img = messageDiv.querySelector('img.dalle-image');
             if (img) {
                 messageDiv.insertBefore(buttonsDiv, img);
             } else {
@@ -2545,16 +2550,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayImage(imageUrl, messageDiv) {
         messageDiv.className = 'image-message';
         let imageElement = messageDiv.querySelector('img');
-        if (imageElement) {
-            imageElement.src = imageUrl; 
-        } else {
+        if (!imageElement) {
             imageElement = document.createElement("img");
-            imageElement.src = imageUrl;
+            imageElement.classList.add('dalle-image');
             messageDiv.appendChild(imageElement);
         }
+        imageElement.dataset.latestUrl = imageUrl;
         imageElement.onload = () => {
-            messageDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+            if (imageElement.dataset.latestUrl === imageUrl) {
+                messageDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+            }
         };
+        imageElement.src = imageUrl;
         imageElement.onclick = () => window.open(imageUrl, "_blank");
     }
     /**

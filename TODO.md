@@ -1,13 +1,11 @@
 # Known issues to fix
 
 - [ ] Using the run button on a Gemini 1.5 pro model by Shadow for whatever reason appears to not work
-- [ ] Images appear to load slowly. Could it be because they load twice? Attempt to find a solution to this issue
-- [ ] Dall-e-3 probably needs longer timeout(?)
-- [ ] Selecting or copying text while a response is being generated doesn't work well
 
 # Features to be implemented (more or less, in order of priority)
 
 - [x] Export chat as JSON and import chat as JSON
+- [ ] Text should be selectable while the response is generated
 - [ ] Toggle to disable the auto compressing of messages ("Show More")
 - [ ] Support for SDXL on api.discord.rocks
 - [ ] Comparison mode, with a button only visible on wide screens

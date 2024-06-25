@@ -302,6 +302,26 @@ textarea {
     padding: 10px
 }
 
+blockquote>p {
+    font-size: 0.9em;
+    text-align: right;
+}
+
+table {
+    margin: 10px auto;
+    border-collapse: collapse
+}
+
+th,td {
+    padding: 10px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+body.light-mode th,body.light-mode td {
+    border: 1px solid #000
+}
+
 .user-message {
     align-self: flex-end;
     color: #e1e1e1;
