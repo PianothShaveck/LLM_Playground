@@ -1019,11 +1019,7 @@ document.addEventListener('DOMContentLoaded', function() {
         openEndpointSettings(endpoints.length - 1);
     });
     /**
-     * Loads the endpoints and displays them in the endpointsList element.
-     * Each endpoint is represented by an li element with the endpoint's title.
-     * Clicking on an endpoint triggers the openEndpointSettings function with the index of the endpoint.
-     * Each endpoint also has a delete button that, when clicked, prompts the user to confirm deletion.
-     * If confirmed, the endpoint is removed from the endpoints array, the settings are saved, and the endpoints are reloaded.
+     * Loads the endpoints and populates the endpoints list.
      */
     function loadEndpoints() {
         endpointsList.innerHTML = '';
@@ -1032,6 +1028,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const li = document.createElement('li');
             li.textContent = title;
             li.addEventListener('click', () => openEndpointSettings(endpoints.findIndex(e => e.title === title && e.url === url)));
+            const testButton = document.createElement('button');
+            testButton.textContent = 'Test';
+            testButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const spinner = document.createElement('span');
+                spinner.className = 'loading-spinner';
+                testButton.appendChild(spinner);
+                testButton.disabled = true;
+                const endpointsToTest = endpoints.filter(e => e.title === title && e.url === url);
+                testEndpointsSequentially(endpointsToTest)
+                    .then(() => {
+                        alert(`All test requests for endpoint '${title}' were successful!`);
+                    })
+                    .catch(e => {
+                        const failedModels = endpointsToTest.filter(endpoint => !endpoint.tested).map(endpoint => endpoint.model);
+                        alert(`Test requests for endpoint '${title}' failed for the following model: ${failedModels.join(', ')}`);
+                    })
+                    .finally(() => {
+                        testButton.removeChild(spinner);
+                        testButton.disabled = false;
+                    });
+            });
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', (event) => {
@@ -1043,6 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadEndpoints();
                 }
             });
+            li.appendChild(testButton);
             li.appendChild(deleteButton);
             endpointsList.appendChild(li);
         });
@@ -1084,9 +1103,61 @@ document.addEventListener('DOMContentLoaded', function() {
         const modelList = endpointSettingsModal.querySelector('.model-list');
         modelList.innerHTML = ''
         const matchingEndpoints = endpoints.filter(e => e.url === endpoint.url);
+        /**
+         * Adds a model to the list by creating a new list item with an input field,
+         * a test button, and a delete button. The test button triggers a testEndpoint
+         * function with the given model. The delete button removes the list item from
+         * the list.
+         *
+         * @param {HTMLElement} list - The list element to which the new item will be added.
+         * @param {string} model - The model to be added to the list.
+         */
+        function addModelToList(list, model) {
+            const li = document.createElement('li');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = model;
+            const testButton = document.createElement('button');
+            testButton.textContent = 'Test';
+            testButton.addEventListener('click', () => {
+                const spinner = document.createElement('span');
+                spinner.className = 'loading-spinner';
+                testButton.appendChild(spinner);
+                testButton.disabled = true;
+                const endpointToTest = { ...endpoints[index], model: model };
+                testEndpoint(endpointToTest)
+                    .then(([url, output, gemini]) => {
+                        alert(`Test request for model '${model}' was successful!`);
+                    })
+                    .catch(e => {
+                        alert(`Test request for model '${model}' failed! ${e.message}`);
+                    })
+                    .finally(() => {
+                        testButton.removeChild(spinner);
+                        testButton.disabled = false;
+                    });
+            });
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => {
+                list.removeChild(li);
+            });
+            li.appendChild(input);
+            li.appendChild(testButton);
+            li.appendChild(deleteButton);
+            list.appendChild(li);
+        }
         matchingEndpoints.forEach(endpoint => {
             addModelToList(modelList, endpoint.model);
         });
+        const addModelButton = document.getElementById('addModelButton');
+        if (!addModelButton.hasOwnProperty('_hasClickHandler')) {
+            function clickHandler() {
+                addModelToList(document.querySelector('#endpointSettingsModal .model-list'), '');
+            }
+            addModelButton.addEventListener('click', clickHandler);
+            addModelButton._hasClickHandler = true;
+        }
         endpointOutputInput.value = endpoint.output;
         endpointStreamInput.checked = endpoint.stream !== undefined ? endpoint.stream : true;
         endpointSettingsModal.style.display = 'flex';
@@ -1158,7 +1229,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert(`All test requests to the endpoint were successful! Models were added to the list of models.`);
                     })
                     .catch(e => {
-                        alert(`A test request to the endpoint failed! ${e.message}`);
+                        const failedModels = endpointsToTest.filter(endpoint => !endpoint.tested).map(endpoint => endpoint.model);
+                        alert(`Test requests for endpoint '${title}' failed for the following model: ${failedModels.join(', ')}`);
                     })
                     .finally(() => {
                         populateDropdown(modelIds, true);
@@ -1362,29 +1434,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
     };
-    /**
-     * Adds a model input field to the given list element.
-     *
-     * @param {HTMLElement} list - The list element to add the model input to.
-     * @param {string} model - The model name to be displayed in the input field.
-     */
-    function addModelToList(list, model) {
-        const li = document.createElement('li');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = model;
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => {
-            list.removeChild(li);
-        });
-        li.appendChild(input);
-        li.appendChild(deleteButton);
-        list.appendChild(li);
-    }
-    document.getElementById('addModelButton').addEventListener('click', () => {
-        addModelToList(document.querySelector('#endpointSettingsModal .model-list'), '')
-    });
     closeEndpointSettingsModalButton.addEventListener('click', () => {
         endpointSettingsModal.style.display = 'none';
     });
