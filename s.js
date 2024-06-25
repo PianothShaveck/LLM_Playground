@@ -1779,7 +1779,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (messageContent) {
             const selectedModel = modelDropdown.value;
             const requestBody = `{"prompt":"${messageContent}","model":"${selectedModel}","n":1,"quality":"${imageQuality}","response format":"url","size":"${imageSize}"}`
-            if (!apiKey && !freeModelsList.includes(selectedModel)) {
+            if (!apiKey && !freeModelsList.includes(selectedModel) && selectedModel !== 'dall-e-3') {
                 alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
                 return;
             }
