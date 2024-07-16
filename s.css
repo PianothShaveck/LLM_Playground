@@ -26,6 +26,10 @@ a:visited {
     color: #482b00;
 }
 
+#settingsModal a:visited {
+    color: #ffa500;
+}
+
 .loading-spinner {
     display: inline-block;
     width: 12px;
