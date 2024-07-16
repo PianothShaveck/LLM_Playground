@@ -18,6 +18,14 @@
     }
 }
 
+a:link {
+    color: #ffa500;
+}
+
+a:visited {
+    color: #482b00;
+}
+
 .loading-spinner {
     display: inline-block;
     width: 12px;
@@ -558,6 +566,23 @@ button.show-more-button {
     background: #dc3545
 }
 
+#endpointsList li span {
+    flex-grow: 1;
+}
+
+#endpointsList li .button-group {
+    display: flex;
+    gap: 5px;
+}
+
+#endpointsList li button.test, #endpointSettingsModal .model-list li button.test {
+    background: #4CAF50;
+}
+
+#endpointsList li button.test:hover, #endpointSettingsModal .model-list li button.test:hover {
+    background: #4CAF50d5;
+}
+
 #addEndpointButton:hover,#saveEndpointSettingsButton:hover,.export-button-container button:hover {
     background: #764941d5
 }
@@ -997,7 +1022,7 @@ input:checked+.slider:before {
 .global-message-counter {
     position: absolute;
     z-index: 1000;
-    top: 10px;
+    top: 25px;
     left: 10px
 }
 

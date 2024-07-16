@@ -1,4 +1,75 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Donation modal
+    var modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '1000';
+    var modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#333';
+    modalContent.style.color = '#eee';
+    modalContent.style.padding = '20px';
+    modalContent.style.borderRadius = '5px';
+    modalContent.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    modalContent.style.textAlign = 'center';
+    modalContent.style.width = '300px';
+    var message = document.createElement('p');
+    message.textContent = 'Help us keep this service free forever. Please consider making a donation!';
+    modalContent.appendChild(message);
+    var donateButton1 = document.createElement('a');
+    donateButton1.href = 'https://paypal.me/thefiredragon05';
+    donateButton1.textContent = 'Support Free LLMs API';
+    donateButton1.style.display = 'inline-block';
+    donateButton1.style.margin = '10px';
+    donateButton1.style.padding = '10px 20px';
+    donateButton1.style.backgroundColor = '#0070ba';
+    donateButton1.style.color = '#fff';
+    donateButton1.style.textDecoration = 'none';
+    donateButton1.style.borderRadius = '5px';
+    donateButton1.style.fontWeight = 'bold';
+    modalContent.appendChild(donateButton1);
+    var donateButton2 = document.createElement('a');
+    donateButton2.href = 'https://paypal.me/pianoth';
+    donateButton2.textContent = 'Support Chat Interface Development';
+    donateButton2.style.display = 'inline-block';
+    donateButton2.style.margin = '10px';
+    donateButton2.style.padding = '10px 20px';
+    donateButton2.style.backgroundColor = '#0070ba';
+    donateButton2.style.color = '#fff';
+    donateButton2.style.textDecoration = 'none';
+    donateButton2.style.borderRadius = '5px';
+    donateButton2.style.fontWeight = 'bold';
+    modalContent.appendChild(donateButton2);
+    var closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.style.display = 'block';
+    closeButton.style.margin = '20px auto 0';
+    closeButton.style.padding = '10px 20px';
+    closeButton.style.backgroundColor = '#ccc';
+    closeButton.style.border = 'none';
+    closeButton.style.borderRadius = '5px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.onclick = function(event) {
+        event.stopPropagation();
+        modal.style.display = 'none';
+    };
+    modalContent.appendChild(closeButton);
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+    modal.onclick = closeModal;
+    modalContent.onclick = function(event) {
+        event.stopPropagation();
+    };
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
     const cancelSVG = `<svg id="closeSVG" xmlns="http://www.w3.org/2000/svg" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M228 1.1c-50.8 5-99.1 24.6-137.9 55.9C22.8 111.4-11.5 206.2 4 295.5c12.6 72.1 54 135.3 114.5 174.8 86.3 56.2 198.8 55.3 285-2.4 23.9-16 39.8-30.8 56-52.4 42.9-57 60.4-129 48.5-199.2-17.4-102.1-93.8-184-194.7-208.8-24.9-6.1-60.9-8.8-85.3-6.4zm63 50.8c85.2 15.2 151.5 79.4 168.4 163.3C480 316.8 420.6 419 322 452c-75.4 25.2-159.6 4.6-215.1-52.7-47.4-48.9-67.2-117.7-53.4-185.8 6.2-30.8 20.8-62 40.8-87.3 18.4-23.3 46.7-45.5 74.5-58.4 17.5-8.1 43.1-15.3 63.2-17.8 12.7-1.5 45.9-.5 59 1.9zm-137.6 88c-10.5 4.8-16 13.9-15.2 25.1.3 3.8 1.4 8.1 2.6 10.5 1.2 2.3 17.9 19.8 40.1 42l38.1 38-38.5 38.5c-42.2 42.3-42.4 42.6-42.5 53.9 0 10.8 5.5 19.1 15.9 23.9 4.4 2 6.4 2.4 11.5 2 3.4-.3 7.7-1.3 9.6-2.3 1.9-.9 20.9-19.1 42.3-40.3l38.7-38.7 38.8 38.7c21.3 21.2 40.3 39.4 42.2 40.4 4.8 2.5 17.1 2.6 22.1.1 4.8-2.4 10.3-7.9 12.5-12.6 1-2 2-6.4 2.2-9.9.8-11.9 1.3-11.3-41.9-54.7l-38.9-39 38-38c25.9-25.9 38.7-39.4 40.1-42.3 3.1-6.4 3.6-15.7 1.2-21.3-4.8-10.7-12.6-15.9-23.9-15.9-11.8.1-11.8.1-54.1 42.3L256 218.4l-38.2-38.1c-28.5-28.4-39.5-38.7-42.8-40.2-5.9-2.7-15.9-2.8-21.6-.2z"/></svg>`
     const editSVG = `<svg id="editSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M414.1 7.5c-3 .9-7.5 2.7-10.1 4.1-3.2 1.7-57.3 55.2-176.8 174.7L52.4 362c-4.9 6.6-8.5 15.2-18 42.3L21.5 441C11.7 468.3 3 494.4 3 496.7c0 7.2 7.2 14.3 14.7 14.3 2.6 0 12-2.8 25.5-7.4L96.5 485l38.5-13.5c16.2-6.1 7.3 2.3 193.1-183.5C518 98.3 505.8 111.3 508.3 96.6c.8-4.9.8-8.3 0-13.2-2.2-12.9-4.3-15.7-30.1-41.2L449.8 15c-9.2-7.5-24.4-10.6-35.7-7.5zM436 24.3c6.3 2.9 52.1 48.2 55.2 54.6 3 6.3 3 15.9 0 22.1-1.4 2.9-8.1 10.4-18.7 21L456 138.5 416.5 99 377 58.4c0-1.6 31.1-31.9 34.8-33.8 7.5-3.9 16.3-4 24.2-.3zM237.8 227.8L89.7 375.1c-3.8 3-5.7 3.9-8.7 3.9-7.3 0-12.4-7-10-13.6.7-1.7 60.5-62.3 147.8-149.6L365.5 69l7.7 7.7 7.8 7.8-143.2 143.3zM406 110.1l13.3 14.1-143.4 143.4-147.1 145.5c-12 6.2-28.8-4.3-28.8-18.1 0-8.5-2.7-5.7 147.8-155.7L392.1 96.1c.4-.1 6.6 6.2 13.9 14zM297.1 297.4L149.2 445.3l-4.2-.6c-2.3-.3-5.3-1.5-6.6-2.8-2.7-2.5-4.1-8.1-2.8-11 .5-1.1 67-68.1 147.9-148.9l147-147 7.3 7.3 7.2 7.2-147.9 147.9zM69 391.4c3.7 2 6.8 2.9 10.5 3l5.3.1.5 5.1c1.5 14.3 15.3 28.4 29.5 30.1l4.9.5.5 6.2c.6 7.3 2.5 11.4 7.7 16.4l3.9 3.7-32.6 11.3-32.5 11.3-15.4-15.3c-8.4-8.4-15.3-15.9-15.3-16.6s5-15.7 11.2-33.3L58.4 382l2.7 3.3c1.5 1.8 5 4.5 7.9 6.1zM40.5 474c5.4 5.4 9.6 10.2 9.2 10.6-.8.9-30.1 11.2-30.6 10.8S29.4 464 30 464c.3 0 5 4.5 10.5 10z"/></svg>`
     const deleteSVG = `<svg id="deleteSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="682.667" height="682.667" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="M202.1 1.1c-12.8 2.5-25.7 12.5-31.1 24.1-3.7 7.9-5 14.6-5 25.9V60h-46.4c-27.3 0-48.5.4-51.7 1-18 3.4-32.5 17.9-35.9 35.9-.5 3-1 13.4-1 23.3 0 15.9.2 18.3 2 21.8 3.1 6.1 7.8 8 19.4 8h9.5l.5 4.2c.4 2.4 6.4 75.4 13.5 162.3 13.8 168.3 13.4 164.8 19.5 174.4 6.4 10 18 17.9 29.5 20.1 7.3 1.4 254.9 1.4 262.2 0 11.5-2.2 23.1-10.1 29.5-20.1 6.1-9.6 5.7-6.1 19.5-174.4l13.5-162.3.5-4.2h9.5c11.6 0 16.3-1.9 19.4-8 1.8-3.5 2-5.9 2-21.8 0-9.9-.5-20.3-1-23.3-3.4-18-17.9-32.5-35.9-35.9-3.2-.6-24.4-1-51.7-1H346v-8.9c0-4.8-.5-11.2-1-14.2-3.4-18-17.9-32.5-35.9-35.9-6.5-1.2-100.6-1.2-107 .1zM308 32c6 3.1 8 7.8 8 19v9h-60-60v-9c0-11 2-15.9 7.8-18.9 3.5-1.9 5.9-2 52-2.1 46.5 0 48.4.1 52.2 2zm135 60c6 3.1 8 7.8 8 19v9H256 61v-9c0-11 2-15.9 7.8-18.9 3.6-2 6.5-2 187-2.1L443 92zm-23.6 62.7c-.3 2.7-6.3 75.1-13.4 161.1L393.2 472l-2.7 3.6c-5.2 6.8 3.4 6.4-134.5 6.4s-129.3.4-134.5-6.4l-2.7-3.6L106 315.8 92.6 154.7l-.5-4.7H256h163.9l-.5 4.7z"/><use xlink:href="#B"/><use xlink:href="#B" x="90"/><use xlink:href="#B" x="180"/><defs ><path id="B" d="M158.8 182.1c-2.3 1.2-4.6 3.5-5.8 5.9-2 3.9-2 5.7-2 113s0 109.1 2 113c2.3 4.5 8 8 13 8s10.7-3.5 13-8c2-3.9 2-5.7 2-113s0-109.1-2-113c-3.7-7.3-12.7-9.9-20.2-5.9z"/></defs></svg>`
@@ -1023,13 +1094,18 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function loadEndpoints() {
         endpointsList.innerHTML = '';
-        const uniqueEndpoints = Array.from(new Set(endpoints.map(endpoint => `${endpoint.title} - ${endpoint.url}`))).map(endpointString => endpointString.split(' - '));
+        const uniqueEndpoints = Array.from(new Set(endpoints.map(endpoint => `${endpoint.title} - ${endpoint.url}`)))
+            .map(endpointString => endpointString.split(' - '));
         uniqueEndpoints.forEach(([title, url]) => {
             const li = document.createElement('li');
-            li.textContent = title;
-            li.addEventListener('click', () => openEndpointSettings(endpoints.findIndex(e => e.title === title && e.url === url)));
+            const span = document.createElement('span');
+            span.textContent = title;
+            li.appendChild(span);
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
             const testButton = document.createElement('button');
             testButton.textContent = 'Test';
+            testButton.className = 'test';
             testButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 const spinner = document.createElement('span');
@@ -1052,6 +1128,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
+            deleteButton.className = 'delete';
             deleteButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 if (confirm('Are you sure you want to delete this endpoint?')) {
@@ -1061,8 +1138,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadEndpoints();
                 }
             });
-            li.appendChild(testButton);
-            li.appendChild(deleteButton);
+            buttonGroup.appendChild(testButton);
+            buttonGroup.appendChild(deleteButton);
+            li.appendChild(buttonGroup);
+            li.addEventListener('click', () => openEndpointSettings(endpoints.findIndex(e => e.title === title && e.url === url)));
             endpointsList.appendChild(li);
         });
     }
@@ -1119,12 +1198,20 @@ document.addEventListener('DOMContentLoaded', function() {
             input.value = model;
             const testButton = document.createElement('button');
             testButton.textContent = 'Test';
+            testButton.className = 'test'
             testButton.addEventListener('click', () => {
                 const spinner = document.createElement('span');
                 spinner.className = 'loading-spinner';
                 testButton.appendChild(spinner);
                 testButton.disabled = true;
-                const endpointToTest = { ...endpoints[index], model: model };
+                const endpointToTest = {
+                    title: endpointTitleInput.value,
+                    url: endpointUrlInput.value,
+                    headers: endpointHeadersInput.value,
+                    model: input.value,
+                    output: endpointOutputInput.value,
+                    stream: endpointStreamInput.checked
+                };
                 testEndpoint(endpointToTest)
                     .then(([url, output, gemini]) => {
                         alert(`Test request for model '${model}' was successful!`);
@@ -1229,8 +1316,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert(`All test requests to the endpoint were successful! Models were added to the list of models.`);
                     })
                     .catch(e => {
-                        const failedModels = endpointsToTest.filter(endpoint => !endpoint.tested).map(endpoint => endpoint.model);
-                        alert(`Test requests for endpoint '${title}' failed for the following model: ${failedModels.join(', ')}`);
+                        const failedModels = endpointsToBeTested.filter(endpoint => !endpoint.tested).map(endpoint => endpoint.model);
+                        alert(`Test requests for endpoint '${endpointTitleInput.value}' failed for the following model(s): ${failedModels.join(', ')}`);
                     })
                     .finally(() => {
                         populateDropdown(modelIds, true);
@@ -1779,10 +1866,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (messageContent) {
             const selectedModel = modelDropdown.value;
             const requestBody = `{"prompt":"${messageContent}","model":"${selectedModel}","n":1,"quality":"${imageQuality}","response format":"url","size":"${imageSize}"}`
-            if (!apiKey && !freeModelsList.includes(selectedModel) && selectedModel !== 'dall-e-3') {
-                alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
-                return;
-            }
             if (!apiKey) {apiKey = 'missing api key'}
             const loadingMessage = displayMessage('Generating image...', 'loading');
             let retries = 0;
@@ -1941,9 +2024,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchEndpointNonStream(requestBody, quotes, endpoint.url, headers, endpoint.output, endpoint.gemini)
             }
         } else {
-            if (!apiKey && !freeModelsList.includes(selectedModel)) {
-                alert('API key for api.discord.rocks not found. Please obtain an API key from the discord server and enter it in the settings. You will use credit for the API key. WARNING: Do not lose the API key!');
-            }
             if (!apiKey) {apiKey = 'missing api key'}
             fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey.trim()}` }, 'choices[0].delta.content');
         }
