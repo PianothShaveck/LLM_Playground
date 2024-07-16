@@ -32,6 +32,10 @@ It's designed with a focus on a pure JavaScript and CSS implementation, minimizi
 
 This project is built with pure JavaScript, with minimal external libraries used only for parsing specific file types. This approach ensures a lightweight, fast-loading application with no unnecessary dependencies.
 
+**Enjoying LLM Playground? Consider supporting its development!**
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/pianoth)
+
 ## Project Roadmap and Known Issues
 
 For a detailed project roadmap and a list of known issues, please refer to the [TODO.md](TODO.md) file.
