@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.info === 'Sponsor key' || data.info === 'Premium key') {
-                console.log('Sponsor key detected');
+                // Do nothing
             } else {
                 showDonationModal();
             }
@@ -697,8 +697,8 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('file', audioFile);
             formData.append('model', 'whisper-large-v3');
             formData.append('temperature', 0);
-            formData.append('response_format', 'json'); 
-            formData.append('language', 'en');
+            formData.append('response_format', 'json');
+            document.getElementById('bigSpinner').style.display = 'block';
             fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
                 method: 'POST',
                 headers: {
@@ -707,6 +707,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData
             })
             .then(response => {
+                document.getElementById('bigSpinner').style.display = 'none';
                 if (!response.ok) {
                     throw new Error(`Groq API request failed: ${response.statusText}`);
                 }
@@ -716,6 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 resolve(data.text); 
             })
             .catch(error => {
+                document.getElementById('bigSpinner').style.display = 'none';
                 reject(error);
             });
         });
