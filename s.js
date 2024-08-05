@@ -3452,23 +3452,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     saveSystemPromptButton.addEventListener('click', saveSystemPrompt);
     document.getElementById('loadSystemPromptButton').addEventListener('click', loadSystemPrompts);
-    let img = document.querySelector('img[alt="ad"]');
-
-    // Funzione per verificare la visibilità dell'immagine
-    function checkImageVisibility() {
-        if (img) {
-            let style = window.getComputedStyle(img);
-            if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
-                console.warn("L'immagine è nascosta.", style);
-            } else {
-                console.log("L'immagine è visibile.");
-            }
-        } else {
-            console.error("Immagine non trovata nel DOM.");
-        }
-    }
-
-    // Verifica la visibilità subito e dopo un intervallo di tempo
-    checkImageVisibility();
-    setTimeout(checkImageVisibility, 2000);
 });
