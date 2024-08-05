@@ -349,11 +349,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!attachedFiles.some(attachedFile => attachedFile.name === file.name)) {
                 const extension = file.name.split('.').pop().toLowerCase();
                 if (['xls', 'xlsx', 'csv', 'docx', 'pdf', 'pptx', 'epub', 'rtf', 'mp3', 'm4a', 'webm'].includes(extension)) {
-                    attachedFiles.push(file);
-                    createFileBubble(file.name, fileContainer);
-                    if (fileContainer.children.length > 0) {
-                        fileContainer.style.display = 'flex';
-                        fileContainer.style.marginBottom = '10px';
+                    if (['mp3', 'm4a', 'webm'].includes(extension) && !checkValidityGroqToken(groqToken)) {
+                        alert('To transcribe audios, please enter a valid Groq token.');
+                    } else {
+                        attachedFiles.push(file);
+                        createFileBubble(file.name, fileContainer);
+                        if (fileContainer.children.length > 0) {
+                            fileContainer.style.display = 'flex';
+                            fileContainer.style.marginBottom = '10px';
+                        }
                     }
                 } else {
                     const reader = new FileReader();
@@ -372,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 fileContainer.style.marginBottom = '10px';
                             }
                         } catch (e) {
-                            alert(`File '${file.name}' is not a supported text, rtf, spreadsheet, docx, pptx, pdf or epub file.`);
+                            alert(`File '${file.name}' is not a supported text, rtf, spreadsheet, docx, pptx, pdf, epub, mp3, m4a or webm file.`);
                             console.error(e);
                         }
                     };
