@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
     modalContent.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
     modalContent.style.textAlign = 'center';
     modalContent.style.width = '300px';
+    var adContainer = document.createElement('div');
+    adContainer.id = 'ad-container';
+    adContainer.innerHTML = `
+        <div class="ad-slot"><a href="https://discord.com/invite/q55gsH8z5F"><img src="https://f003.backblazeb2.com/file/WLpA4Qwq/ad.png"></a></div>
+    `;
+    modalContent.appendChild(adContainer);
     var message = document.createElement('p');
     message.textContent = 'Help us keep this service free forever. Please consider making a donation!';
     modalContent.appendChild(message);
@@ -111,14 +117,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     endpoint.headers = endpoint.headers.replace(/'/g, '"');
                     const parsedHeaders = JSON.parse(endpoint.headers);
                     if (parsedHeaders.Authorization) {
-                        const apiKey = parsedHeaders.Authorization.split(' ')[1];
-                        if (apiKey) {
-                            endpoint.headers = apiKey;
+                        const tempapiKey = parsedHeaders.Authorization.split(' ')[1];
+                        if (tempapiKey) {
+                            endpoint.headers = tempapiKey;
                         }
                     } else if (parsedHeaders['x-api-key']) {
-                        const apiKey = parsedHeaders['x-api-key'];
-                        if (apiKey) {
-                            endpoint.headers = apiKey;
+                        const tempapiKey = parsedHeaders['x-api-key'];
+                        if (tempapiKey) {
+                            endpoint.headers = tempapiKey;
                         }
                     }
                 } catch (error) {
@@ -153,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function checkApiStatus() {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
         fetch('https://api.discord.rocks/models', {
             method: 'GET',
             signal: controller.signal
@@ -942,6 +948,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveSettingsButton = document.getElementById('saveSettingsButton');
     const saveSettingsButton2 = document.getElementById('saveSettingsButton2');
     const apiKeyInput = document.getElementById('apiKey');
+    const groqTokenInput = document.getElementById('groqToken');
     const systemPromptInput = document.getElementById('systemPromptInput');
     const favoriteModelDropdown = document.getElementById('favoriteModelDropdown')
     const maxTokensInput = document.getElementById('maxTokensInput');
@@ -962,6 +969,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endpointStreamInput = document.getElementById('endpointStream');
     const saveEndpointSettingsButton = document.getElementById('saveEndpointSettingsButton');
     let apiKey = ''
+    let groqToken = ''
     let max_tokens = 4096;
     let temperature = 1;
     let top_p = 1;
@@ -1042,12 +1050,26 @@ document.addEventListener('DOMContentLoaded', function() {
         if (apiKey !== null) {
             apiKeyInput.value = apiKey;
         }
+        groqToken = localStorage.getItem('groqToken');
+        if (groqToken !== null) {
+            groqTokenInput.value = groqToken.trim();
+        }
+    }
+    /**
+     * Checks the validity of a Groq token.
+     *
+     * @param {string} groqT - The Groq token to check.
+     * @return {boolean} Returns true if the token is valid, false otherwise.
+     */
+    function checkValidityGroqToken(groqT) {
+        return groqT.startsWith('gsk_') && groqT.length > 40;
     }
     /**
      * Saves the current settings to the local storage.
      */
     function saveSettings() {
         localStorage.setItem('apiKey', apiKey);
+        localStorage.setItem('groqToken', groqToken);
         localStorage.setItem('copyToFileEnabled', JSON.stringify(copyToFileEnabled));
         localStorage.setItem('webSearch', document.querySelector('input[name="webSearch"]:checked').value);
         localStorage.setItem('endpoints', JSON.stringify(endpoints));
@@ -1057,7 +1079,9 @@ document.addEventListener('DOMContentLoaded', function() {
      * Saves the current settings and updates the UI accordingly.
      */
     function saveSettingsButtonEvent() {
-        apiKey = apiKeyInput.value;
+        apiKey = apiKeyInput.value.trim();
+        groqToken = groqTokenInput.value.trim();
+        if (!checkValidityGroqToken(groqToken)) alert('Invalid Groq Token!');
         copyToFileEnabled = document.getElementById('copyToFileToggle').checked;
         saveSettings();
         max_tokens = parseInt(maxTokensInput.value) || 4096;
@@ -1661,7 +1685,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    /**
+/**
      * Fetches a chat title based on the provided message content using the LLaMA 8B model.
      *
      * @param {string} messageContent - The content of the message to generate the chat title from.
@@ -1670,47 +1694,104 @@ document.addEventListener('DOMContentLoaded', function() {
      *                           Rejects if there is an error fetching the chat title.
      */
     function fetchChatTitle(messageContent, chatIndex) {
-        const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
-        const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
-        if (generateButton.querySelector('.loading-spinner')) {
-            return;
-        }
-        const spinner = document.createElement('span');
-        spinner.className = 'loading-spinner';
-        generateButton.appendChild(spinner);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
         return new Promise((resolve, reject) => {
-            fetch('https://llm-playground-backend.uc.r.appspot.com/api/title', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+            const listItem = previousChats.children[previousChats.children.length - 1 - chatIndex];
+            const generateButton = listItem.querySelector('button[title="Generate a new title for the chat."]');
+            if (generateButton.querySelector('.loading-spinner')) {
+                return;
+            }
+            const spinner = document.createElement('span');
+            spinner.className = 'loading-spinner';
+            generateButton.appendChild(spinner);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const requestBody = {
+                messages: [
+                {
+                    role: 'user',
+                    content: `Your task is to generate a title for the following conversation:\n\n<conversation>\n${messageContent}\n</conversation>\n\nThe title should concisely summarize the main topic or key points of the conversation in a catchy and engaging way.\n\nUse plain text for the title with no markdown formatting.\n\nDo not include any text before or after the title, and only output one title.\n\nMake sure your title is short and concise.\n\nOutput your title between \` characters, like this: \`example title\``,
                 },
-                body: JSON.stringify({ messageContent }),
-                signal: controller.signal
-            }).then(response => {
-                clearTimeout(timeoutId);
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error(`Failed to fetch chat title: ${response.statusText}`);
-                }
-            }).then(data => {
-                if (data.title) {
-                  updateChatTitle(data.title, chatIndex);
-                  resolve(data.title);
-                } else {
-                  throw new Error('Invalid title response');
-                }
-            }).catch(e => {
-                generateButton.removeChild(spinner);
-                if (e.name === 'AbortError') {
-                    console.error('Fetch request for the chat title timed out.');
-                } else {
-                    console.error('Error fetching chat title:', e);
-                }
-                reject(e);
-            })
+                ],
+                max_tokens: 40,
+                temperature: 0.5
+            };
+            if (checkValidityGroqToken(groqToken)) {
+                requestBody.model = 'llama-3.1-8b-instant';
+                fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${groqToken.trim()}`
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
+                }).then(response => {
+                    clearTimeout(timeoutId);
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Failed to fetch chat title: ${response.statusText}`);
+                    }
+                }).then(data => {
+                    let title = data.choices[0].message.content.trim();
+                    if (title && title.startsWith('`') && title.endsWith('`')) {
+                        title = title.slice(1, -1);
+                        if (title.startsWith('"') && title.endsWith('"')) {
+                            title = title.slice(1, -1);
+                        }
+                        updateChatTitle(title, chatIndex);
+                        resolve(title);
+                    } else {
+                        throw new Error('Invalid title response');
+                    }
+                }).catch(e => {
+                    generateButton.removeChild(spinner);
+                    if (e.name === 'AbortError') {
+                        console.error('Fetch request for the chat title timed out.');
+                    } else {
+                        console.error('Error fetching chat title:', e);
+                    }
+                    reject(e);
+                })
+            } else {
+                console.error('Invalid GROQ token:', groqToken);
+                requestBody.model = 'llama-3.1-8b-turbo';
+                fetch('https://api.discord.rocks/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
+                }).then(response => {
+                    clearTimeout(timeoutId);
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Failed to fetch chat title: ${response.statusText}`);
+                    }
+                }).then(data => {
+                    let title = data.choices[0].message.content.trim();
+                    if (title && title.startsWith('`') && title.endsWith('`')) {
+                        title = title.slice(1, -1);
+                        if (title.startsWith('"') && title.endsWith('"')) {
+                            title = title.slice(1, -1);
+                        }
+                        updateChatTitle(title, chatIndex);
+                        resolve(title);
+                    } else {
+                        throw new Error('Invalid title response');
+                    }
+                }).catch(e => {
+                    generateButton.removeChild(spinner);
+                    if (e.name === 'AbortError') {
+                        console.error('Fetch request for the chat title timed out.');
+                    } else {
+                        console.error('Error fetching chat title:', e);
+                    }
+                    reject(e);
+                })
+            }
         });
     }
     /**
@@ -1730,41 +1811,103 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Fetches a web search query based on the provided message content using the LLaMA 8B model.
+     * Fetches a web search query based on a conversation message content.
      *
-     * @param {string} messageContent - The content of the message to generate the search query from.
-     * @param {boolean} [auto=false] - Whether to use the auto option for the API.
-     * @return {Promise<string>} A promise that resolves with the generated search query or rejects with an error.
+     * @param {string} messageContent - The content of the conversation message.
+     * @param {boolean} [auto=false] - Whether to automatically determine if a web search is needed.
+     * @return {Promise<string>} A promise that resolves to the generated search query.
      */
     function fetchAutoWebSearchQuery(messageContent, auto = false) {
         return new Promise((resolve, reject) => {
-            fetch('https://llm-playground-backend.uc.r.appspot.com/api/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messageContent, auto }),
-                signal: abortController.signal
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.searchQuery) { 
-                    resolve(data.searchQuery);
-                } else {
-                    reject(new Error('No search string found'));
-                }
-            })
-            .catch(e => {
-                if (e.name === 'AbortError') {
-                    reject(new Error('Request aborted'));
-                } else {
-                    console.error('Error fetching web search query:', e);
-                    reject(e);
-                }
-            });
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const today = new Date().toDateString();
+            let prompt = `Here is a conversation from the user:\n<conversation>\n${JSON.stringify(messageContent)}\n</conversation>\n`;
+            prompt += auto
+            ? `Please carefully analyze the conversation to determine if a web search is needed in order for you to provide an appropriate response to the latest message.\n\nIf you don't think you need to do a web search in order to respond, just reply with a very short message saying "NO".\n\nIf you believe a search is necessary, generate a search query that you would enter into the DuckDuckGo search engine to find the most relevant information to help you respond.\n\n`
+            : `Your task is to generate a search query that you would enter into the DuckDuckGo search engine to find information that could help respond to the user's message. Do not attempt to directly answer the message yourself. Instead, focus on creating a search query that would surface the most relevant information from DuckDuckGo.\n\n`;
+            prompt += `Keep it simple and short. Output your search query between \` characters, like this: \`example search query\`\n\nRespond with plain text only. Do not use any markdown formatting, and do not specify a site unless asked by the user. Do not include any text before or after the search query.\n\nRemember, today's date is ${today}. Keep this date in mind to provide time-relevant context in your search query if needed.\n\nFocus on generating the single most relevant search query you can think of to address the user's message. Do not provide multiple queries.`;
+            const requestBody = {
+                messages: [
+                {
+                    role: 'user',
+                    content: prompt,
+                },
+                ],
+                max_tokens: 40,
+                temperature: 0.5
+            };
+            if (checkValidityGroqToken(groqToken)) {
+                requestBody.model = 'llama-3.1-8b-instant';
+                fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${groqToken.trim()}`
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: abortController.signal
+                }).then(response => {
+                    clearTimeout(timeoutId);
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Failed to fetch chat title: ${response.statusText}`);
+                    }
+                }).then(data => {
+                    let searchQuery = data.choices[0].message.content.trim();
+                    if (searchQuery && searchQuery.startsWith('`') && searchQuery.endsWith('`')) {
+                        searchQuery = searchQuery.slice(1, -1);
+                        if (searchQuery.startsWith('"') && searchQuery.endsWith('"')) {
+                            searchQuery = searchQuery.slice(1, -1);
+                        }
+                        resolve(searchQuery)
+                    } else {
+                        resolve(searchQuery)
+                    }
+                }).catch(e => {
+                    if (e.name === 'AbortError') {
+                        reject(new Error('Request aborted'));
+                    } else {
+                        console.error('Error fetching web search query:', e);
+                        reject(e);
+                    }
+                });
+            } else {
+                requestBody.model = 'llama-3.1-8b-turbo';
+                fetch('https://api.discord.rocks/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
+                }).then(response => {
+                    clearTimeout(timeoutId);
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Failed to fetch chat title: ${response.statusText}`);
+                    }
+                }).then(data => {
+                    let searchQuery = data.choices[0].message.content.trim();
+                    if (searchQuery && searchQuery.startsWith('`') && searchQuery.endsWith('`')) {
+                        searchQuery = searchQuery.slice(1, -1);
+                        if (searchQuery.startsWith('"') && searchQuery.endsWith('"')) {
+                            searchQuery = searchQuery.slice(1, -1);
+                        }
+                        resolve(searchQuery)
+                    } else {
+                        resolve(searchQuery)
+                    }
+                }).catch(e => {
+                    if (e.name === 'AbortError') {
+                        reject(new Error('Request aborted'));
+                    } else {
+                        console.error('Error fetching web search query:', e);
+                        reject(e);
+                    }
+                });
+            }
         });
     }
     /**
@@ -1777,7 +1920,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function fetchSearchResults(query) {        
         return new Promise((resolve, reject) => {
-            fetch(`https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {signal: abortController.signal})
+            fetch(`https://cloudflare-cors-anywhere.queakchannel42.workers.dev/?https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {signal: abortController.signal})
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -3005,22 +3148,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /**
-     * Reverses a string.
-     *
-     * @param {string} str - The string to reverse.
-     * @return {string} The reversed string.
-     */
-    function reverseString(str) {
-        return str.split('').reverse().join('');
-    }
-    /**
      * Saves the chat data to a GitHub Gist.
      *
      * @param {Object} chatData - The chat data to be saved.
      * @return {Promise} A promise that resolves when the chat data is successfully saved, or rejects with an error if there was a problem.
      */
     function saveChatToGist(chatData) {
-        const apiUrl = 'https://llm-playground-backend.uc.r.appspot.com/api/gist';
+        const apiUrl = 'https://shiny-rice-f8c5.pianothshaveck.workers.dev/api/gist';
         fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

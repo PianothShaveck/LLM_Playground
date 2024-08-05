@@ -622,7 +622,7 @@ button.show-more-button {
     background: #666
 }
 
-#settingsContent #apiKey {
+#settingsContent #apiKey,#settingsContent #groqToken {
     width: 90%;
     margin: 0 auto 10px
 }
@@ -1080,6 +1080,23 @@ input:checked+.slider:before {
     color: #fff;
     border-radius: 20px;
     background: #764941
+}
+
+#ad-container {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    border: 1px solid #764941;
+    border-radius: 5px;
+    background-color: #222;
+    padding: 10px;
+}
+
+.ad-slot {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 5px;
 }
 
 @media (max-width: 1200px) {
