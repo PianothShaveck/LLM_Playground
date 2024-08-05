@@ -47,29 +47,29 @@ document.addEventListener('DOMContentLoaded', function() {
         /**
          * Fetches ads from 'https://api.discord.rocks/ads' and creates ad slots based on the retrieved data.
          */
-        function fetchAndCreateAds() {
+        function fetchAndCreateSlots() {
             fetch('https://api.discord.rocks/ads')
                 .then(response => response.json())
                 .then(data => {
-                    const adContainer = document.getElementById('ad-container');
-                    adContainer.innerHTML = '';
-                    for (const [key, ad] of Object.entries(data)) {
-                        const adSlot = document.createElement('div');
-                        adSlot.className = 'ad-slot';
-                        adSlot.innerHTML = `
-                            <a href="${ad.url}" target="_blank">
-                                <img src="${ad.image}" alt="${ad.alt}">
+                    const slotsContainer = document.getElementById('slots-container');
+                    slotsContainer.innerHTML = '';
+                    for (const [key, slot] of Object.entries(data)) {
+                        const slotSlot = document.createElement('div');
+                        slotSlot.className = 'slot-slot';
+                        slotSlot.innerHTML = `
+                            <a href="${slot.url}" target="_blank">
+                                <img src="${slot.image}" alt="${slot.alt}">
                             </a>
                         `;
-                        adContainer.appendChild(adSlot);
+                        slotsContainer.appendChild(slotSlot);
                     }
                 })
-                .catch(error => console.error('Error fetching ads:', error));
+                .catch(error => console.error('Error fetching slots:', error));
         }
-        var adContainer = document.createElement('div');
-        adContainer.id = 'ad-container';
-        modalContent.appendChild(adContainer);
-        fetchAndCreateAds();
+        var slotsContainer = document.createElement('div');
+        slotsContainer.id = 'slots-container';
+        modalContent.appendChild(slotsContainer);
+        fetchAndCreateSlots();
         var message = document.createElement('p');
         message.textContent = 'Help us keep this service free forever. Please consider making a donation!';
         modalContent.appendChild(message);
