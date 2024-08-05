@@ -23,6 +23,7 @@ It's designed with a focus on a pure JavaScript and CSS implementation, minimizi
 - **File Processing:** Attach and process various file types, including spreadsheets, documents, PDFs, PowerPoints, EPUBs, RTFs, and plain text files.
 - **Chat Management:** Maintain, export, and import chat histories. Search through past conversations.
 - **Message Control:** Edit, delete, copy, and change the role of individual messages.
+- **Audio Support:** Record and transcribe audio messages (requires Groq API key).
 - **Theming:** Toggle between light and dark themes.
 - **System Prompts:** Save, load, and customize system prompts.
 - **Web Search:** Enable, disable, or automate web searches to enhance LLM responses.
