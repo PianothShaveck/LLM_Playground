@@ -48,14 +48,24 @@ document.addEventListener('DOMContentLoaded', function() {
          * Fetches ads from 'https://api.discord.rocks/ads' and creates ad slots based on the retrieved data.
          */
         function fetchAndCreateSlots() {
+            var slotsContainer = document.createElement('div');
+            slotsContainer.style.display = 'flex';
+            slotsContainer.style.flexDirection = 'column';
+            slotsContainer.style.margin = '10px 0';
+            slotsContainer.style.border = '1px solid #764941';
+            slotsContainer.style.borderRadius = '5px';
+            slotsContainer.style.padding = '10px';
+            slotsContainer.style.backgroundColor = '#222';
             fetch('https://api.discord.rocks/ads')
                 .then(response => response.json())
                 .then(data => {
-                    const slotsContainer = document.getElementById('slots-container');
                     slotsContainer.innerHTML = '';
                     for (const [key, slot] of Object.entries(data)) {
                         const slotSlot = document.createElement('div');
-                        slotSlot.className = 'slot-slot';
+                        slotSlot.style.width = '100%';
+                        slotSlot.style.maxHeight = '200px';
+                        slotSlot.style.objectFit = 'contain';
+                        slotSlot.style.borderRadius = '5px';
                         slotSlot.innerHTML = `
                             <a href="${slot.url}" target="_blank">
                                 <img src="${slot.image}" alt="${slot.alt}">
@@ -65,10 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => console.error('Error fetching slots:', error));
+            modalContent.appendChild(slotsContainer);
         }
-        var slotsContainer = document.createElement('div');
-        slotsContainer.id = 'slots-container';
-        modalContent.appendChild(slotsContainer);
         fetchAndCreateSlots();
         var message = document.createElement('p');
         message.textContent = 'Help us keep this service free forever. Please consider making a donation!';

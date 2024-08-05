@@ -1119,23 +1119,6 @@ input:checked+.slider:before {
     background: #764941
 }
 
-#slots-container {
-    display: flex;
-    flex-direction: column;
-    margin: 10px 0;
-    border: 1px solid #764941;
-    border-radius: 5px;
-    background-color: #222;
-    padding: 10px;
-}
-
-.slot-slot {
-    width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    border-radius: 5px;
-}
-
 @media (max-width: 1200px) {
     .container {
         width: 80%;
