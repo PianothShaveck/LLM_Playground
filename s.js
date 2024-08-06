@@ -989,6 +989,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isProcessingAudio = true;
         clearInterval(recordingTimer);
         mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
         // Use setTimeout to ensure all data has been processed
         setTimeout(() => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -1006,6 +1007,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 timerElement.remove();
             }
             processRecordedAudio(audioBlob);
+            mediaRecorder = null;
             isProcessing = false;
         }, 1000); // Small delay to ensure all data is collected
     }
