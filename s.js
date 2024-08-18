@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastPosition = modelDropdown.value;
         modelDropdown.innerHTML = `<option disabled>Popular models</option>
         <option value='llama-3-70b-chat'>llama-3-70b-chat (Free)</option>
-        <option value='dall-e-3'>dall-e-3</option>`;
+        <option value='flux-realism'>flux-realism</option>`;
         const savedModels = localStorage.getItem('savedModels');
         if (savedModels) {
             const savedModelIds = JSON.parse(savedModels);
@@ -293,10 +293,22 @@ document.addEventListener('DOMContentLoaded', function() {
         imageGeneration.textContent = 'Image Generation';
         imageGeneration.disabled = true;
         modelDropdown.appendChild(imageGeneration);
-        const dallE3 = document.createElement('option');
-        dallE3.value = 'dall-e-3';
-        dallE3.textContent = 'dall-e-3';
-        modelDropdown.appendChild(dallE3);
+        const flux1 = document.createElement('option');
+        flux1.value = 'flux';
+        flux1.textContent = 'flux';
+        modelDropdown.appendChild(flux1);
+        const flux2 = document.createElement('option');
+        flux2.value = 'flux-realism';
+        flux2.textContent = 'flux-realism';
+        modelDropdown.appendChild(flux2);
+        const flux3 = document.createElement('option');
+        flux3.value = 'flux-anime';
+        flux3.textContent = 'flux-anime';
+        modelDropdown.appendChild(flux3);
+        const flux4 = document.createElement('option');
+        flux4.value = 'flux-3d';
+        flux4.textContent = 'flux-3d';
+        modelDropdown.appendChild(flux4);
         const freeModels = modelIds.filter(model => model.created === 0);
         const otherModels = modelIds.filter(model => model.created !== 0);
         const freeOption = document.createElement('option');
@@ -922,8 +934,7 @@ document.addEventListener('DOMContentLoaded', function() {
         adjustTextareaHeight(messageBox);
         fileInput.value = '';
     });
-    let imageQuality = 'standard'; 
-    let imageSize = '1024x1024';
+    let imageSize = '1:1';
     const sendButton = document.getElementById('sendButton');
     sendButton.innerHTML = sendSVG;
     const backButton = document.getElementById('backButton');
@@ -1083,19 +1094,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const previousChats = document.querySelector('.previous-chats ul');
     modelDropdown.addEventListener('change', () => {
         const selectedModel = modelDropdown.value;
-        const imageQualitySelector = document.getElementById('imageQualitySelector');
         const imageSizeSelector = document.getElementById('imageSizeSelector');
-        if (selectedModel === 'dall-e-3') {
-            if (!imageQualitySelector) {
-                createImageQualitySelector();
-            }
+        if (selectedModel === 'flux' || selectedModel === 'flux-realism' || selectedModel === 'flux-3d' || selectedModel === 'flux-anime') {
             if (!imageSizeSelector) {
                 createImageSizeSelector();
             }
         } else {
-            if (imageQualitySelector) {
-                imageQualitySelector.remove();
-            }
             if (imageSizeSelector) {
                 imageSizeSelector.remove();
             }
@@ -1104,20 +1108,6 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Creates an image quality selector element and appends it to the model selector.
      */
-    function createImageQualitySelector() {
-        const imageQualitySelector = document.createElement('select');
-        imageQualitySelector.id = 'imageQualitySelector';
-        imageQualitySelector.innerHTML = `
-            <option value="standard">Standard</option>
-            <option value="hd">HD</option>
-        `;
-        imageQualitySelector.value = imageQuality;
-        imageQualitySelector.addEventListener('change', () => {
-            imageQuality = imageQualitySelector.value;
-        });
-        imageQualitySelector.selectedIndex = 0
-        document.querySelector('.model-selector-right').appendChild(imageQualitySelector);
-    }
     /**
      * Creates the image size selector element and appends it to the model selector.
      */
@@ -1125,9 +1115,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const imageSizeSelector = document.createElement('select');
         imageSizeSelector.id = 'imageSizeSelector';
         imageSizeSelector.innerHTML = `
-            <option value="1024x1024">1024x1024</option>
-            <option value="1024x1792">1024x1792</option>
-            <option value="1792x1024">1792x1024</option>
+            <option value="1:1">1:1</option>
+            <option value="16:9">16:9</option>
+            <option value="9:16">9:16</option>
+            <option value="21:9">21:9</option>
+            <option value="9:21">9:21</option>
+            <option value="1:2">1:2</option>
+            <option value="2:1">2:1</option>
         `;
         imageSizeSelector.value = imageSize;
         imageSizeSelector.addEventListener('change', () => {
@@ -2256,13 +2250,13 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Sends a message to the server to generate an image.
      */
-    function handleSendImage() {
+    function handleSendImage(model) {
         const messageContent = conversationHistory[conversationHistory.length - 1].content
         if (messageContent) {
             const selectedModel = modelDropdown.value;
-            const requestBody = `{"prompt":"${messageContent}","model":"${selectedModel}","n":1,"quality":"${imageQuality}","response format":"url","size":"${imageSize}"}`
             if (!apiKey) {apiKey = 'missing api key'}
             const loadingMessage = displayMessage('Generating image...', 'loading');
+            const seed = Math.floor(Math.random() * 100000) + 1;
             let retries = 0;
             const maxRetries = 2;
             allowRetry = true
@@ -2273,13 +2267,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         reject(new Error('Image generation request timed out.'));
                     }, 120000);
                 });
-                Promise.race([fetch('https://api.discord.rocks/images/generations', {
-                        method: 'POST',
+                Promise.race([fetch(`https://api.discord.rocks/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`, {
+                        method: 'GET',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Authorization': `Bearer ${apiKey.trim()}`
                         },
-                        body: requestBody,
                         signal: abortController.signal
                     }),
                     timeoutPromise
@@ -2288,20 +2280,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!response.ok) {
                         throw new Error(`Image generation request failed: ${response.error}`);
                     }
-                    return response.json();
                 })
                 .then(data => {
                     backButton.disabled = true;
-                    if (data.data && data.data.length > 0 && data.data[0].url) {
-                        const imageUrl = data.data[0].url;
-                        document.getElementById('messageContainer').removeChild(loadingMessage)
-                        addMessageToHistory(imageUrl, 'assistant');
-                        updateMessageCounters();
-                        revertSendButton();
-                        backButton.disabled = false;
-                    } else {
-                        throw new Error('Invalid image generation response.');
-                    }
+                    const imageUrl = `https://api.discord.rocks/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`;
+                    document.getElementById('messageContainer').removeChild(loadingMessage)
+                    addMessageToHistory(imageUrl, 'assistant');
+                    updateMessageCounters();
+                    revertSendButton();
+                    backButton.disabled = false;
                 })
                 .catch(e => {
                     if (e.name === 'AbortError') {
@@ -2336,8 +2323,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {Promise<void>} A promise that resolves when the message is sent and the UI is updated.
      */
     function handleSend() {
-        if (modelDropdown.value === 'dall-e-3') {
-            handleSendImage();
+        if (modelDropdown.value === 'flux-realism' || modelDropdown.value === 'flux' || modelDropdown.value === 'flux-anime' || modelDropdown.value === 'flux-3d') {
+            handleSendImage(modelDropdown.value);
         } else {
             const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
             if (webSearchToggle === 'on') {
@@ -2799,7 +2786,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function parseMessage(textSpan, message, user = true, messageDiv) {
         if (containsFiles(message) && user) {
             displayFilesAsBubbles(textSpan, message);
-        } else if (message.startsWith("https://dalleprodaue.blob.core.windows.net/private/images/")) {
+        } else if (message.startsWith("https://api.discord.rocks/imagine?model=flux")) {
             displayImage(message, messageDiv);
         } else {
             parseMarkdownToHTML(textSpan, message);
