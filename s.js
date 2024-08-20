@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if api key exists
     if (localStorage.getItem('apiKey') !== null) {
         apiKey = localStorage.getItem('apiKey');
-        fetch(`https://api.discord.rocks/check?key=${apiKey}`)
+        fetch(`https://api.airforce/check?key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
             if (data.info === 'Sponsor key' || data.info === 'Premium key') {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalContent.style.textAlign = 'center';
         modalContent.style.width = '300px';
         /**
-         * Fetches ads from 'https://api.discord.rocks/ads' and creates ad slots based on the retrieved data.
+         * Fetches ads from 'https://api.airforce/ads' and creates ad slots based on the retrieved data.
          */
         function fetchAndCreateSlots() {
             var slotsContainer = document.createElement('div');
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             slotsContainer.style.borderRadius = '5px';
             slotsContainer.style.padding = '10px';
             slotsContainer.style.backgroundColor = '#222';
-            fetch('https://api.discord.rocks/ads')
+            fetch('https://api.airforce/ads')
                 .then(response => response.json())
                 .then(data => {
                     slotsContainer.innerHTML = '';
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadScript('https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.min.js', () => {});
     let modelIds = []
     /**
-     * Checks the status of the API by making a GET request to 'https://api.discord.rocks/models'.
+     * Checks the status of the API by making a GET request to 'https://api.airforce/models'.
      * If the request is successful, the function populates a dropdown menu with the model IDs
      * received from the response. If a favorite model is saved in the local storage, the dropdown
      * menus are updated with the saved favorite model.
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function checkApiStatus() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        fetch('https://api.discord.rocks/models', {
+        fetch('https://api.airforce/models', {
             method: 'GET',
             signal: controller.signal
         })
@@ -243,9 +243,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('apiStatusMessage').style.display = 'block';
             if (e.name === 'AbortError') {
                 console.error('Fetch request timed out.');
-                document.getElementById('apiStatusMessage').textContent = 'Request to api.discord.rocks timed out.'
+                document.getElementById('apiStatusMessage').textContent = 'Request to api.airforce timed out.'
             } else {
-                console.error('Error fetching api.discord.rocks data:', e);
+                console.error('Error fetching api.airforce data:', e);
             }
         });
     }
@@ -1150,10 +1150,10 @@ document.addEventListener('DOMContentLoaded', function() {
      * Displays information about the application and prompts the user to visit the Discord Rocks API website if confirmed.
      */
     function showInfo() {
-        var message = 'Created by @pianoth, LLMs and domain provided by @meow_18838.\nPowered by the Discord Rocks API (https://api.discord.rocks/).\n\nDo you want to visit the Discord Rocks API website?';
+        var message = 'Created by @pianoth, LLMs and domain provided by @meow_18838.\nPowered by the Discord Rocks API (https://api.airforce/).\n\nDo you want to visit the Discord Rocks API website?';
         var result = confirm(message);
         if (result) {
-            window.location.href = 'https://api.discord.rocks/';
+            window.location.href = 'https://api.airforce/';
         }
     }
     /**
@@ -2002,7 +2002,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.error('Invalid GROQ token:', groqToken);
                 requestBody.model = 'llama-3.1-8b-turbo';
-                fetch('https://api.discord.rocks/chat/completions', {
+                fetch('https://api.airforce/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -2120,7 +2120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             } else {
                 requestBody.model = 'llama-3.1-8b-turbo';
-                fetch('https://api.discord.rocks/chat/completions', {
+                fetch('https://api.airforce/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2267,7 +2267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         reject(new Error('Image generation request timed out.'));
                     }, 120000);
                 });
-                Promise.race([fetch(`https://api.discord.rocks/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`, {
+                Promise.race([fetch(`https://api.airforce/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${apiKey.trim()}`
@@ -2283,7 +2283,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     backButton.disabled = true;
-                    const imageUrl = `https://api.discord.rocks/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`;
+                    const imageUrl = `https://api.airforce/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`;
                     document.getElementById('messageContainer').removeChild(loadingMessage)
                     addMessageToHistory(imageUrl, 'assistant');
                     updateMessageCounters();
@@ -2407,7 +2407,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             if (!apiKey) {apiKey = 'missing api key'}
-            fetchEndpointStream(requestBody, quotes, 'https://api.discord.rocks/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey.trim()}` }, 'choices[0].delta.content');
+            fetchEndpointStream(requestBody, quotes, 'https://api.airforce/chat/completions', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey.trim()}` }, 'choices[0].delta.content');
         }
     }
     /**
@@ -2786,7 +2786,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function parseMessage(textSpan, message, user = true, messageDiv) {
         if (containsFiles(message) && user) {
             displayFilesAsBubbles(textSpan, message);
-        } else if (message.startsWith("https://api.discord.rocks/imagine?model=flux")) {
+        } else if (message.startsWith("https://api.airforce/imagine?model=flux")) {
             displayImage(message, messageDiv);
         } else {
             parseMarkdownToHTML(textSpan, message);
