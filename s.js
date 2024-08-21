@@ -2790,7 +2790,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function parseMessage(textSpan, message, user = true, messageDiv) {
         if (containsFiles(message) && user) {
             displayFilesAsBubbles(textSpan, message);
-        } else if (message.startsWith("https://api.airforce/imagine?model=flux")) {
+        } else if (message.startsWith("https://api.airforce/imagine2?model=flux")) {
             displayImage(message, messageDiv);
         } else {
             parseMarkdownToHTML(textSpan, message);
