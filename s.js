@@ -309,6 +309,10 @@ document.addEventListener('DOMContentLoaded', function() {
         flux4.value = 'flux-3d';
         flux4.textContent = 'flux-3d';
         modelDropdown.appendChild(flux4);
+        const flux5 = document.createElement('option');
+        flux5.value = 'flux-disney';
+        flux5.textContent = 'flux-disney';
+        modelDropdown.appendChild(flux5);
         const freeModels = modelIds.filter(model => model.created === 0);
         const otherModels = modelIds.filter(model => model.created !== 0);
         const freeOption = document.createElement('option');
@@ -2267,7 +2271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         reject(new Error('Image generation request timed out.'));
                     }, 120000);
                 });
-                Promise.race([fetch(`https://api.airforce/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`, {
+                Promise.race([fetch(`https://api.airforce/imagine2?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${apiKey.trim()}`
@@ -2283,7 +2287,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     backButton.disabled = true;
-                    const imageUrl = `https://api.airforce/imagine?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`;
+                    const imageUrl = `https://api.airforce/imagine2?model=${model}&prompt=${messageContent}&size=${imageSize}&seed=${seed}`;
                     document.getElementById('messageContainer').removeChild(loadingMessage)
                     addMessageToHistory(imageUrl, 'assistant');
                     updateMessageCounters();
@@ -2323,7 +2327,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {Promise<void>} A promise that resolves when the message is sent and the UI is updated.
      */
     function handleSend() {
-        if (modelDropdown.value === 'flux-realism' || modelDropdown.value === 'flux' || modelDropdown.value === 'flux-anime' || modelDropdown.value === 'flux-3d') {
+        if (modelDropdown.value === 'flux-realism' || modelDropdown.value === 'flux' || modelDropdown.value === 'flux-anime' || modelDropdown.value === 'flux-3d'  || modelDropdown.value === 'flux-disney') {
             handleSendImage(modelDropdown.value);
         } else {
             const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
