@@ -1151,10 +1151,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     infoLink.addEventListener('click', showInfo);
     /**
-     * Displays information about the application and prompts the user to visit the Discord Rocks API website if confirmed.
+     * Displays information about the application and prompts the user to visit the Airforce API website if confirmed.
      */
     function showInfo() {
-        var message = 'Created by @pianoth, LLMs and domain provided by @meow_18838.\nPowered by the Discord Rocks API (https://api.airforce/).\n\nDo you want to visit the Discord Rocks API website?';
+        var message = 'Created by @pianoth, LLMs and domain provided by @meow_18838.\nPowered by the Airforce API (https://api.airforce/).\n\nDo you want to visit the Airforce API website?';
         var result = confirm(message);
         if (result) {
             window.location.href = 'https://api.airforce/';
