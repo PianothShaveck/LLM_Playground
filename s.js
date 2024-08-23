@@ -313,6 +313,18 @@ document.addEventListener('DOMContentLoaded', function() {
         flux5.value = 'flux-disney';
         flux5.textContent = 'flux-disney';
         modelDropdown.appendChild(flux5);
+        const flux6 = document.createElement('option');
+        flux6.value = 'flux-pixel';
+        flux6.textContent = 'flux-pixel';
+        modelDropdown.appendChild(flux6);
+        const flux7 = document.createElement('option');
+        flux7.value = 'flux-4o';
+        flux7.textContent = 'flux-4o';
+        modelDropdown.appendChild(flux7);
+        const flux8 = document.createElement('option');
+        flux8.value = 'any-dark';
+        flux8.textContent = 'any-dark';
+        modelDropdown.appendChild(flux8);
         const freeModels = modelIds.filter(model => model.created === 0);
         const otherModels = modelIds.filter(model => model.created !== 0);
         const freeOption = document.createElement('option');
@@ -1099,7 +1111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     modelDropdown.addEventListener('change', () => {
         const selectedModel = modelDropdown.value;
         const imageSizeSelector = document.getElementById('imageSizeSelector');
-        if (selectedModel === 'flux' || selectedModel === 'flux-realism' || selectedModel === 'flux-3d' || selectedModel === 'flux-anime') {
+        if (selectedModel === 'flux' || selectedModel === 'flux-realism' || selectedModel === 'flux-3d' || selectedModel === 'flux-anime' || selectedModel === 'flux-disney' || selectedModel === 'flux-pixel' || selectedModel === 'flux-4o' || selectedModel === 'any-dark') {
             if (!imageSizeSelector) {
                 createImageSizeSelector();
             }
@@ -2327,7 +2339,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {Promise<void>} A promise that resolves when the message is sent and the UI is updated.
      */
     function handleSend() {
-        if (modelDropdown.value === 'flux-realism' || modelDropdown.value === 'flux' || modelDropdown.value === 'flux-anime' || modelDropdown.value === 'flux-3d'  || modelDropdown.value === 'flux-disney') {
+        if (modelDropdown.value === 'flux-realism' || modelDropdown.value === 'flux' || modelDropdown.value === 'flux-anime' || modelDropdown.value === 'flux-3d'  || modelDropdown.value === 'flux-disney' || selectedModel === 'flux-pixel' || selectedModel === 'flux-4o' || selectedModel === 'any-dark') {
             handleSendImage(modelDropdown.value);
         } else {
             const webSearchToggle = document.querySelector('input[name="webSearch"]:checked').value;
