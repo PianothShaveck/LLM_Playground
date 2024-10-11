@@ -1,3 +1,7 @@
+# This repository is archived.
+
+The original author of this repository, PianothShaveck, decided to stop working on it, especially to not be affiliated anymore with owner of the API this repository used.
+
 # LLM Playground
 
 This repository contains the source code for [LLM Playground](https://llmplayground.net), a web-based interface for testing various Large Language Models (LLMs).
